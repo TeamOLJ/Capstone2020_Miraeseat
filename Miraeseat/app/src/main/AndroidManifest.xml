@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.capstondesign.miraeseat">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera2" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".search.SearchActivity"></activity>
+
+        <activity android:name=".TheaterActivity"></activity>
+
+        <!--오나현-->
+        <activity
+            android:name=".LoginPage"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+
+        <activity
+            android:name=".SignUpPage"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".find.FindInfoPage"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity android:name=".notice.NoticeListPage"></activity>
+
+        <activity android:name=".notice.NoticeContext"></activity>
+
+        <activity
+            android:name=".UnsubscribePage"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--이명주-->
+        <activity android:name=".seatPage"></activity>
+
+        <activity android:name=".hall.HallInfo"></activity>
+
+        <activity android:name=".EditReview"></activity>
+
+        <activity android:name=".EditInfo"></activity>
+
+        <activity android:name=".WriteReview"></activity>
+
+        <activity android:name=".mypage.MyPage"></activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.myapplication"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>

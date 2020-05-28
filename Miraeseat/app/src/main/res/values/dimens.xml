@@ -1,0 +1,32 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_spacing">8dp</dimen>
+    <dimen name="nav_header_height">175dp</dimen>
+
+    <dimen name="nav_profile">70dp</dimen>
+
+    <dimen name="font_size">20sp</dimen>
+
+    <!--activity_main.xml-->
+    <dimen name="view_search_height">250dp</dimen>
+    <dimen name="editText_width">200dp</dimen>
+    <dimen name="poster_width">150dp</dimen>
+    <dimen name="poster_height">200dp</dimen>
+    <dimen name="poster_margin">5dp</dimen>
+
+    <!--result-->
+    <dimen name="result_width">125dp</dimen>
+    <dimen name="result_height">150dp</dimen>
+    <dimen name="result_padding">5dp</dimen>
+
+    <!--activity_theater.xml-->
+    <dimen name="floatingActionButton_margin">8dp</dimen>
+    <dimen name="design_fab_size_mini" tools:override="true">40dp</dimen>
+
+    <!--charlotte.jpg-->
+    <dimen name="A1_table_height">170dp</dimen>
+    <dimen name="A1_table_width">107dp</dimen>
+
+</resources>

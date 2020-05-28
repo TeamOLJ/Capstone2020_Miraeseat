@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/floatingActionButton_margin"
+        android:layout_marginTop="@dimen/floatingActionButton_margin"
+        android:clickable="true"
+        android:onClick="onFloatingButtonClicked"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+
+    <RelativeLayout
+        android:id="@+id/seatView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/charlotte90" />
+
+        <TableLayout
+            android:layout_width="@dimen/A1_table_width"
+            android:layout_height="@dimen/A1_table_height"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="162dp">
+        </TableLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,76 @@
+<resources>
+    <string name="app_name">Miraeseat</string>
+
+    <!--장혜진-->
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Closed</string>
+
+        <!--drawer-->
+    <string name="menu_notice">공지사항</string>
+    <string name="menu_use">이용방법</string>
+    <string name="menu_settings">설정</string>
+
+    <string name="nav_login">로그인을 해주세요.</string>
+    <string name="nav_profile_desc">Profile picture</string>
+
+    <string name="editText_desc">검색창</string>
+    <string name="editText_hint">공연장/공연 검색</string>
+
+    <!--오나현-->
+    <string name="hint_id">아이디</string>
+    <string name="hint_nick">닉네임</string>
+    <string name="hint_pwd">비밀번호</string>
+    <string name="hint_pwd_check">비밀번호 확인</string>
+    <string name="hint_email">이메일</string>
+
+    <string name="enter_user_info">회원 정보 입력</string>
+    <string name="condition_agreement">약관 동의</string>
+
+    <string name="id_require">5~20자의 영문 소문자, 숫자, -, _</string>
+    <string name="nick_require">2~7자의 한글, 영문, 숫자</string>
+    <string name="pwd_require">8~20자의 영문 대소문자, 숫자, 특수문자</string>
+
+    <string name="agree_TC">이용약관 동의</string>
+    <string name="agree_PI">개인정보 수집 동의</string>
+
+    <string name="notice_title">공지 제목</string>
+    <string name="notice_date">공지 날짜</string>
+    <string name="notice_context">공지 내용</string>
+
+    <string name="temp_title_text">타이틀</string>
+
+    <string name="login">로그인</string>
+    <string name="keep_loggedin">로그인 상태 유지</string>
+    <string name="go_login">로그인 하러 가기</string>
+
+    <string name="find_id">아이디 찾기</string>
+    <string name="find_id_button">아이디 찾기  |</string>
+    <string name="find_pwd">비밀번호 찾기</string>
+    <string name="sign_up">회원가입</string>
+
+    <string name="unsubscribe">회원 탈퇴</string>
+
+    <string name="logo_desc">어플 메인 로고</string>
+
+    <string name="check_redundancy">중복확인</string>
+    <string name="read_all">전체보기</string>
+
+    <string name="text_to_find_id">가입에 사용한 이메일을 입력하세요.</string>
+    <string name="text_to_find_pwd">가입된 아이디와 이메일을 입력하세요.</string>
+
+    <string name="found_id_text1">회원님의 아이디는</string>
+    <string name="found_id_text2"> 입니다.</string>
+
+    <string name="found_pwd_text1">회원님의 정보를 이메일로 전송했습니다.</string>
+    <string name="found_pwd_text2">이메일 확인 후 다시 로그인해주세요.</string>
+
+    <string name="unsubscribe_text1">정말로 탈퇴하시겠습니까?</string>
+    <string name="unsubscribe_text2">회원 탈퇴 시 지금까지 작성한 모든 리뷰가 함께 삭제되며, 삭제 된 데이터는 복구할 수 없습니다.</string>
+    <string name="unsubscribe_text3">가입 시 입력하신 모든 개인정보는 회원 탈퇴와 동시에 일괄 폐기됩니다.</string>
+    <string name="unsubscribe_text4">본인확인을 위해 비밀번호를 한 번 더 입력해주세요.</string>
+
+    <!--이명주-->
+    <string name="my_page_text1">마이페이지</string>
+
+    <string name="hall_info_text1">공연장</string>
+</resources>
