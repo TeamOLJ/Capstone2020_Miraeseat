@@ -3,6 +3,8 @@ package com.capstondesign.miraeseat;
 import android.app.Activity;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class BackPressCloseHandler {
     private long backKeyPressedTime = 0;
     private Toast toast;
@@ -20,6 +22,7 @@ public class BackPressCloseHandler {
         }
         else
         {
+            // FirebaseAuth.getInstance().signOut();
             activity.finish();
             toast.cancel();
         }

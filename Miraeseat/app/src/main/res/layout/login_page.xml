@@ -19,7 +19,7 @@
         android:contentDescription="@string/logo_desc" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/InputID"
+        android:id="@+id/InputEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
@@ -31,7 +31,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_id" />
+            android:hint="@string/hint_email" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:layout_below="@id/InputID"
+        android:layout_below="@id/InputEmail"
         app:hintEnabled="false"
         app:passwordToggleEnabled="true">
 
@@ -74,23 +74,11 @@
         android:text="@string/login"/>
 
     <Button
-        android:id="@+id/btnFindID"
+        android:id="@+id/btnFindPwd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/btnLogin"
         android:layout_alignLeft="@id/btnLogin"
-        android:layout_below="@id/btnLogin"
-        android:background="#00ff0000"
-        android:textColor="#4C4C4C"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:text="@string/find_id_button" />
-
-    <Button
-        android:id="@+id/btnFindPwd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/btnFindID"
-        android:layout_toRightOf="@id/btnFindID"
         android:layout_below="@id/btnLogin"
         android:background="#00ff0000"
         android:textColor="#4C4C4C"

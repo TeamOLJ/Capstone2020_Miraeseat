@@ -43,8 +43,6 @@
     <string name="keep_loggedin">로그인 상태 유지</string>
     <string name="go_login">로그인 하러 가기</string>
 
-    <string name="find_id">아이디 찾기</string>
-    <string name="find_id_button">아이디 찾기  |</string>
     <string name="find_pwd">비밀번호 찾기</string>
     <string name="sign_up">회원가입</string>
 

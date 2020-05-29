@@ -46,7 +46,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="10dp"
             android:background="@color/main_color"
-            android:text="@string/find_id"
+            android:text="이 페이지 삭제해야 함"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
