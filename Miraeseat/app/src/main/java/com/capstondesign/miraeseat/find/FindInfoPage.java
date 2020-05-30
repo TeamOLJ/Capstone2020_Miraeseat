@@ -54,6 +54,7 @@ public class FindInfoPage extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         titleText = (TextView) findViewById(R.id.titleText);
+        titleText.setText("비밀번호 찾기");
 
         layoutFindPwd = findViewById(R.id.layoutFindPwd);
         layoutFoundPwd = findViewById(R.id.layoutFoundPwd);

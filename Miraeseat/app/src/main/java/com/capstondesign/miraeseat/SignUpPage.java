@@ -1,6 +1,7 @@
 package com.capstondesign.miraeseat;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -376,7 +377,11 @@ public class SignUpPage extends AppCompatActivity {
                                                 // ...
                                                 setResult(SIGN_UP_SUCCESS);
                                                 Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
-                                                finish();
+                                                // 메인화면으로 복귀
+                                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
                                             }
                                             else {
                                                 // 회원가입 실패
