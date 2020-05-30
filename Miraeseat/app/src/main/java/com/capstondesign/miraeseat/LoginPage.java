@@ -16,11 +16,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.capstondesign.miraeseat.find.FindInfoPage;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Pattern;
 
@@ -29,6 +33,7 @@ public class LoginPage extends AppCompatActivity {
 
     // Firebase 인증 변수
     private FirebaseAuth loginAuth;
+    FirebaseFirestore db;
 
     TextInputLayout inputLayoutEmail;
     TextInputLayout inputLayoutPwd;
@@ -63,11 +68,12 @@ public class LoginPage extends AppCompatActivity {
 
         // Initialize Firebase Auth
         loginAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String givenEmail = inputEmail.getText().toString();
+                final String givenEmail = inputEmail.getText().toString();
                 String givenPwd = inputPwd.getText().toString();
 
                 isAutoLoginChecked = checkAutoLogin.isChecked();
@@ -143,14 +149,25 @@ public class LoginPage extends AppCompatActivity {
                                         if(task.isSuccessful()) {
                                             // 로그인 성공
                                             Log.d(TAG, "LogInWithEmail:success");
-                                            // 메인화면으로 복귀
-                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            // 자동로그인 체크 여부 저장
-                                            SaveSharedPreference.setIsAutoLogin(getApplicationContext(), isAutoLoginChecked);
-                                            Toast.makeText(getApplicationContext(), "(닉네임)님 환영합니다!", Toast.LENGTH_LONG).show();
-                                            startActivity(intent);
+                                            // DB에서 닉네임 읽어오기
+                                            db.collection("UserInfo").document(givenEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                    UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
+                                                    SaveSharedPreference.setUserNickName(getApplicationContext(), loginedUser.getNick());
+//                                                    Log.d(TAG, "nickname: "+loginedUser.getNick());
+//                                                    Log.d(TAG, "sharedPreference: "+SaveSharedPreference.getUserNickName(getApplicationContext()));
+                                                    // 메인화면으로 복귀
+                                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                    // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    // 자동로그인 체크 여부 저장
+                                                    SaveSharedPreference.setIsAutoLogin(getApplicationContext(), isAutoLoginChecked);
+                                                    Log.d(TAG, "sharedPreference: "+SaveSharedPreference.getUserNickName(getApplicationContext()));
+                                                    Toast.makeText(getApplicationContext(), SaveSharedPreference.getUserNickName(getApplicationContext())+"님 환영합니다!", Toast.LENGTH_LONG).show();
+                                                    startActivity(intent);
+                                                }
+                                            });
                                         }
                                         else {
                                             // 로그인 실패

@@ -17,17 +17,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class UnsubscribePage extends AppCompatActivity {
     private static final String TAG = "UnsubscribePage";
 
     FirebaseUser user;
+    FirebaseFirestore db;
 
     TextView titleText;
 
@@ -57,6 +61,8 @@ public class UnsubscribePage extends AppCompatActivity {
 
         final EditText edtUnsubPwd = textLayoutPwd.getEditText();
 
+        db = FirebaseFirestore.getInstance();
+
         edtUnsubPwd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -85,7 +91,7 @@ public class UnsubscribePage extends AppCompatActivity {
                 else
                 {
                     user = FirebaseAuth.getInstance().getCurrentUser();
-                    String userEmail = user.getEmail();
+                    final String userEmail = user.getEmail();
 
                     // Get auth credentials from the user for re-authentication.
                     AuthCredential credential = EmailAuthProvider.getCredential(userEmail, givenPwd);
@@ -102,6 +108,22 @@ public class UnsubscribePage extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             Log.d(TAG, "User account deleted.");
                                             SaveSharedPreference.setIsAutoLogin(getApplicationContext(), false);
+                                            // 회원 기타 정보 삭제
+                                            db.collection("UserInfo").document(userEmail).delete()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG, "User information successfully deleted from DB.");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error deleting document(DB)", e);
+                                                        }
+                                                    });
+                                            // 회원의 리뷰 전체 삭제
+                                            // ...
                                             // 메인화면으로 돌아감
                                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                             // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록

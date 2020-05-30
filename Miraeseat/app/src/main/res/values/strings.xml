@@ -67,4 +67,8 @@
     <string name="my_page_text1">마이페이지</string>
 
     <string name="hall_info_text1">공연장</string>
+
+    <string name="hint_pwd_change">비밀번호 변경</string>
+    <string name="save_changes">변경사항 저장</string>
+
 </resources>

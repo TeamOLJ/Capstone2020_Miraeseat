@@ -49,7 +49,7 @@ public class LoginCheckHandler {
     public void loginCheck() {
         // currentUser가 null이 아닌 경우 (로그인 중인 경우)
         if (currentUser != null) {
-            login_id.setText("닉네임 뜨는 곳");
+            login_id.setText(SaveSharedPreference.getUserNickName(ctx));
             profile_image.setImageResource(R.drawable.logo_temp);
 
             nav_left.setText("마이페이지");
@@ -105,6 +105,7 @@ public class LoginCheckHandler {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mainAuth.signOut();
+                    SaveSharedPreference.setUserNickName(ctx, "");
                     SaveSharedPreference.setIsAutoLogin(ctx, false);
                     Toast.makeText(ctx, "로그아웃 되었습니다.", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(ctx, MainActivity.class);

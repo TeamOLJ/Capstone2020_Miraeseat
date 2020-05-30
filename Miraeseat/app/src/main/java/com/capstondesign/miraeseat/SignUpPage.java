@@ -24,10 +24,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Pattern;
 
@@ -39,6 +42,7 @@ public class SignUpPage extends AppCompatActivity {
 
     // Firebase 인증 변수
     private FirebaseAuth signupAuth;
+    FirebaseFirestore db;
 
     TextView titleText;
 
@@ -126,6 +130,7 @@ public class SignUpPage extends AppCompatActivity {
 
         // Initialize Firebase Auth
         signupAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         // 이메일 입력칸 입력 정보에 따라 오류메시지 생성하는 코드
         edtEmail.addTextChangedListener(new TextWatcher() {
@@ -374,14 +379,28 @@ public class SignUpPage extends AppCompatActivity {
                                                 // 회원가입 성공
                                                 Log.d(TAG, "createUserWithEmail:success");
                                                 // 입력된 모든 정보를 데이터베이스에 추가
-                                                // ...
-                                                setResult(SIGN_UP_SUCCESS);
-                                                Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
-                                                // 메인화면으로 복귀
-                                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                                // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                startActivity(intent);
+                                                UserClass newUser = new UserClass(edtEmail.getText().toString(), edtNick.getText().toString(), "");
+                                                db.collection("UserInfo").document(edtEmail.getText().toString()).set(newUser)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d(TAG, "Signup Info successfully written to DB.");
+                                                                setResult(SIGN_UP_SUCCESS);
+                                                                FirebaseAuth.getInstance().signOut();
+                                                                Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
+                                                                // 메인화면으로 복귀
+                                                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                                // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
+                                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                startActivity(intent);
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w(TAG, "Error writing document(DB)", e);
+                                                            }
+                                                        });
                                             }
                                             else {
                                                 // 회원가입 실패

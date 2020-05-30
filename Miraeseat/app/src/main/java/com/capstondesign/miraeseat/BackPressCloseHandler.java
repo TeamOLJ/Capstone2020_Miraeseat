@@ -29,6 +29,7 @@ public class BackPressCloseHandler {
             }
             else {
                 FirebaseAuth.getInstance().signOut();
+                SaveSharedPreference.setUserNickName(activity.getApplicationContext(), "");
             }
             activity.finish();
             toast.cancel();

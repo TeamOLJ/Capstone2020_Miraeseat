@@ -26,30 +26,43 @@
 
         <ImageButton style="@style/homebt"
             android:id="@+id/edit_save"
-            android:layout_gravity="right"
-            />
+            android:layout_gravity="right" />
 
     </LinearLayout>
-
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginVertical="20dp"
         android:id="@+id/edit_photo"
         android:src="@mipmap/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
+        android:text="기본 정보" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <TextView style="@style/editinfo_text"
+        <TextView
+            style="@style/editinfo_text"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
             android:text="@string/hint_email" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/editInput"
-            android:id="@+id/layoutEmail">
+            android:id="@+id/layoutEmail"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            app:hintEnabled="false" >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtEmail"
@@ -57,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
-                android:hint="id123" />
+                android:hint="@string/hint_email" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
@@ -66,57 +79,93 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content" >
 
         <TextView
             style="@style/editinfo_text"
-            android:text="닉네임" />
-
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
+            android:text="@string/hint_nick" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutNickname"
             style="@style/editInput"
             android:layout_marginRight="0dp"
-            android:layout_width="190dp"
+            android:layout_width="0dp"
+            android:layout_weight="3.5"
+            app:hintEnabled="false"
             android:focusableInTouchMode="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtNickname"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:hint="2"
+                android:hint="@string/hint_nick"
                 android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btnCheckNick"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="20dp"
-            android:text="확인" />
+            android:layout_weight="1.5"
+            android:text="@string/check_redundancy" />
     </LinearLayout>
 
 <!--    <View style="@style/divideline"/>-->
 
-<!--    <View style="@style/divideline"/>-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="10dp"
+        android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
+        android:text="@string/hint_pwd_change" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView style="@style/editinfo_text"
-            android:text="비밀번호" />
+        <TextView
+            style="@style/editinfo_text"
+            android:layout_width="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
+            android:text="현재 비밀번호" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/editInput"
-            android:id="@+id/layoutPwd"
-            android:focusableInTouchMode="true"
-            >
+            android:id="@+id/layoutCurrentPwd"
+            android:focusableInTouchMode="true" >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtPwd"
+                android:id="@+id/edtCurrentPwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint=""
+                android:inputType="textPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/editinfo_text"
+            android:layout_width="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
+            android:text="새 비밀번호" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/editInput"
+            android:id="@+id/layoutNewPwd"
+            android:focusableInTouchMode="true" >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtNewPwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint=""
@@ -128,18 +177,20 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
->
+        android:layout_height="wrap_content" >
 
-        <TextView style="@style/editinfo_text"
-            android:text="비밀번호 확인"
-             />
+        <TextView
+            style="@style/editinfo_text"
+            android:layout_width="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSearchResultTitle"
+            android:text="@string/hint_pwd_check" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/editInput"
             android:id="@+id/layoutCheckPwd"
-            android:focusableInTouchMode="true"
-            >
+            android:layout_width="0dp"
+            android:layout_weight="5.5"
+            android:focusableInTouchMode="true" >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtCheckPwd"
@@ -147,10 +198,11 @@
                 android:layout_height="wrap_content"
                 android:hint=""
                 android:inputType="textPassword" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 
-<!--    <View style="@style/divideline"/>-->
+    <!--    <View style="@style/divideline"/>-->
 
 </LinearLayout>

@@ -1,21 +1,27 @@
 package com.capstondesign.miraeseat;
 
-public class UserClass {
-    String Email;
-    String Nick;
-    // imagepath
+import com.google.firebase.firestore.auth.User;
 
-    public UserClass(String email, String nick) {
-        this.Email = email;
-        this.Nick = email;
-        // imagepath
+public class UserClass {
+    private String email;
+    private String nick;
+    private String imagepath;
+
+    public UserClass() { }
+
+    public UserClass(String email, String nick, String imagepath) {
+        this.email = email;
+        this.nick = nick;
+        this.imagepath = imagepath;
     }
 
-    public String getEmail() { return Email; }
+    public String getEmail() { return email; }
 
-    public String getNick() { return Nick; }
+    public String getNick() { return nick; }
 
-    public void setNick(String nick) { this.Nick = nick; }
+    public String getImagepath() { return imagepath; }
+
+    public void setNick(String nick) { this.nick = nick; }
 
     // imagepath 관련 함수
 }

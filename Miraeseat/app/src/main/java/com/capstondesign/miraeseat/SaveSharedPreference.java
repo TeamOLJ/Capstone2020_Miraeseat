@@ -6,10 +6,21 @@ import android.preference.PreferenceManager;
 
 public class SaveSharedPreference {
     //static final String PREF_USER_NAME = "username";
+    static final String USER_NICK_NAME = "nickname";
     static final String IS_AUTO_LOGIN = "AutoLogin";
 
     static SharedPreferences getSharedPreferences(Context ctx) {
         return PreferenceManager.getDefaultSharedPreferences(ctx);
+    }
+
+    public static void setUserNickName(Context ctx, String nickName) {
+        SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
+        editor.putString(USER_NICK_NAME, nickName);
+        editor.apply();
+    }
+
+    public static String getUserNickName(Context ctx) {
+        return getSharedPreferences(ctx).getString(USER_NICK_NAME, "");
     }
 
     public static void setIsAutoLogin(Context ctx, boolean isAutoLogin) {
