@@ -147,8 +147,9 @@ public class LoginPage extends AppCompatActivity {
                                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                             // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
                                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            // 자동로그인 여부에 따른 처리
-                                            // isAutoLoginChecked...
+                                            // 자동로그인 체크 여부 저장
+                                            SaveSharedPreference.setIsAutoLogin(getApplicationContext(), isAutoLoginChecked);
+                                            Toast.makeText(getApplicationContext(), "(닉네임)님 환영합니다!", Toast.LENGTH_LONG).show();
                                             startActivity(intent);
                                         }
                                         else {
