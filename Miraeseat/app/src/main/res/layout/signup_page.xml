@@ -173,6 +173,7 @@
                     android:id="@+id/textlayoutPwdCheck"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textPassword"
                     android:layout_marginHorizontal="20dp"
                     app:hintEnabled="false" >
 

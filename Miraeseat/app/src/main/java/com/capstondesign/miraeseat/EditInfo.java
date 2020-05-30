@@ -51,9 +51,8 @@ public class EditInfo extends AppCompatActivity {
 
     Button btnCheckNick;
 
-    private TextInputLayout inputLayoutID;
-    private TextInputLayout inputLayoutNickname;
     private TextInputLayout inputLayoutEmail;
+    private TextInputLayout inputLayoutNickname;
     private TextInputLayout inputLayoutPwd;
     private TextInputLayout inputLayoutCheckPwd;
 
@@ -76,20 +75,17 @@ public class EditInfo extends AppCompatActivity {
 
         btnCheckNick = (Button)findViewById(R.id.btnCheckNick);
 
-        inputLayoutID = (TextInputLayout) findViewById(R.id.layoutID);
-        inputLayoutNickname = (TextInputLayout) findViewById(R.id.layoutNickname);
         inputLayoutEmail = (TextInputLayout) findViewById(R.id.layoutEmail);
+        inputLayoutNickname = (TextInputLayout) findViewById(R.id.layoutNickname);
         inputLayoutPwd = (TextInputLayout) findViewById(R.id.layoutPwd);
         inputLayoutCheckPwd = (TextInputLayout) findViewById(R.id.layoutCheckPwd);
 
-        final EditText edtID = inputLayoutID.getEditText();
-        final EditText edtNickname = inputLayoutNickname.getEditText();
         final EditText edtEmail = inputLayoutEmail.getEditText();
+        final EditText edtNickname = inputLayoutNickname.getEditText();
         final EditText edtPwd = inputLayoutPwd.getEditText();
         final EditText edtCheckPwd = inputLayoutCheckPwd.getEditText();
 
         //이름 닉네임 이메일 데이터 불러오기
-
 
         //닉네임 설정
         edtNickname.addTextChangedListener(new TextWatcher() {
@@ -196,8 +192,6 @@ public class EditInfo extends AppCompatActivity {
                 finish();
             }
         });
-
-
 
         //프사 변경
         edit_photo.setOnClickListener(new View.OnClickListener() {

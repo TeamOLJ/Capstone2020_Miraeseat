@@ -1,19 +1,33 @@
 package com.capstondesign.miraeseat;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class UnsubscribePage extends AppCompatActivity {
+    private static final String TAG = "UnsubscribePage";
+
+    FirebaseUser user;
 
     TextView titleText;
 
@@ -43,6 +57,22 @@ public class UnsubscribePage extends AppCompatActivity {
 
         final EditText edtUnsubPwd = textLayoutPwd.getEditText();
 
+        edtUnsubPwd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                textLayoutPwd.setError(null);
+                textLayoutPwd.setErrorEnabled(false);
+            }
+        });
+
         btnUnsubscribe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,12 +84,41 @@ public class UnsubscribePage extends AppCompatActivity {
                 }
                 else
                 {
-                    // 서버로 전송하여 비밀번호 일치여부 확인
-                    // if 일치하지 않으면
-                    // textLayoutPwd.setError("잘못 된 입력입니다. 비밀번호를 확인하세요.");
-                    // else 일치하면
-                    // 모든 데이터베이스에서 ID가 일치하는 정보 삭제
-                    // 창을 새로 띄울까 아니면 바로 홈으로 보내고 토스트만 띄울까?
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+                    String userEmail = user.getEmail();
+
+                    // Get auth credentials from the user for re-authentication.
+                    AuthCredential credential = EmailAuthProvider.getCredential(userEmail, givenPwd);
+
+                    // Prompt the user to re-provide their sign-in credentials
+                    user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                Log.d(TAG, "User re-authenticated.");
+                                user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.d(TAG, "User account deleted.");
+                                            SaveSharedPreference.setIsAutoLogin(getApplicationContext(), false);
+                                            // 메인화면으로 돌아감
+                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                            // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                        }
+                                        else {
+                                            Log.w(TAG, "User account is not deleted.", task.getException());
+                                        }
+                                    }
+                                });
+                            }
+                            else {
+                                textLayoutPwd.setError("잘못 된 입력입니다. 비밀번호를 확인하세요.");
+                            }
+                        }
+                    });
                 }
             }
         });

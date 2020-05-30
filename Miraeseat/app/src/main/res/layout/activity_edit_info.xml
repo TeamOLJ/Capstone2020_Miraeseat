@@ -40,29 +40,26 @@
         android:id="@+id/edit_photo"
         android:src="@mipmap/ic_launcher_round" />
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-    <TextView style="@style/editinfo_text"
-        android:text="ID" />
+        <TextView style="@style/editinfo_text"
+            android:text="@string/hint_email" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/editInput"
+            android:id="@+id/layoutEmail">
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/editInput"
-        android:id="@+id/layoutID"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:focusable="false"
-            android:hint="id123" />
-    </com.google.android.material.textfield.TextInputLayout>
-</LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:hint="id123" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     
 <!--    <View style="@style/divideline"/>-->
@@ -102,31 +99,6 @@
     </LinearLayout>
 
 <!--    <View style="@style/divideline"/>-->
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-
-        <TextView style="@style/editinfo_text"
-            android:text="이메일" />
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/editInput"
-            android:id="@+id/layoutEmail"
-            >
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:focusable="false"
-                android:hint="email@gmail.com" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </LinearLayout>
 
 <!--    <View style="@style/divideline"/>-->
 
