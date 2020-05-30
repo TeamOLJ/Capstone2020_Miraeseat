@@ -129,8 +129,7 @@ public class LoginPage extends AppCompatActivity {
                 // 이메일과 비밀번호 모두 입력되어 있으면
                 else
                 {
-                    // sql injection 대비, 형식에 맞지 않으면 오류 띄움
-                    // 비밀번호는 Hash할 거니까 상관없나...
+                    // Firebase도 sql injection을 따로 대비해줘야 하는가?
                     if(!android.util.Patterns.EMAIL_ADDRESS.matcher(givenEmail).matches())
                     {
                         inputLayoutPwd.setError("잘못된 로그인 정보입니다. 이메일과 비밀번호를 확인해주세요.");
@@ -144,8 +143,13 @@ public class LoginPage extends AppCompatActivity {
                                         if(task.isSuccessful()) {
                                             // 로그인 성공
                                             Log.d(TAG, "LogInWithEmail:success");
-                                            // 로그인 버튼 누르기 전 화면으로 돌아가기
-                                            // 자동로그인 여부에 따른 처리와 로그인 성공에 따른 화면 전환 처리도 필요
+                                            // 메인화면으로 복귀
+                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                            // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            // 자동로그인 여부에 따른 처리
+                                            // isAutoLoginChecked...
+                                            startActivity(intent);
                                         }
                                         else {
                                             // 로그인 실패
@@ -163,7 +167,6 @@ public class LoginPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), FindInfoPage.class);
-                intent.putExtra("selectedTab", 1);
                 startActivity(intent);
             }
         });

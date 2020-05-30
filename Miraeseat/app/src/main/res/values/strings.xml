@@ -53,11 +53,7 @@
     <string name="check_redundancy">중복확인</string>
     <string name="read_all">전체보기</string>
 
-    <string name="text_to_find_id">가입에 사용한 이메일을 입력하세요.</string>
-    <string name="text_to_find_pwd">가입된 아이디와 이메일을 입력하세요.</string>
-
-    <string name="found_id_text1">회원님의 아이디는</string>
-    <string name="found_id_text2"> 입니다.</string>
+    <string name="text_to_find_pwd">가입된 이메일을 입력하세요.</string>
 
     <string name="found_pwd_text1">회원님의 정보를 이메일로 전송했습니다.</string>
     <string name="found_pwd_text2">이메일 확인 후 다시 로그인해주세요.</string>

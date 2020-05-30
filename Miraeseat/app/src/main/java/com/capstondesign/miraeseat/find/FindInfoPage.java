@@ -2,7 +2,13 @@ package com.capstondesign.miraeseat.find;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
@@ -12,14 +18,26 @@ import androidx.fragment.app.Fragment;
 
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.R;
+import com.capstondesign.miraeseat.SignUpPage;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class FindInfoPage extends AppCompatActivity {
+    private static final String TAG = "FindInfoPage";
+
+    static int SIGN_UP_SUCCESS = 1111;
+    static int SIGN_UP_CANCLE = 2222;
 
     TextView titleText;
 
-    FindIDFragment findIDFragment;
-    FindPwdFragment findPwdFragment;
+    LinearLayout layoutFindPwd;
+    LinearLayout layoutFoundPwd;
+
+    TextInputLayout inputLayoutEmail;
+
+    Button btnFindPwd;
+    Button btnSignUp;
+    Button btnGoLogin;
 
     DrawerHandler drawer;
 
@@ -27,10 +45,6 @@ public class FindInfoPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.find_info_page);
-
-        // 호출한 인텐트(LoginPage)로부터 요청페이지가 아이디 찾기인지 비밀번호 찾기인지 판별
-        Intent intent = getIntent();
-        int selectedTab = intent.getIntExtra("selectedTab", 0);
 
         drawer = new DrawerHandler(this);
         setSupportActionBar(drawer.toolbar);
@@ -41,49 +55,77 @@ public class FindInfoPage extends AppCompatActivity {
 
         titleText = (TextView) findViewById(R.id.titleText);
 
-        findIDFragment = new FindIDFragment();
-        findPwdFragment = new FindPwdFragment();
+        layoutFindPwd = findViewById(R.id.layoutFindPwd);
+        layoutFoundPwd = findViewById(R.id.layoutFoundPwd);
 
-        TabLayout tabs = findViewById(R.id.tabFindInfo);
+        layoutFindPwd.setVisibility(View.VISIBLE);
+        layoutFoundPwd.setVisibility(View.INVISIBLE);
 
-        if(selectedTab == 0) {
-            titleText.setText("아이디 찾기");
-            // 지정된 인덱스의 탭을 선택해 보여주는 코드
-            tabs.getTabAt(0).select();
-            // frameContainer 이라는 프레임레이아웃 안의 프래그먼트를 findIDFragment로 대체
-            getSupportFragmentManager().beginTransaction().replace(R.id.frameContainer, findIDFragment).commit();
-        }
+        inputLayoutEmail = findViewById(R.id.inputLayoutEmail);
 
-        if(selectedTab == 1) {
-            titleText.setText("비밀번호 찾기");
-            tabs.getTabAt(1).select();
-            getSupportFragmentManager().beginTransaction().replace(R.id.frameContainer,findPwdFragment).commit();
-        }
+        final EditText edtEmail = inputLayoutEmail.getEditText();
 
-        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        btnFindPwd = findViewById(R.id.btnFindInfoPwd);
+        btnSignUp = findViewById(R.id.btnFindInfoSignUp);
+        btnGoLogin = findViewById(R.id.btnGoLogin);
+
+        btnFindPwd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                // Log.d("MainActivity", "선택된 탭 : " + position);
+            public void onClick(View v) {
+                String givenEmail = edtEmail.getText().toString();
 
-                Fragment selected = null;
-                if (position == 0) {
-                    selected = findIDFragment;
-                    titleText.setText("아이디 찾기");
-                } else if (position == 1) {
-                    selected = findPwdFragment;
-                    titleText.setText("비밀번호 찾기");
+                if(givenEmail.getBytes().length <= 0)
+                {
+                    inputLayoutEmail.setError("이메일을 입력하세요.");
+                }
+                else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(givenEmail).matches())
+                {
+                    inputLayoutEmail.setError("유효하지 않은 이메일 형식입니다.");
+                }
+                else
+                {
+                    inputLayoutEmail.setError(null);
+                    inputLayoutEmail.setErrorEnabled(false);
+                    // 서버로 전송해 DB 확인
+                    // if(!Pattern.matches("[+a-zA-Z0-9[-[_]]]{5,20}", givenID) || (매칭되는 아이디와 이메일이 없으면))
+                    // inputLayoutEmail.setError("가입 정보가 없습니다. 입력 정보를 다시 확인하시거나 회원가입 후 이용해주세요.");
+                    // else 매칭되는 정보가 있으면
+                    // layoutFindPwd.setVisibility(View.INVISIBLE);
+                    // layoutFoundPwd.setVisibility(View.VISIBLE);
+                    // 그에 따른 정보처리 진행
                 }
 
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameContainer, selected).commit();
-            }
+                // 뭔가를 작성하면 하단의 오류문구를 지워주기 위한 코드
+                edtEmail.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
 
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        inputLayoutEmail.setError(null);
+                        inputLayoutEmail.setErrorEnabled(false);
+                    }
+                });
+            }
+        });
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SignUpPage.class);
+                startActivity(intent);
+            }
+        });
+
+        btnGoLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
