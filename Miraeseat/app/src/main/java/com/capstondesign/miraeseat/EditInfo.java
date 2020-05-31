@@ -25,7 +25,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,14 +52,26 @@ import java.util.regex.Pattern;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditInfo extends AppCompatActivity {
+    private static final String TAG = "EditInfo";
 
     static final int MY_PERMISSION_CAMERA = 1111;
     static final int REQUEST_TAKE_PHOTO = 2222;
     static final int REQUEST_TAKE_ALBUM = 3333;
     static final int REQUEST_IMAGE_CROP = 4444;
+
     String mCurrentPhotoPath;
     Uri imageURI;
-    Uri photoURI, albumURI;
+    Uri photoURI, albumURI, finalURI;
+    String currentPhoto;
+
+    int selectedPhotoMenu;
+
+    // Firebase Instance variables
+    private FirebaseUser user;
+    private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+
     CircleImageView edit_photo;
 
     ImageButton btnCancel;
@@ -51,18 +79,18 @@ public class EditInfo extends AppCompatActivity {
 
     Button btnCheckNick;
 
-    private TextInputLayout inputLayoutID;
-    private TextInputLayout inputLayoutNickname;
     private TextInputLayout inputLayoutEmail;
-    private TextInputLayout inputLayoutPwd;
+    private TextInputLayout inputLayoutNickname;
+    private TextInputLayout inputLayoutCurrentPwd;
+    private TextInputLayout inputLayoutNewPwd;
     private TextInputLayout inputLayoutCheckPwd;
 
-    private Boolean isNickChecked = false;
-
-    private Boolean isNickValid = false;
+    private Boolean isNickChecked = true;
+    private Boolean isNickValid = true;
     private Boolean isPwdValid = false;
-
     private Boolean isPwdChecked = false;
+
+    String prevNick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,20 +104,43 @@ public class EditInfo extends AppCompatActivity {
 
         btnCheckNick = (Button)findViewById(R.id.btnCheckNick);
 
-        inputLayoutID = (TextInputLayout) findViewById(R.id.layoutID);
-        inputLayoutNickname = (TextInputLayout) findViewById(R.id.layoutNickname);
         inputLayoutEmail = (TextInputLayout) findViewById(R.id.layoutEmail);
-        inputLayoutPwd = (TextInputLayout) findViewById(R.id.layoutPwd);
+        inputLayoutNickname = (TextInputLayout) findViewById(R.id.layoutNickname);
+        inputLayoutCurrentPwd = (TextInputLayout)findViewById(R.id.layoutCurrentPwd);
+        inputLayoutNewPwd = (TextInputLayout) findViewById(R.id.layoutNewPwd);
         inputLayoutCheckPwd = (TextInputLayout) findViewById(R.id.layoutCheckPwd);
 
-        final EditText edtID = inputLayoutID.getEditText();
-        final EditText edtNickname = inputLayoutNickname.getEditText();
         final EditText edtEmail = inputLayoutEmail.getEditText();
-        final EditText edtPwd = inputLayoutPwd.getEditText();
+        final EditText edtNickname = inputLayoutNickname.getEditText();
+        final EditText edtCurrentPwd = inputLayoutCurrentPwd.getEditText();
+        final EditText edtNewPwd = inputLayoutNewPwd.getEditText();
         final EditText edtCheckPwd = inputLayoutCheckPwd.getEditText();
 
-        //이름 닉네임 이메일 데이터 불러오기
+        // Firebase
+        db = FirebaseFirestore.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        final String userEmail = user.getEmail();
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference().child("user_review_photo");
 
+        //닉네임 이메일 사진 데이터 불러오기
+        db.collection("UserInfo").document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
+                edtEmail.setText(userEmail);
+                prevNick = loginedUser.getNick();
+                edtNickname.setText(prevNick);
+                if(loginedUser.getImagepath() != null) {
+                    // edit_photo 에 loginedUser.getImagepath()의 이미지 보이게
+                    Glide.with(getApplicationContext()).load(loginedUser.getImagepath()).into(edit_photo);
+                    currentPhoto = loginedUser.getImagepath();
+                }
+                else {
+                }
+                finalURI = null;
+            }
+        });
 
         //닉네임 설정
         edtNickname.addTextChangedListener(new TextWatcher() {
@@ -116,7 +167,7 @@ public class EditInfo extends AppCompatActivity {
             }
         });
 
-        edtPwd.addTextChangedListener(new TextWatcher() {
+        edtNewPwd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -131,17 +182,17 @@ public class EditInfo extends AppCompatActivity {
 
                 if(!Pattern.matches("[+a-zA-Z0-9[`~!@#$%^&*()-_=,./<>?;:\"'{}\\[\\][+[|]]]]{8,20}", s.toString())) {
                     isPwdValid = false;
-                    inputLayoutPwd.setError("8~20자의 영문 대소문자, 숫자, 특수문자를 사용할 수 있습니다.");
+                    inputLayoutNewPwd.setError("8~20자의 영문 대소문자, 숫자, 특수문자를 사용할 수 있습니다.");
                 }
                 else {
                     isPwdValid = true;
-                    inputLayoutPwd.setError(null);
-                    inputLayoutPwd.setErrorEnabled(false);
+                    inputLayoutNewPwd.setError(null);
+                    inputLayoutNewPwd.setErrorEnabled(false);
                 }
 
                 // 비밀번호 확인란의 오류문구 설정
                 // 비밀번호 확인란이 비어있지 않은 상태에서 비밀번호!=비밀번호확인 일 때 오류문구 띄우기
-                if(edtCheckPwd.getText().toString().length() > 0 && !edtCheckPwd.getText().toString().equals(edtPwd.getText().toString())) {
+                if(edtCheckPwd.getText().toString().length() > 0 && !edtCheckPwd.getText().toString().equals(edtNewPwd.getText().toString())) {
                     isPwdChecked = false;
                     inputLayoutCheckPwd.setError("비밀번호를 확인하세요.");
                 }
@@ -159,7 +210,7 @@ public class EditInfo extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String givenPwd = edtPwd.getText().toString();
+                String givenPwd = edtNewPwd.getText().toString();
                 String givenPwdCheck = edtCheckPwd.getText().toString();
                 // 비밀번호 확인란의 입력값과 비밀번호란의 입력값이 같지 않으면
                 if(!givenPwdCheck.equals(givenPwd)) {
@@ -197,8 +248,6 @@ public class EditInfo extends AppCompatActivity {
             }
         });
 
-
-
         //프사 변경
         edit_photo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,59 +262,192 @@ public class EditInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (edtNickname.getText().toString().getBytes().length <= 0) {
-                    inputLayoutNickname.setError("닉네임을 입력하세요.");
-                    edtNickname.requestFocus();
-                } else if (edtPwd.getText().toString().getBytes().length <= 0) {
-                    inputLayoutPwd.setError("비밀번호를 입력하세요.");
-                    edtPwd.requestFocus();
-                } else if (edtCheckPwd.getText().toString().getBytes().length <= 0) {
-                    inputLayoutCheckPwd.setError("비밀번호를 한 번 더 입력해주세요.");
-                    edtCheckPwd.requestFocus();
-                } else if (!isNickChecked) {
-                    inputLayoutNickname.setError("닉네임 중복 확인을 해주세요.");
-                } else {
+                // 닉네임에 수정사항이 있는 경우
+                if (!prevNick.equals(edtNickname.getText().toString())) {
+                    Log.d(TAG, "prevNick: " + prevNick);
+                    Log.d(TAG, "edtNickname.getText().toString(): " + edtNickname.getText().toString());
+                    if (edtNickname.getText().toString().getBytes().length <= 0) {
+                        inputLayoutNickname.setError("닉네임을 입력하세요.");
+                        edtNickname.requestFocus();
+                    } else if (!isNickChecked) {
+                        inputLayoutNickname.setError("닉네임 중복 확인을 해주세요.");
+                    }
+                }
 
-                     //수정된 정보를 DB에 저장
-                    Toast.makeText(getApplicationContext(), "회원정보가 수정되었습니다.", Toast.LENGTH_LONG).show();
-                    finish();
+                // 비밀번호를 변경하는 경우
+                if (edtCurrentPwd.getText().toString().getBytes().length > 0 || edtNewPwd.getText().toString().getBytes().length > 0 || edtCheckPwd.getText().toString().getBytes().length > 0) {
+                    if (edtCurrentPwd.getText().toString().getBytes().length <= 0) {
+                        inputLayoutCurrentPwd.setError("현재 비밀번호를 입력하세요.");
+                        edtCurrentPwd.requestFocus();
+                    } else if (edtNewPwd.getText().toString().getBytes().length <= 0) {
+                        inputLayoutNewPwd.setError("변경할 비밀번호를 입력하세요.");
+                        edtNewPwd.requestFocus();
+                    } else if (edtCheckPwd.getText().toString().getBytes().length <= 0) {
+                        inputLayoutCheckPwd.setError("비밀번호를 한 번 더 입력해주세요.");
+                        edtCheckPwd.requestFocus();
+                    }
+                    // 유효성 검사
+                    if (isNickValid && isNickChecked && isPwdValid && isPwdChecked) {
+                        // 비밀번호 변경 루틴
+                        AuthCredential credential = EmailAuthProvider.getCredential(userEmail, edtCurrentPwd.getText().toString());
+                        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User re-authenticated.");
+                                    user.updatePassword(edtNewPwd.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "User password updated.");
+                                            }
+                                        }
+                                    });
+                                    if(finalURI != null) {
+                                        // 사진에 변경사항이 있다면
+                                        // 사진을 가리키는 참조 생성 (user_review_photo/<파일이름>)
+                                        final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
+                                        // Storage에 사진 업로드
+                                        photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                            @Override
+                                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                                if (!task.isSuccessful()) {
+                                                    throw task.getException();
+                                                }
+
+                                                // Continue with the task to get the download URL
+                                                return photoRef.getDownloadUrl();
+                                            }
+                                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Uri> task) {
+                                                if (task.isSuccessful()) {
+                                                    // 업로드한 사진을 가리키는 주소
+                                                    Uri downloadUri = task.getResult();
+
+                                                    // 이후 전체 회원정보(변경사항) DB에 반영
+                                                    UserClass modifyUser = new UserClass(edtEmail.getText().toString(), edtNickname.getText().toString(), downloadUri.toString());
+                                                    updateDB(modifyUser);
+                                                } else {
+                                                    // Handle failures
+                                                    // ...
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        // 사진은 바꾸지 않는다면
+                                        UserClass modifyUser = new UserClass(edtEmail.getText().toString(), edtNickname.getText().toString(), currentPhoto);
+                                        updateDB(modifyUser);
+                                    }
+                                } else {
+                                    Log.w(TAG, "User failed to re-authenticate.", task.getException());
+                                    Toast.makeText(getApplicationContext(), "회원 인증에 실패했습니다. 비밀번호를 다시 확인하세요.", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                }
+                else { //비밀번호는 변경하지 않는 경우
+                    if (prevNick.equals(edtNickname.getText().toString()) || (isNickValid && isNickChecked)) {
+                        if(finalURI != null) {
+                            // 사진에 변경사항이 있다면
+                            // finalURI를 DStorage에 저장
+                            // 사진을 가리키는 참조 생성 (user_review_photo/<파일이름>)
+                            final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
+                            // Storage에 사진 업로드
+                            photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                @Override
+                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                    if (!task.isSuccessful()) {
+                                        throw task.getException();
+                                    }
+
+                                    // Continue with the task to get the download URL
+                                    return photoRef.getDownloadUrl();
+                                }
+                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()) {
+                                        Uri downloadUri = task.getResult();
+
+                                        // 이후 전체 회원정보(변경사항) DB에 반영
+                                        UserClass modifyUser = new UserClass(edtEmail.getText().toString(), edtNickname.getText().toString(), downloadUri.toString());
+                                        updateDB(modifyUser);
+                                    } else {
+                                        // Handle failures
+                                        // ...
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            // 사진은 바꾸지 않는다면
+                            UserClass modifyUser = new UserClass(edtEmail.getText().toString(), edtNickname.getText().toString(), currentPhoto);
+                            updateDB(modifyUser);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 데이터베이스 업데이트 함수
+    private void updateDB(final UserClass user) {
+        db.collection("UserInfo").document(user.getEmail()).set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Modified Info successfully written to DB.");
+                        SaveSharedPreference.setUserNickName(getApplicationContext(), user.getNick());
+                        Toast.makeText(getApplicationContext(), "회원정보가 수정되었습니다.", Toast.LENGTH_LONG).show();
+                        setResult(1);
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error modifying document(DB)", e);
+                    }
+                });
+    }
+
+
+    //프로필 사진 눌렀을 때 메뉴
+    private void makeDialog(){
+
+        AlertDialog.Builder alt_bld = new AlertDialog.Builder(EditInfo.this);
+        alt_bld.setTitle("프로필 변경").setCancelable(false);
+
+        alt_bld.setSingleChoiceItems(R.array.array_photo, 0, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                selectedPhotoMenu = whichButton;
+            }
+        });
+
+        alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if(selectedPhotoMenu == 0 ) {
+                    // 사진촬영
+                    Log.v("알림", "다이얼로그 > 사진촬영 선택");
+                    getCamera();
+                } else if(selectedPhotoMenu == 1) {
+                    // 앨범에서 선택
+                    Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                    getAlbum();
                 }
             }
         });
 
-
-    }
-
-
-//프로필 사진 눌렀을 때 메뉴
-    private void makeDialog(){
-
-
-        AlertDialog.Builder alt_bld = new AlertDialog.Builder(EditInfo.this);
-        alt_bld.setTitle("프로필 변경").setCancelable(false).setPositiveButton("사진촬영",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
-                        //사진촬영
-                        getCamera();
-                    }
-                }).setNeutralButton("앨범선택",
-
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
-                        //앨범에서 선택
-                        getAlbum();
-                    }
-                }).setNegativeButton("취소   ",
-
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 취소 선택");
-                        // 취소 클릭. dialog 닫기.
-                        dialog.cancel();
-                    }
-                });
+        alt_bld.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v("알림", "다이얼로그 > 취소 선택");
+                dialog.cancel();
+            }
+        });
 
         checkPermission();
 
@@ -275,7 +457,7 @@ public class EditInfo extends AppCompatActivity {
         }
     }
 
-//사진촬영 함수
+    //사진촬영 함수
     private void getCamera() {
 
         String state = Environment.getExternalStorageState();
@@ -302,7 +484,7 @@ public class EditInfo extends AppCompatActivity {
         }
     }
 
-//이미지저장 함수
+    //이미지저장 함수
     private File createImageFile() throws IOException{
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + ".jpg";
@@ -318,7 +500,7 @@ public class EditInfo extends AppCompatActivity {
         return imageFile;
     }
 
-//사진촬영,앨범 권한
+    //사진촬영,앨범 권한
     private int checkPermission() {
        // if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
             if((ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.WRITE_EXTERNAL_STORAGE))||
@@ -365,6 +547,7 @@ public class EditInfo extends AppCompatActivity {
                         galleryAddPic();
 
                         edit_photo.setImageURI(imageURI);
+                        finalURI = imageURI;
                     }catch(Exception e){
                         Log.e("REQUEST_TAKE_PHOTO",e.toString());
                     }
@@ -392,12 +575,13 @@ public class EditInfo extends AppCompatActivity {
                     galleryAddPic();
                     //사진 변환 error
                     edit_photo.setImageURI(albumURI);
+                    finalURI = albumURI;
                 }
                 break;
         }
     }
 
-//앨범에서 사진 가져오기
+    //앨범에서 사진 가져오기
     private void getAlbum() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -406,7 +590,7 @@ public class EditInfo extends AppCompatActivity {
     }
 
 
-//사진 crop할 수 있도록 하는 함수
+    //사진 crop할 수 있도록 하는 함수
     public void cropImage(){
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

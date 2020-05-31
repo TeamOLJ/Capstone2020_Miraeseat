@@ -3,6 +3,7 @@ package com.capstondesign.miraeseat;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -10,12 +11,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.capstondesign.miraeseat.mypage.MyPage;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
-//dawerLayout의 로그인 정보를 변경하기 위함. SaveSharedPreference 클래스 사용.
+// dawerLayout의 로그인 정보를 변경하기 위함.
+// FirebaseAuth, FirebaseUser 객체 이용
 public class LoginCheckHandler {
     private Context ctx;
     private NavigationView root;
@@ -23,12 +28,21 @@ public class LoginCheckHandler {
     private TextView login_id;
     private ImageView profile_image;
     private Button nav_left, nav_right;
-    private String prefId;
+    public DrawerLayout drawer;
 
-    public LoginCheckHandler(NavigationView navigationView, Context context) {
+    // Firebase
+    private FirebaseAuth mainAuth;
+    private FirebaseUser currentUser;
+
+    public LoginCheckHandler(DrawerLayout drawerLayout, NavigationView navigationView, Context context) {
         root = navigationView;
         ctx = context;
-        prefId = SaveSharedPreference.getUserName(context);
+        //prefId = SaveSharedPreference.getUserName(context);
+
+        drawer = drawerLayout;
+
+        mainAuth = FirebaseAuth.getInstance();
+        currentUser = mainAuth.getCurrentUser();
 
         nav_header = root.getHeaderView(0);
         login_id = nav_header.findViewById(R.id.login_id);
@@ -38,8 +52,9 @@ public class LoginCheckHandler {
     }
 
     public void loginCheck() {
-        if (prefId.length() != 0) { //user_name이 null이 아닌 경우.
-            login_id.setText(prefId);
+        // currentUser가 null이 아닌 경우 (로그인 중인 경우)
+        if (currentUser != null) {
+            login_id.setText(SaveSharedPreference.getUserNickName(ctx));
             profile_image.setImageResource(R.drawable.logo_temp);
 
             nav_left.setText("마이페이지");
@@ -47,7 +62,8 @@ public class LoginCheckHandler {
 
             nav_right.setText("로그아웃");
             nav_right.setOnClickListener(Logout);
-        } else {
+        }
+        else {
             login_id.setText(R.string.nav_login);
             profile_image.setImageResource(R.drawable.no_result);
 
@@ -63,6 +79,7 @@ public class LoginCheckHandler {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(ctx, com.capstondesign.miraeseat.mypage.MyPage.class);
+            drawer.closeDrawer(Gravity.RIGHT);
             ctx.startActivity(intent);
         }
     };
@@ -71,6 +88,7 @@ public class LoginCheckHandler {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(ctx, SignUpPage.class);
+            drawer.closeDrawer(Gravity.RIGHT);
             ctx.startActivity(intent);
         }
     };
@@ -79,6 +97,7 @@ public class LoginCheckHandler {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(ctx, LoginPage.class);
+            drawer.closeDrawer(Gravity.RIGHT);
             ctx.startActivity(intent);
         }
     };
@@ -93,7 +112,10 @@ public class LoginCheckHandler {
             builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    SaveSharedPreference.clearUserName(ctx);
+                    mainAuth.signOut();
+                    SaveSharedPreference.setUserNickName(ctx, "");
+                    SaveSharedPreference.setIsAutoLogin(ctx, false);
+                    Toast.makeText(ctx, "로그아웃 되었습니다.", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(ctx, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     ctx.startActivity(intent);

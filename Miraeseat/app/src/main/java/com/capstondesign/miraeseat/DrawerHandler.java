@@ -36,7 +36,7 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        LCH = new LoginCheckHandler(navigationView, activity); //drawerLayout을 activity에 생성할 때마다 로그인 정보를 갱신하기 위해 LoginCheckHandler 사용
+        LCH = new LoginCheckHandler(drawerLayout, navigationView, activity); //drawerLayout을 activity에 생성할 때마다 로그인 정보를 갱신하기 위해 LoginCheckHandler 사용
         LCH.loginCheck();
     }
 

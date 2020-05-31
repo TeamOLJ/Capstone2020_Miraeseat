@@ -1,10 +1,12 @@
 package com.capstondesign.miraeseat;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -15,12 +17,20 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Pattern;
 
@@ -30,13 +40,16 @@ public class SignUpPage extends AppCompatActivity {
     static int SIGN_UP_SUCCESS = 1111;
     static int SIGN_UP_CANCLE = 2222;
 
+    // Firebase 인증 변수
+    private FirebaseAuth signupAuth;
+    FirebaseFirestore db;
+
     TextView titleText;
 
-    private TextInputLayout inputLayoutID;
+    private TextInputLayout inputLayoutEmail;
     private TextInputLayout inputLayoutNick;
     private TextInputLayout inputLayoutPwd;
     private TextInputLayout inputLayoutCheckPwd;
-    private TextInputLayout inputLayoutEmail;
 
     CheckBox checkTermCondition;
     CheckBox checkPersonalInfo;
@@ -44,7 +57,7 @@ public class SignUpPage extends AppCompatActivity {
     ScrollView scrollTermCondition;
     ScrollView scrollPersonalInfo;
 
-    Button btnCheckID;
+    Button btnCheckEmail;
     Button btnCheckNick;
     Button btnReadTC;
     Button btnReadPI;
@@ -54,15 +67,13 @@ public class SignUpPage extends AppCompatActivity {
     TextView textFullPI;
 
     // 중복확인 여부 체크하기 위한 변수값
-    private Boolean isIDChecked = false;
-    private Boolean isNickChecked = false;
     private Boolean isEmailChecked = false;
+    private Boolean isNickChecked = false;
 
     // 입력 가능한 값으로만 텍스트가 이루어져있는지 확인
-    private Boolean isIDValid = false;
+    private Boolean isEmailValid = false;
     private Boolean isNickValid = false;
     private Boolean isPwdValid = false;
-    private Boolean isEmailValid = false;
 
     // 비밀번호 확인 값과 비밀번호 값이 동일한지 확인
     private Boolean isPwdChecked = false;
@@ -84,17 +95,15 @@ public class SignUpPage extends AppCompatActivity {
         titleText = (TextView) findViewById(R.id.titleText);
         titleText.setText("회원가입");
 
-        inputLayoutID = (TextInputLayout)findViewById(R.id.textlayoutID);
+        inputLayoutEmail = (TextInputLayout)findViewById(R.id.textlayoutEmail);
         inputLayoutNick = (TextInputLayout)findViewById(R.id.textlayoutNick);
         inputLayoutPwd = (TextInputLayout)findViewById(R.id.textlayoutPwd);
         inputLayoutCheckPwd = (TextInputLayout)findViewById(R.id.textlayoutPwdCheck);
-        inputLayoutEmail = (TextInputLayout)findViewById(R.id.textlayoutEmail);
 
-        final EditText edtID = inputLayoutID.getEditText();
+        final EditText edtEmail = inputLayoutEmail.getEditText();
         final EditText edtNick = inputLayoutNick.getEditText();
         final EditText edtPwd = inputLayoutPwd.getEditText();
         final EditText edtCheckPwd = inputLayoutCheckPwd.getEditText();
-        final EditText edtEmail = inputLayoutEmail.getEditText();
 
         checkTermCondition = (CheckBox)findViewById(R.id.checkTermCondition);
         checkPersonalInfo = (CheckBox)findViewById(R.id.checkPersonalInfoCollection);
@@ -102,7 +111,7 @@ public class SignUpPage extends AppCompatActivity {
         scrollTermCondition = (ScrollView)findViewById(R.id.scrollTermCondition);
         scrollPersonalInfo = (ScrollView)findViewById(R.id.scrollPersonalInfo);
 
-        btnCheckID = (Button)findViewById(R.id.btnCheckID);
+        btnCheckEmail = (Button)findViewById(R.id.btnCheckID);
         btnCheckNick = (Button)findViewById(R.id.btnCheckNick);
         btnReadTC = (Button)findViewById(R.id.btnReadTermCondition);
         btnReadPI = (Button)findViewById(R.id.btnReadPersonalInfo);
@@ -119,8 +128,12 @@ public class SignUpPage extends AppCompatActivity {
         // textFullTC.setText(읽어온 이용약관);
         // textFullPI.setText(읽어온 개인 정보 동의);
 
-        // 아이디 입력칸 입력 정보에 따라 오류메시지 생성하는 코드
-        edtID.addTextChangedListener(new TextWatcher() {
+        // Initialize Firebase Auth
+        signupAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        // 이메일 입력칸 입력 정보에 따라 오류메시지 생성하는 코드
+        edtEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -131,38 +144,39 @@ public class SignUpPage extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                // 이메일 형식 유효성 검사
                 // 입력값에 변화가 생기면 중복확인을 하지 않은 것으로 봄
-                isIDChecked = false;
-                // 자바 정규식을 사용하여 입력값의 유효성 검사
-                if (!Pattern.matches("[+a-zA-Z0-9[-[_]]]{5,20}", s.toString())) {
-                    // 패턴에 매칭되지 않으면 (입력되면 안 되는 값이 포함되면) isIDValid 값을 false로 설정
-                    isIDValid = false;
-                    // inputLayoutID.setErrorEnabled(true);
-                    inputLayoutID.setError("5~20 글자의 영문 소문자, 숫자, _, -를 사용할 수 있습니다.");
+                isEmailChecked = false;
+                if(!android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString()).matches()) {
+                    // 패턴에 매칭되지 않으면 isEmailValid 값을 false로 설정
+                    isEmailValid = false;
+                    // inputLayoutEmail.setErrorEnabled(true);
+                    inputLayoutEmail.setError("유효하지 않은 이메일 형식입니다.");
                 }
                 else {
-                    isIDValid = true;
-                    inputLayoutID.setError(null); // null은 에러 메시지를 지워주는 기능
+                    isEmailValid = true;
+                    inputLayoutEmail.setError(null); // null은 에러 메시지를 지워주는 기능
                     // 에러메시지가 사라졌을 때 생기는 빈칸을 없애기 위해 Enabled 값을 false로 바꿔줌
-                    inputLayoutID.setErrorEnabled(false);
+                    inputLayoutEmail.setErrorEnabled(false);
                 }
+
             }
         });
 
         // setOnFocusChangeLister을 사용한 방식
         // 텍스트를 입력할 때마다 확인하는 것이 아니라 EditText가 Focus를 잃었을 때만 확인
-//        edtID.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//        edtEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 //            @Override
 //            public void onFocusChange(View v, boolean hasFocus) {
 //                if(!hasFocus) {
-//                    if (!Pattern.matches("[+a-zA-Z0-9[-[_]]]{5,20}", edtID.getText().toString())) {
-//                        isIDValid = false;
-//                        inputLayoutID.setError("5~20 글자의 영문 소문자, 숫자, _, -를 사용할 수 있습니다.");
+//                    if (!android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString()).matches()) {
+//                        isEmailValid = false;
+//                        inputLayoutEmail.setError("유효하지 않은 이메일 형식입니다.");
 //                    }
 //                    else {
-//                        isIDValid = true;
-//                        inputLayoutID.setError(null);
-//                        inputLayoutID.setErrorEnabled(false);
+//                        isEmailValid = true;
+//                        inputLayoutEmail.setError(null);
+//                        inputLayoutEmail.setErrorEnabled(false);
 //                    }
 //                }
 //            }
@@ -180,6 +194,7 @@ public class SignUpPage extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 isNickChecked = false;
+                // 자바 정규식을 사용하여 입력값의 유효성 검사
                 if(!Pattern.matches("[+ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]{2,7}", s.toString())) {
                     isNickValid = false;
                     inputLayoutNick.setError("2~7글자의 한글, 영문, 숫자를 사용할 수 있습니다.");
@@ -251,47 +266,6 @@ public class SignUpPage extends AppCompatActivity {
             }
         });
 
-        edtEmail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // 이메일 형식 유효성 검사
-                if(!android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString()).matches()) {
-                    isEmailValid = false;
-                    inputLayoutEmail.setError("유효하지 않은 이메일 형식입니다.");
-                }
-                else {
-                    isEmailValid = true;
-                    inputLayoutEmail.setError(null);
-                    inputLayoutEmail.setErrorEnabled(false);
-                }
-
-            }
-        });
-
-        edtEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus && isEmailValid) {
-                    // 작성 된 이메일 주소를 서버에 전송, 이미 존재하는 계정의 이메일인지 확인
-                    // if 이미 가입된 이메일이면:
-                    // isEmailChecked = false;
-                    // inputLayoutEmail.setError("이미 가입 된 이메일입니다.");
-                    // else (가입되지 않은 이메일이면):
-                    // isEmailChecked = true;
-                    // inputLayoutEmail.setError(null);
-                    // inputLayoutEmail.setErrorEnabled(false);
-                }
-            }
-        });
-
         // 약관에 동의하지 않고 회원가입 버튼을 눌렀을 때 체크박스 배경색이 붉게 변하는 것의 대응
         // 약관 동의 박스에 체크하면 붉었던 배경색이 사라진다.
         checkTermCondition.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -308,17 +282,17 @@ public class SignUpPage extends AppCompatActivity {
             }
         });
 
-        btnCheckID.setOnClickListener(new View.OnClickListener() {
+        btnCheckEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // ID값이 DB에 이미 존재하는지 확인
+                // 이메일이 DB에 이미 존재하는지 확인
 
-                // if 존재하지 않으면 (사용 가능한 아이디이면):
-                isIDChecked = true;
-                // inputLayoutID.setError(null);
-                // inputLayoutID.setErrorEnabled(false);
-                // 입력칸 하단에 "사용 가능한 아이디입니다!"를 띄워줘야 하는데...
+                // if 존재하지 않으면 (사용 가능한 이메일이면):
+                isEmailChecked = true;
+                // inputLayoutEmail.setError(null);
+                // inputLayoutEmail.setErrorEnabled(false);
+                // 입력칸 하단에 "사용 가능한 이메일입니다!"를 띄워줘야 하는데...
             }
         });
 
@@ -357,9 +331,9 @@ public class SignUpPage extends AppCompatActivity {
             public void onClick(View v) {
                 // 위에서부터 차례로 빈칸 존재하는지 확인
                 // 빈칸이 두 개 이상이면 가장 윗 줄에만 오류 메시지 띄움
-                if(edtID.getText().toString().getBytes().length <= 0) {
-                    inputLayoutID.setError("아이디를 입력하세요.");
-                    edtID.requestFocus(); //해당 입력칸에 커서를 이동시키는 함수
+                if(edtEmail.getText().toString().getBytes().length <= 0) {
+                    inputLayoutEmail.setError("이메일을 입력하세요.");
+                    edtEmail.requestFocus(); //해당 입력칸에 커서를 이동시키는 함수
                 }
                 else if(edtNick.getText().toString().getBytes().length <= 0) {
                     inputLayoutNick.setError("닉네임을 입력하세요.");
@@ -372,14 +346,10 @@ public class SignUpPage extends AppCompatActivity {
                 else if(edtCheckPwd.getText().toString().getBytes().length <= 0) {
                     inputLayoutCheckPwd.setError("비밀번호를 한 번 더 입력해주세요.");
                     edtCheckPwd.requestFocus();
-                }
-                else if(edtEmail.getText().toString().getBytes().length <= 0) {
-                    inputLayoutEmail.setError("이메일을 입력하세요");
-                    edtEmail.requestFocus();
                 }   // 모든 칸이 채워져 있는 경우에 다음 검사 실행:
-                else if (!isIDChecked) {
+                else if (!isEmailChecked) {
                     // 중복확인 여부 체크
-                    inputLayoutID.setError("아이디 중복확인을 해주세요.");
+                    inputLayoutEmail.setError("이메일 중복확인을 해주세요.");
                 }
                 else if (!isNickChecked) {
                     inputLayoutNick.setError("닉네임 중복 확인을 해주세요.");
@@ -387,7 +357,7 @@ public class SignUpPage extends AppCompatActivity {
                 else {
                     // 모든 칸이 채워져있고 중복확인도 체크했다면:
                     // 모든 칸의 값이 유효한지 확인
-                    if(isIDValid && isNickValid && isPwdValid && isPwdChecked && isEmailValid && isEmailChecked) {
+                    if(isEmailValid && isNickValid && isPwdValid && isPwdChecked) {
                         // 약관 동의 여부 확인
                         if(!checkTermCondition.isChecked()) {
                             // 약관 동의에 체크표시 하지 않았다면 해당 약관 체크박스의 배경색을 붉게 바꿈
@@ -400,10 +370,45 @@ public class SignUpPage extends AppCompatActivity {
                         }
                         if(checkTermCondition.isChecked() && checkPersonalInfo.isChecked()) {
                             // 약관 동의에도 모두 체크했다면!
-                            // 입력된 모든 정보를 서버로 전송, DB에 추가
-                            setResult(SIGN_UP_SUCCESS);
-                            Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
-                            finish();
+                            // Firebase 인증 기능으로 사용자 추가
+                            signupAuth.createUserWithEmailAndPassword(edtEmail.getText().toString(), edtPwd.getText().toString())
+                                    .addOnCompleteListener(SignUpPage.this, new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if(task.isSuccessful()) {
+                                                // 회원가입 성공
+                                                Log.d(TAG, "createUserWithEmail:success");
+                                                // 입력된 모든 정보를 데이터베이스에 추가
+                                                UserClass newUser = new UserClass(edtEmail.getText().toString(), edtNick.getText().toString(), null);
+                                                db.collection("UserInfo").document(edtEmail.getText().toString()).set(newUser)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d(TAG, "Signup Info successfully written to DB.");
+                                                                setResult(SIGN_UP_SUCCESS);
+                                                                FirebaseAuth.getInstance().signOut();
+                                                                Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
+                                                                // 메인화면으로 복귀
+                                                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                                // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
+                                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                startActivity(intent);
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w(TAG, "Error writing document(DB)", e);
+                                                            }
+                                                        });
+                                            }
+                                            else {
+                                                // 회원가입 실패
+                                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                                Toast.makeText(getApplicationContext(), "회원가입에 실패했습니다. 인터넷 연결을 확인하시고 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
                         }
                     }
                 }

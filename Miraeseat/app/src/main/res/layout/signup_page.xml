@@ -64,7 +64,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/hint_id"
+                    android:text="@string/hint_email"
                     android:layout_marginHorizontal="20dp"
                     android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"/>
 
@@ -75,7 +75,7 @@
                     android:layout_marginHorizontal="20dp" >
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/textlayoutID"
+                        android:id="@+id/textlayoutEmail"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
@@ -86,7 +86,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:maxLength="20"
-                            android:hint="@string/id_require" />
+                            android:hint="@string/hint_email" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -173,6 +173,7 @@
                     android:id="@+id/textlayoutPwdCheck"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textPassword"
                     android:layout_marginHorizontal="20dp"
                     app:hintEnabled="false" >
 
@@ -183,28 +184,6 @@
                         android:inputType="textPassword"
                         android:maxLength="20"
                         android:hint="@string/hint_pwd_check" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hint_email"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textlayoutEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    app:hintEnabled="false" >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editEmail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/hint_email" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView

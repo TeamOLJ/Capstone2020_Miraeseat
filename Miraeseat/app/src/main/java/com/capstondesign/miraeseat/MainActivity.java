@@ -21,11 +21,16 @@ import androidx.core.view.ViewCompat;
 
 import com.capstondesign.miraeseat.hall.HallInfo;
 import com.capstondesign.miraeseat.search.SearchActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     final int theater_id = 10000;
     final int show_id = 20000;
     final String SEARCH_WORD = "search_word";
+
+    // Firebase 인증 변수
+    private FirebaseAuth mainAuth;
 
     BackPressCloseHandler backpress;
     EditText searchText;
@@ -51,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
         CreateButton(theater_id, R.id.view_theater);
         CreateButton(show_id, R.id.view_show);
+
+        // Initialize Firebase Auth
+        mainAuth = FirebaseAuth.getInstance();
     }
 
     //검색 버튼 눌렀을 때
@@ -106,6 +114,14 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         }
     };
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // 사용자가 로그인 되어 있는지 (null이 아닌지) 확인
+        FirebaseUser currentUser = mainAuth.getCurrentUser();
+        // 로그인 여부에 따라 처리하는 코드
+        // updateUI(currentUser);
+    }
 
     @Override
     public void onBackPressed() {
@@ -123,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                 drawer.drawerLayout.closeDrawer(Gravity.RIGHT);
             } else {
                 drawer.drawerLayout.openDrawer(Gravity.RIGHT);
+                drawer.init();
             }
             return true;
         }
