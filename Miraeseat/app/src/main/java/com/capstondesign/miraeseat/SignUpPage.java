@@ -379,7 +379,7 @@ public class SignUpPage extends AppCompatActivity {
                                                 // 회원가입 성공
                                                 Log.d(TAG, "createUserWithEmail:success");
                                                 // 입력된 모든 정보를 데이터베이스에 추가
-                                                UserClass newUser = new UserClass(edtEmail.getText().toString(), edtNick.getText().toString(), "");
+                                                UserClass newUser = new UserClass(edtEmail.getText().toString(), edtNick.getText().toString(), null);
                                                 db.collection("UserInfo").document(edtEmail.getText().toString()).set(newUser)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override

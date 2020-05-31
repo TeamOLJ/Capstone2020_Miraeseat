@@ -10,10 +10,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 
+import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.EditInfo;
 import com.capstondesign.miraeseat.R;
@@ -30,6 +32,8 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MyPage extends AppCompatActivity {
+
+    static final int IS_INFO_MODIFIED = 1234;
 
     FirebaseUser user;
     FirebaseFirestore db;
@@ -70,20 +74,7 @@ public class MyPage extends AppCompatActivity {
 
         mData = new ArrayList<mypageList_item>();
 
-        // Firebase
-        db = FirebaseFirestore.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        final String userEmail = user.getEmail();
-
-        // 프로필사진 & 닉네임 데이터베이스에서 읽어오기
-        db.collection("UserInfo").document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
-                nickname.setText(loginedUser.getNick());
-                // 프로필 사진 설정하는 코드 ...
-            }
-        });
+        initUI();
 
         // 해당 계정 글 정보 서버에서 불러옴
 
@@ -94,14 +85,12 @@ public class MyPage extends AppCompatActivity {
         myPageAdapter = new MyPageAdapter(MyPage.this, mData);
         listView.setAdapter(myPageAdapter);
 
-
-
         //회원정보수정 버튼
         mypage_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), EditInfo.class);
-                startActivity(intent);
+                startActivityForResult(intent, IS_INFO_MODIFIED);
             }
         });
 
@@ -115,7 +104,33 @@ public class MyPage extends AppCompatActivity {
             }
         });
 
+    }
 
+    public void initUI() {
+        // Firebase
+        db = FirebaseFirestore.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        final String userEmail = user.getEmail();
+
+        // 프로필사진 & 닉네임 데이터베이스에서 읽어오기
+        db.collection("UserInfo").document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
+                nickname.setText(loginedUser.getNick());
+                if(loginedUser.getImagepath() != null) {
+                    Glide.with(getApplicationContext()).load(loginedUser.getImagepath()).into(profile);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1) {
+            initUI();
+        }
     }
 
     @Override

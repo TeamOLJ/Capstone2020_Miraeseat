@@ -3,6 +3,7 @@ package com.capstondesign.miraeseat;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.capstondesign.miraeseat.mypage.MyPage;
 import com.google.android.material.navigation.NavigationView;
@@ -26,15 +28,18 @@ public class LoginCheckHandler {
     private TextView login_id;
     private ImageView profile_image;
     private Button nav_left, nav_right;
+    public DrawerLayout drawer;
 
     // Firebase
     private FirebaseAuth mainAuth;
     private FirebaseUser currentUser;
 
-    public LoginCheckHandler(NavigationView navigationView, Context context) {
+    public LoginCheckHandler(DrawerLayout drawerLayout, NavigationView navigationView, Context context) {
         root = navigationView;
         ctx = context;
         //prefId = SaveSharedPreference.getUserName(context);
+
+        drawer = drawerLayout;
 
         mainAuth = FirebaseAuth.getInstance();
         currentUser = mainAuth.getCurrentUser();
@@ -74,6 +79,7 @@ public class LoginCheckHandler {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(ctx, com.capstondesign.miraeseat.mypage.MyPage.class);
+            drawer.closeDrawer(Gravity.RIGHT);
             ctx.startActivity(intent);
         }
     };
@@ -82,6 +88,7 @@ public class LoginCheckHandler {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(ctx, SignUpPage.class);
+            drawer.closeDrawer(Gravity.RIGHT);
             ctx.startActivity(intent);
         }
     };
@@ -90,6 +97,7 @@ public class LoginCheckHandler {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(ctx, LoginPage.class);
+            drawer.closeDrawer(Gravity.RIGHT);
             ctx.startActivity(intent);
         }
     };

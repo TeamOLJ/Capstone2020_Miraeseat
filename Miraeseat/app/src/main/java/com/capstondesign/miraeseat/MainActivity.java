@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                 drawer.drawerLayout.closeDrawer(Gravity.RIGHT);
             } else {
                 drawer.drawerLayout.openDrawer(Gravity.RIGHT);
+                drawer.init();
             }
             return true;
         }
