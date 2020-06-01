@@ -6,9 +6,13 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class TheaterActivity extends AppCompatActivity {
@@ -17,40 +21,43 @@ public class TheaterActivity extends AppCompatActivity {
     private float mScaleFactor = 1.0f;
     private ViewGroup mlayout;
     float dX, dY;
+    private ImageView imageView;
 
     DrawerHandler drawer;
+    FirebaseFirestore db;
+    SeatplanItem spi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theater);
 
+        final String TheaterName = getIntent().getStringExtra("hall_name");
+        GetSeatplanImage(TheaterName);
+
+        spi = new SeatplanItem(this, (ViewGroup)findViewById(R.id.seatplanLayout));
+        spi.init();
+        spi.execute();
+
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        if(item.getItemId()==android.R.id.home) {
-//            finish();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+
+    private void GetSeatplanImage(String name) {//DB에서 공연장 이름으로 이미지 받아오기
+        imageView = (ImageView)findViewById(R.id.seatplan);
+
+        Glide.with(getApplicationContext()).load("https://firebasestorage.googleapis.com/v0/b/capstone2020-e540d.appspot.com/o/theater_seat_plan%2Fcharlotte90.jpg?alt=media&token=c58ec0c9-de25-4fc4-b001-d16c6aca986a").into(imageView);
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        mlayout = (ViewGroup)findViewById(R.id.seatView);
+        mlayout = (ViewGroup)findViewById(R.id.seatplanLayout);
         half_width = mlayout.getWidth()/2;
         half_height = mlayout.getHeight()/2;
     }
 
     public void onFloatingButtonClicked(View v) {
         finish();
-    }
-
-    public void onSeatButtonClicked(View v) {
-        String tag = (String) v.getTag();
-        Toast.makeText(this, tag, Toast.LENGTH_SHORT).show();
     }
 
     @Override

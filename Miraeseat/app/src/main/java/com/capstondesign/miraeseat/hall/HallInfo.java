@@ -30,7 +30,6 @@ public class HallInfo extends AppCompatActivity {
 
     DrawerHandler drawer;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +64,7 @@ public class HallInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TheaterActivity.class);
+                intent.putExtra("hall_name", "hello"); //무슨 오류가 난다... 뭔지 모르겠다
                 startActivity(intent);
             }
         });
