@@ -73,7 +73,7 @@ public class LoginPage extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String givenEmail = inputEmail.getText().toString();
+                final String givenEmail = inputEmail.getText().toString().trim();
                 String givenPwd = inputPwd.getText().toString();
 
                 isAutoLoginChecked = checkAutoLogin.isChecked();
