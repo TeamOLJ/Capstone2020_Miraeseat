@@ -2,12 +2,12 @@ package com.capstondesign.miraeseat;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,7 +25,7 @@ public class TheaterActivity extends AppCompatActivity {
 
     DrawerHandler drawer;
     FirebaseFirestore db;
-    SeatplanItem spi;
+    TheaterItem TI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +35,9 @@ public class TheaterActivity extends AppCompatActivity {
         final String TheaterName = getIntent().getStringExtra("hall_name");
         GetSeatplanImage(TheaterName);
 
-        spi = new SeatplanItem(this, (ViewGroup)findViewById(R.id.seatplanLayout));
-        spi.init();
-        spi.execute();
+        TI = new TheaterItem(this, (ViewGroup)findViewById(R.id.seatplanLayout));
+        TI.init();
+        TI.execute();
 
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
     }

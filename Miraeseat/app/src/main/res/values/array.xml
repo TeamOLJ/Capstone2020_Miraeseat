@@ -5,7 +5,17 @@
         <item>앨범에서 선택하기</item>
     </string-array>
 
-    <!-- width, height, margin_left, margin_top, area_space_horizontal, area_space_vertical-->
+    <!-- width, height, margin_left, margin_top, area_space_vertical, area_space_horiaontal-->
+    <string-array name="charlotte">
+        <item>0.888</item>
+        <item>0.692</item>
+        <item>0.055</item>
+        <item>0.208</item>
+        <item>0.0375</item>
+        <item>0.261</item>
+    </string-array>
+
+    <!--
     <integer-array name="charlotte">
         <item>366</item>
         <item>503</item>
@@ -14,63 +24,5 @@
         <item>15</item>
         <item>190</item>
     </integer-array>
-    <!--문제점
-    1. 구역 행렬 : 누른 버튼이 n행 m열 k번 버튼임을 알아야 함 (Tag 할당)
-    2. 한 행/열의 총 좌석 수 : 버튼을 몇개까지 만들지
-    3. 한 구역의 행/열의 좌석 수 : 구역이 나뉘는 빈 공간을 배치하기 위함
-    4. 불규칙한 좌석의 위치(행)과 개수 : 빈 공간 추가 배치
-    추가) 샤롯데의 경우 B구역이 한 행씩 더 많음.
-    -->
-
-
-    <!--좌석 배치도 1층 왼쪽부터 시작, dp 기준
-     row_count : 좌석 행의 개수
-     width : 테이블 넓이
-     height : 테이블 높이
-     margin_top : 이미지 뷰 기준 위쪽 여백
-     margin_left : 이미지 뷰 기준 왼쪽 여백-->
-    <integer-array name="charlotte_row_count">
-        <item>18</item>
-        <item>20</item>
-        <item>18</item>
-        <item>12</item>
-        <item>12</item>
-        <item>12</item>
-    </integer-array>
-
-    <integer-array name="charlotte_width">
-        <item>107</item>
-        <item>123</item>
-        <item>107</item>
-        <item>107</item>
-        <item>123</item>
-        <item>107</item>
-    </integer-array>
-
-    <integer-array name="charlotte_height">
-        <item>170</item>
-        <item>188</item>
-        <item>170</item>
-        <item>123</item>
-        <item>123</item>
-        <item>123</item>
-    </integer-array>
-
-    <integer-array name="charlotte_margin_top">
-        <item>162</item>
-        <item>152</item>
-        <item>162</item>
-        <item>532</item>
-        <item>532</item>
-        <item>532</item>
-    </integer-array>
-
-    <integer-array name="charlotte_margin_left">
-        <item>22</item>
-        <item>144</item>
-        <item>282</item>
-        <item>22</item>
-        <item>144</item>
-        <item>282</item>
-    </integer-array>
+-->
 </resources>
