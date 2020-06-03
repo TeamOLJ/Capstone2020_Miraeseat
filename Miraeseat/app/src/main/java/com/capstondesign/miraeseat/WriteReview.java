@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -44,8 +45,8 @@ public class WriteReview extends AppCompatActivity {
     ImageView image;
     EditText review;
 
-    ImageButton btnSave;
-    ImageButton btnCancel;
+    Button btnSave;
+    Button btnCancel;
 
 
     @Override
@@ -58,8 +59,8 @@ public class WriteReview extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.write_photo);
         review = (EditText) findViewById(R.id.write_text);
 
-        btnSave = (ImageButton) findViewById(R.id.btnSave);
-        btnCancel = (ImageButton) findViewById(R.id.btnCancel);
+        btnSave = (Button) findViewById(R.id.btnSave);
+        btnCancel = (Button) findViewById(R.id.btnCancel);
 
 
         //리뷰사진 촬영 및 업로드
@@ -95,7 +96,7 @@ public class WriteReview extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"리뷰글을 작성해주세요 (10자 이상)",Toast.LENGTH_LONG).show();
                 } else {
 
-                    //해당 계정정보, 사진, 리뷰글, 리뷰작성날짜, 별점 데이터 저장
+                    //해당 계정정보, 사진, 리뷰글, 리뷰작성날짜, 별점 데이터 저장 그리고 해당 좌석 정보 페이지 업데이트?
                     Toast.makeText(getApplicationContext(), "리뷰가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
                     finish();
                 }
@@ -109,9 +110,8 @@ public class WriteReview extends AppCompatActivity {
     //프로필 사진 눌렀을 때 메뉴
     private void makeDialog(){
 
-
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(WriteReview.this);
-        alt_bld.setTitle("프로필 변경").setCancelable(false).setPositiveButton("사진촬영",
+        alt_bld.setTitle("리뷰 사진 추가").setCancelable(false).setPositiveButton("사진촬영",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Log.v("알림", "다이얼로그 > 사진촬영 선택");
@@ -280,8 +280,8 @@ public class WriteReview extends AppCompatActivity {
         cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         cropIntent.setDataAndType(photoURI,"image/*");
-        cropIntent.putExtra("aspectX",1);
-        cropIntent.putExtra("aspectY",1);
+        cropIntent.putExtra("aspectX",4);
+        cropIntent.putExtra("aspectY",3);
         cropIntent.putExtra("scale",true);
         cropIntent.putExtra("output",albumURI);
         startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);

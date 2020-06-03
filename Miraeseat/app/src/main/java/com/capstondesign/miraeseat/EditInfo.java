@@ -54,6 +54,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class EditInfo extends AppCompatActivity {
     private static final String TAG = "EditInfo";
 
+
     static final int MY_PERMISSION_CAMERA = 1111;
     static final int REQUEST_TAKE_PHOTO = 2222;
     static final int REQUEST_TAKE_ALBUM = 3333;
@@ -167,6 +168,7 @@ public class EditInfo extends AppCompatActivity {
             }
         });
 
+        //비밀번호 바꾸기
         edtNewPwd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -199,6 +201,7 @@ public class EditInfo extends AppCompatActivity {
             }
         });
 
+        //바뀐 비밀번호 확인
         edtCheckPwd.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -527,12 +530,6 @@ public class EditInfo extends AppCompatActivity {
             }
 
 
-       /* }
-        else
-        {
-            return 1;
-        }*/
-
     }
 
 
@@ -618,7 +615,7 @@ public class EditInfo extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode==0){
             if(grantResults[0]==0){
-                Toast.makeText(this,"카메라 권한 승인완료",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"카메라 권한 승인 완료",Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(this,"카메라 권한 승인 거절",Toast.LENGTH_SHORT).show();
             }

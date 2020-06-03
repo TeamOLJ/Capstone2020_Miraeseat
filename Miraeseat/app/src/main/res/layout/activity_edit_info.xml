@@ -70,6 +70,8 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
+                android:cursorVisible="false"
+                android:enabled="false"
                 android:hint="@string/hint_email" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>

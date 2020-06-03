@@ -100,7 +100,6 @@ public class MyPage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), UnsubscribePage.class);
                 startActivity(intent);
-                //회원 탈퇴 페이지 액티비티 생성
             }
         });
 
