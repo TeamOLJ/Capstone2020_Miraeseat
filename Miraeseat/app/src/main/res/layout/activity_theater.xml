@@ -26,7 +26,7 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/charlotte90" />
+            android:src="@drawable/logo_temp" />
 
         <TableLayout
             android:layout_width="@dimen/A1_table_width"
