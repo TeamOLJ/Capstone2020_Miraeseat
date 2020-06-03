@@ -14,8 +14,10 @@
         android:focusableInTouchMode="true"
         android:orientation="horizontal">
 
-        <ImageButton style="@style/homebt"
+        <Button style="@style/homebt"
             android:id="@+id/btnCancel"
+            android:text="취소"
+            android:background="#00ff0000"
             android:layout_gravity="left" />
 
         <TextView
@@ -25,17 +27,37 @@
             android:gravity="center"
             android:text="리뷰 작성" />
 
-        <ImageButton style="@style/homebt"
+        <Button style="@style/homebt"
             android:id="@+id/btnSave"
+            android:text="저장"
+            android:background="#00ff0000"
             android:layout_gravity="right" />
 
     </LinearLayout>
 
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/write_photo"
         android:layout_width="match_parent"
-        android:layout_height="250dp" />
+        android:layout_height="250dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/write_photo"
+        android:layout_alignTop="@id/write_photo"
+        android:layout_alignRight="@id/write_photo"
+        android:layout_alignBottom="@id/write_photo"
+        android:layout_margin="1dp"
+        android:gravity="center"
+        android:text="이미지 추가"/>
+
+</RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,6 +75,7 @@
             android:id="@+id/write_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
             android:numStars="5" />
 
     </LinearLayout>
@@ -69,6 +92,7 @@
         android:id="@+id/write_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:hint="최소 00자로 입력해주세요"
         android:layout_marginLeft="10dp"
         android:gravity="top"
         android:maxLines="8"
