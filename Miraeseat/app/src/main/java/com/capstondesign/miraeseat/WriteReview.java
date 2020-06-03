@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -48,12 +49,19 @@ public class WriteReview extends AppCompatActivity {
     Button btnSave;
     Button btnCancel;
 
+    DrawerHandler drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_review);
 
+        drawer = new DrawerHandler(this);
+        setSupportActionBar(drawer.toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
         image = (ImageView) findViewById(R.id.write_photo);

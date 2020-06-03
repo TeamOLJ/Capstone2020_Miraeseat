@@ -10,7 +10,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -44,22 +47,30 @@ public class EditReview extends AppCompatActivity {
     ImageView image;
     EditText review;
 
-    ImageButton btnSave;
-    ImageButton btnCancel;
+    Button btnSave;
+    Button btnCancel;
 
+    DrawerHandler drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_review);
 
+        drawer = new DrawerHandler(this);
+        setSupportActionBar(drawer.toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+
 
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
         image = (ImageView) findViewById(R.id.write_photo);
         review = (EditText) findViewById(R.id.write_text);
 
-        btnSave = (ImageButton) findViewById(R.id.btnSave);
-        btnCancel = (ImageButton) findViewById(R.id.btnCancel);
+        btnSave = (Button) findViewById(R.id.btnSave);
+        btnCancel = (Button) findViewById(R.id.btnCancel);
 
 
 
@@ -309,6 +320,5 @@ public class EditReview extends AppCompatActivity {
             }
         }
     }
-
 
 }

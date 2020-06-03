@@ -68,6 +68,13 @@
 
     <string name="hall_info_text1">공연장</string>
 
+    <string name="edit_info_text1">정보 수정</string>
+    <string name="edit_review_text1">리뷰 수정</string>
+    <string name="write_review_text1">리뷰 작성</string>
+
+    <string name="btnSave_text">저장</string>
+    <string name="btnCancel_text">취소</string>
+
     <string name="hint_pwd_change">비밀번호 변경</string>
     <string name="save_changes">변경사항 저장</string>
 

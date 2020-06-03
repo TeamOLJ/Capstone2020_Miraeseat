@@ -15,7 +15,7 @@ import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.hall.HallInfo;
 
 public class SearchedItem {
-    private final TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    private final TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT);
     private int count = 0;
 
     Context context;
