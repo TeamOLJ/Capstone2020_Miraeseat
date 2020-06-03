@@ -6,7 +6,7 @@
     </string-array>
 
     <!-- width, height, margin_left, margin_top, area_space_vertical, area_space_horiaontal-->
-    <string-array name="charlotte">
+    <string-array name="charlotte_ratio">
         <item>0.888</item>
         <item>0.692</item>
         <item>0.055</item>
@@ -15,7 +15,6 @@
         <item>0.261</item>
     </string-array>
 
-    <!--
     <integer-array name="charlotte">
         <item>366</item>
         <item>503</item>
@@ -24,5 +23,4 @@
         <item>15</item>
         <item>190</item>
     </integer-array>
--->
 </resources>
