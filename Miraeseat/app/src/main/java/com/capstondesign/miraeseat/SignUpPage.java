@@ -2,6 +2,7 @@ package com.capstondesign.miraeseat;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -30,7 +31,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.regex.Pattern;
 
@@ -197,6 +203,7 @@ public class SignUpPage extends AppCompatActivity {
                 // 자바 정규식을 사용하여 입력값의 유효성 검사
                 if(!Pattern.matches("[+ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]{2,7}", s.toString())) {
                     isNickValid = false;
+                    inputLayoutNick.setErrorTextAppearance(R.style.InputError_Red);
                     inputLayoutNick.setError("2~7글자의 한글, 영문, 숫자를 사용할 수 있습니다.");
                 }
                 else {
@@ -285,28 +292,64 @@ public class SignUpPage extends AppCompatActivity {
         btnCheckEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 입력값이 유효할 때만 작동
+                if (isEmailValid) {
+                    // 이메일이 DB에 이미 존재하는지 확인
+                    DocumentReference docRef = db.collection("UserInfo").document(edtEmail.getText().toString());
 
-                // 이메일이 DB에 이미 존재하는지 확인
-
-                // if 존재하지 않으면 (사용 가능한 이메일이면):
-                isEmailChecked = true;
-                // inputLayoutEmail.setError(null);
-                // inputLayoutEmail.setErrorEnabled(false);
-                // 입력칸 하단에 "사용 가능한 이메일입니다!"를 띄워줘야 하는데...
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // 해당 문서가 있음 = 이미 가입 된 이메일
+                                    isEmailChecked = false;
+                                    inputLayoutEmail.setErrorTextAppearance(R.style.InputError_Red);
+                                    inputLayoutEmail.setError("이미 가입 된 이메일입니다.");
+                                } else {
+                                    // 해당 문서가 없음 = 사용 가능한 이메일
+                                    isEmailChecked = true;
+                                    inputLayoutEmail.setErrorTextAppearance(R.style.InputError_Green);
+                                    inputLayoutEmail.setError("사용 가능한 이메일입니다!");
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+                }
             }
         });
 
         btnCheckNick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 입력한 닉네임이 유효한 형식일 때만 중복여부를 확인해줌
+                if (isNickValid) {
+                    // 닉네임이 DB에 이미 존재하는지 확인
+                    Query existingNicks = db.collection("UserInfo").whereEqualTo("nick", edtNick.getText().toString());
 
-                // 닉네임이 DB에 이미 존재하는지 확인
-
-                // if 존재하지 않으면 (사용 가능한 닉네임이면):
-                isNickChecked = true;
-                // inputLayoutNick.setError(null);
-                // inputLayoutNick.setErrorEnabled(false);
-                // 입력칸 하단에 "사용 가능한 닉네임입니다!" 출력
+                    existingNicks.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                QuerySnapshot querySnapshot = task.getResult();
+                                if (querySnapshot.isEmpty()) {
+                                    // 쿼리가 리턴하는 값이 없는 경우 = 중복된 닉네임이 아닌 경우
+                                    isNickChecked = true;
+                                    inputLayoutNick.setErrorTextAppearance(R.style.InputError_Green);
+                                    inputLayoutNick.setError("사용 가능한 닉네임입니다!");
+                                } else {
+                                    // 리턴값이 있는 경우 = 사용 중인 닉네임인 경우
+                                    isNickChecked = false;
+                                    inputLayoutNick.setErrorTextAppearance(R.style.InputError_Red);
+                                    inputLayoutNick.setError("이미 사용 중인 닉네임입니다.");
+                                }
+                            }
+                        }
+                    });
+                }
             }
         });
 

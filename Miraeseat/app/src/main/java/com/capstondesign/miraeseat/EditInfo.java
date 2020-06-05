@@ -42,6 +42,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -232,18 +234,33 @@ public class EditInfo extends AppCompatActivity {
             }
         });
 
+        // 닉네임 중복여부 확인
         btnCheckNick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isNickValid) {
+                    Query existingNicks = db.collection("UserInfo").whereEqualTo("nick", edtNickname.getText().toString());
 
-                // 닉네임이 DB에 이미 존재하는지 확인
-
-                // if 존재하지 않으면 (사용 가능한 닉네임이면):
-
-                isNickChecked = true;
-                // inputLayoutNick.setError(null);
-                // inputLayoutNick.setErrorEnabled(false);
-                // 입력칸 하단에 "사용 가능한 닉네임입니다!" 출력
+                    existingNicks.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                QuerySnapshot querySnapshot = task.getResult();
+                                if (querySnapshot.isEmpty()) {
+                                    // 쿼리가 리턴하는 값이 없는 경우 = 중복된 닉네임이 아닌 경우
+                                    isNickChecked = true;
+                                    inputLayoutNickname.setErrorTextAppearance(R.style.InputError_Green);
+                                    inputLayoutNickname.setError("사용 가능한 닉네임입니다!");
+                                } else {
+                                    // 리턴값이 있는 경우 = 사용 중인 닉네임인 경우
+                                    isNickChecked = false;
+                                    inputLayoutNickname.setErrorTextAppearance(R.style.InputError_Red);
+                                    inputLayoutNickname.setError("이미 사용 중인 닉네임입니다.");
+                                }
+                            }
+                        }
+                    });
+                }
             }
         });
 
