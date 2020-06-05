@@ -4,6 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -91,6 +95,9 @@ public class EditInfo extends AppCompatActivity {
     private Boolean isPwdChecked = false;
 
     String prevNick;
+
+    Bitmap originalBitmap;
+    Bitmap rotatedBitmap = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -492,7 +499,7 @@ public class EditInfo extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + ".jpg";
         File imageFile = null;
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures");
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "Miraeseat");
 
         if(!storageDir.exists()){
             storageDir.mkdirs();
@@ -538,7 +545,6 @@ public class EditInfo extends AppCompatActivity {
 
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -549,8 +555,35 @@ public class EditInfo extends AppCompatActivity {
                         Log.i("REQUEST_TAKE_PHOTO","OK!!!!!!");
                         galleryAddPic();
 
-                        edit_photo.setImageURI(imageURI);
                         finalURI = imageURI;
+
+                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
+                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), edit_photo.getWidth(), edit_photo.getHeight());
+
+                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+                        switch(orientation) {
+
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                rotatedBitmap = rotateImage(originalBitmap, 90);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                rotatedBitmap = rotateImage(originalBitmap, 180);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                rotatedBitmap = rotateImage(originalBitmap, 270);
+                                break;
+
+                            case ExifInterface.ORIENTATION_NORMAL:
+                            default:
+                                rotatedBitmap = originalBitmap;
+                        }
+
+                        edit_photo.setImageBitmap(rotatedBitmap);
+
                     }catch(Exception e){
                         Log.e("REQUEST_TAKE_PHOTO",e.toString());
                     }
@@ -582,6 +615,52 @@ public class EditInfo extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    // 사진 회전 함수
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(File res, int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(res.getAbsolutePath(),options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeFile(res.getAbsolutePath(),options);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height;
+            final int halfWidth = width;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     //앨범에서 사진 가져오기
