@@ -157,6 +157,7 @@ public class SignUpPage extends AppCompatActivity {
                     // 패턴에 매칭되지 않으면 isEmailValid 값을 false로 설정
                     isEmailValid = false;
                     // inputLayoutEmail.setErrorEnabled(true);
+                    inputLayoutEmail.setErrorTextAppearance(R.style.InputError_Red);
                     inputLayoutEmail.setError("유효하지 않은 이메일 형식입니다.");
                 }
                 else {
@@ -295,26 +296,24 @@ public class SignUpPage extends AppCompatActivity {
                 // 입력값이 유효할 때만 작동
                 if (isEmailValid) {
                     // 이메일이 DB에 이미 존재하는지 확인
-                    DocumentReference docRef = db.collection("UserInfo").document(edtEmail.getText().toString());
+                    Query existingEmails = db.collection("UserInfo").whereEqualTo("email", edtEmail.getText().toString());
 
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    existingEmails.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    // 해당 문서가 있음 = 이미 가입 된 이메일
-                                    isEmailChecked = false;
-                                    inputLayoutEmail.setErrorTextAppearance(R.style.InputError_Red);
-                                    inputLayoutEmail.setError("이미 가입 된 이메일입니다.");
-                                } else {
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()) {
+                                QuerySnapshot querySnapshot = task.getResult();
+                                if (querySnapshot.isEmpty()) {
                                     // 해당 문서가 없음 = 사용 가능한 이메일
                                     isEmailChecked = true;
                                     inputLayoutEmail.setErrorTextAppearance(R.style.InputError_Green);
                                     inputLayoutEmail.setError("사용 가능한 이메일입니다!");
+                                } else {
+                                    // 해당 문서가 있음 = 이미 가입 된 이메일
+                                    isEmailChecked = false;
+                                    inputLayoutEmail.setErrorTextAppearance(R.style.InputError_Red);
+                                    inputLayoutEmail.setError("이미 가입 된 이메일입니다.");
                                 }
-                            } else {
-                                Log.d(TAG, "get failed with ", task.getException());
                             }
                         }
                     });
@@ -423,7 +422,7 @@ public class SignUpPage extends AppCompatActivity {
                                                 Log.d(TAG, "createUserWithEmail:success");
                                                 // 입력된 모든 정보를 데이터베이스에 추가
                                                 UserClass newUser = new UserClass(edtEmail.getText().toString(), edtNick.getText().toString(), null);
-                                                db.collection("UserInfo").document(edtEmail.getText().toString()).set(newUser)
+                                                db.collection("UserInfo").document(FirebaseAuth.getInstance().getUid()).set(newUser)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {

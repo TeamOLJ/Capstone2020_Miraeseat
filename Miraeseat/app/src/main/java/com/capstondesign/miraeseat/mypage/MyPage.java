@@ -110,10 +110,10 @@ public class MyPage extends AppCompatActivity {
         // Firebase
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        final String userEmail = user.getEmail();
+        final String userUID = user.getUid();
 
         // 프로필사진 & 닉네임 데이터베이스에서 읽어오기
-        db.collection("UserInfo").document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 UserClass loginedUser = documentSnapshot.toObject(UserClass.class);

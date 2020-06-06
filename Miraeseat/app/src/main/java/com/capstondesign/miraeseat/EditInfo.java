@@ -96,6 +96,8 @@ public class EditInfo extends AppCompatActivity {
     private Boolean isPwdValid = false;
     private Boolean isPwdChecked = false;
 
+    String userUID;
+    String userEmail;
     String prevNick;
 
     Bitmap originalBitmap;
@@ -128,16 +130,18 @@ public class EditInfo extends AppCompatActivity {
         // Firebase
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        final String userEmail = user.getEmail();
+        userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference().child("user_review_photo");
 
         //닉네임 이메일 사진 데이터 불러오기
-        db.collection("UserInfo").document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
-                edtEmail.setText(userEmail);
+                userEmail = loginedUser.getEmail();
+                edtEmail.setText(loginedUser.getEmail());
+                Log.d(TAG, "loginedUser.getEmail():"+loginedUser.getEmail());
                 prevNick = loginedUser.getNick();
                 edtNickname.setText(prevNick);
                 if(loginedUser.getImagepath() != null) {
@@ -166,6 +170,7 @@ public class EditInfo extends AppCompatActivity {
                 isNickChecked = false;
                 if(!Pattern.matches("[+ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]{2,7}", s.toString())) {
                     isNickValid = false;
+                    inputLayoutNickname.setErrorTextAppearance(R.style.InputError_Red);
                     inputLayoutNickname.setError("2~7글자의 한글, 영문, 숫자를 사용할 수 있습니다.");
                 }
                 else {
@@ -419,7 +424,7 @@ public class EditInfo extends AppCompatActivity {
 
     // 데이터베이스 업데이트 함수
     private void updateDB(final UserClass user) {
-        db.collection("UserInfo").document(user.getEmail()).set(user)
+        db.collection("UserInfo").document(userUID).set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

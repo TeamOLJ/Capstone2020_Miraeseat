@@ -150,7 +150,7 @@ public class LoginPage extends AppCompatActivity {
                                             // 로그인 성공
                                             Log.d(TAG, "LogInWithEmail:success");
                                             // DB에서 닉네임 읽어오기
-                                            db.collection("UserInfo").document(givenEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            db.collection("UserInfo").document(FirebaseAuth.getInstance().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                     UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
