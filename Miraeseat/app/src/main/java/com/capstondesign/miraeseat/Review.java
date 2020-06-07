@@ -3,14 +3,14 @@ package com.capstondesign.miraeseat;
 import com.google.firebase.firestore.FieldValue;
 
 public class Review {
-    String ownerNick;
-    FieldValue timestamp;
-    String reviewDate;
-    String theaterName;
-    String seatNum;
-    String imagepath;
-    float rating;
-    String reviewText;
+    private String ownerNick;
+    private FieldValue timestamp;
+    private String reviewDate;
+    private String theaterName;
+    private String seatNum;
+    private String imagepath;
+    private float rating;
+    private String reviewText;
 
     public Review() {}
 

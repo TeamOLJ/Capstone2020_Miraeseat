@@ -1,43 +1,67 @@
 package com.capstondesign.miraeseat.notice;
 
-public class Notice {
-    int _id;
-    String title;
-    String date;
-    String noticeContext;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    public Notice(int _id, String title, String date, String noticeContext) {
-        this._id = _id;
-        this.title = title;
-        this.date = date;
+import com.google.firebase.Timestamp;
+
+// 인텐트 간 객체 전달을 위해 Parcelable을 상속받도록 함
+public class Notice implements Parcelable {
+    private String noticeTitle;
+    private String noticeDate;
+    private String noticeContext;
+    private Timestamp timestamp;
+
+    public Notice() {}
+
+    public Notice(String noticeTitle, String noticeDate, String noticeContext, Timestamp timestamp) {
+        this.noticeTitle = noticeTitle;
+        this.noticeDate = noticeDate;
         this.noticeContext = noticeContext;
+        this.timestamp = timestamp;
     }
 
-    public int get_id() { return _id; }
-
-    public void set_id(int _id) { this._id = _id; }
-
-    public String getTitle() {
-        return title;
+    public Notice(Parcel src) {
+        noticeTitle = src.readString();
+        noticeDate = src.readString();
+        noticeContext = src.readString();
+        timestamp = null;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getNoticeTitle() {
+        return noticeTitle;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+    public String getNoticeDate() {
+        return noticeDate;
     }
 
     public String getNoticeContext() {
         return noticeContext;
     }
 
-    public void setNoticeContext(String noticeContext) {
-        this.noticeContext = noticeContext;
+    public Timestamp getTimestamp() { return timestamp; }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Notice createFromParcel(Parcel src) {
+            return new Notice(src);
+        }
+
+        public Notice[] newArray(int size) {
+            return new Notice[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int i) {
+        dest.writeString(noticeTitle);
+        dest.writeString(noticeDate);
+        dest.writeString(noticeContext);
+    }
+
 }

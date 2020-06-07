@@ -16,8 +16,6 @@ public class NoticeContext extends AppCompatActivity {
     Toolbar toolbar;
     TextView toolbarText;
 
-    int contentId;
-
     TextView noticeTitle;
     TextView noticeDate;
     TextView noticeContext;
@@ -28,7 +26,7 @@ public class NoticeContext extends AppCompatActivity {
         setContentView(R.layout.notice_context);
 
         Intent intent = getIntent();
-        contentId = intent.getIntExtra("NoticeId", 0);
+        Notice notice = (Notice)intent.getParcelableExtra("SelectedNotice");
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -44,11 +42,9 @@ public class NoticeContext extends AppCompatActivity {
         noticeDate = (TextView)findViewById(R.id.textNoticeDate);
         noticeContext = (TextView)findViewById(R.id.textNoticeContext);
 
-        applyItem();
-    }
-
-    public void applyItem() {
-        // DB에서 공지번호가 contentId인 공지를 읽어와 화면에 적용시키는 함수
+        noticeTitle.setText(notice.getNoticeTitle());
+        noticeDate.setText(notice.getNoticeDate());
+        noticeContext.setText(notice.getNoticeContext());
     }
 
     // 뒤로가기 버튼(홈버튼)을 누르면 창이 꺼지는 메소드

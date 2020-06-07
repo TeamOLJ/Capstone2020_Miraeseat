@@ -91,8 +91,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
 
         public void setItem(Notice item) {
 
-            textTitle.setText(item.getTitle());
-            textDate.setText(item.getDate());
+            textTitle.setText(item.getNoticeTitle());
+            textDate.setText(item.getNoticeDate());
         }
     }
 }
