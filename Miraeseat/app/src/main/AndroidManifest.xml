@@ -69,7 +69,8 @@
             android:windowSoftInputMode="stateAlwaysHidden"></activity>
 
         <activity android:name=".WriteReview"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+        </activity>
 
         <activity android:name=".mypage.MyPage"
             android:windowSoftInputMode="stateAlwaysHidden"></activity>

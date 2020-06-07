@@ -7,72 +7,223 @@
     android:orientation="vertical"
     tools:context=".WriteReview">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="horizontal">
+        android:background="@color/total_background"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="1dp">
 
-        <ImageButton style="@style/homebt"
-            android:id="@+id/btnCancel"
-            android:layout_gravity="left" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/main_color"
+            app:elevation="1dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="3.5"
-            android:gravity="center"
-            android:text="리뷰 작성" />
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="@dimen/btn_width"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/btnCancel_text" />
 
-        <ImageButton style="@style/homebt"
-            android:id="@+id/btnSave"
-            android:layout_gravity="right" />
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/write_review_text1"
+                android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="@dimen/btn_width"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="@dimen/btnSave_right_margin"
+                android:background="@android:color/transparent"
+                android:text="@string/btnSave_text" />
 
+        </androidx.appcompat.widget.Toolbar>
 
-    <ImageView
-        android:id="@+id/write_photo"
-        android:layout_width="match_parent"
-        android:layout_height="250dp" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="평점  "
-            android:layout_gravity="center_vertical"
-            android:textSize="18sp" />
-
-        <RatingBar
-            android:id="@+id/write_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:numStars="5" />
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:text="후기  "
-        android:layout_gravity="center_vertical"
-        android:textSize="18sp" />
-
-    <EditText
-        android:id="@+id/write_text"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:gravity="top"
-        android:maxLines="8"
-        />
+        android:fillViewport="true" >
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/write_photo"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
+
+            <TextView
+                android:id="@+id/textAddPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/write_photo"
+                android:layout_alignTop="@id/write_photo"
+                android:layout_alignRight="@id/write_photo"
+                android:layout_alignBottom="@id/write_photo"
+                android:layout_margin="1dp"
+                android:gravity="center"
+                android:text="이미지 추가" />
+
+            <LinearLayout
+                android:id="@+id/seatNumLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_below="@id/write_photo" >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/hint_seat"
+                    android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
+
+                <Spinner
+                    android:id="@+id/floorSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:text="층"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/rowSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:text="열"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/seatnumSpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:text="번"
+                    android:textSize="18sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ratingLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/seatNumLayout" >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/hint_rating"
+                    android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="12"
+                    android:layout_gravity="center_vertical" >
+
+                    <RatingBar
+                        android:id="@+id/write_rating"
+                        style="@style/Widget.AppCompat.RatingBar.Indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:isIndicator="false"
+                        android:numStars="5"
+                        android:rating="0"
+                        android:stepSize="0.5" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/reviewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:layout_below="@id/ratingLayout"
+                android:layout_marginLeft="10dp"
+                android:text="@string/hint_review"
+                android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textlayoutReview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/reviewTitle"
+                android:layout_marginHorizontal="10dp"
+                app:hintEnabled="false"
+                app:counterEnabled="true"
+                app:counterMaxLength="500" >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtReview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:hint="10글자 이상 입력해주세요" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+    <!--        <EditText-->
+    <!--            android:id="@+id/write_text"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:layout_marginLeft="10dp"-->
+    <!--            android:gravity="top"-->
+    <!--            android:hint="최소 00자로 입력해주세요"-->
+    <!--            android:maxLines="8" />-->
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </LinearLayout>

@@ -132,7 +132,7 @@ public class EditInfo extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference().child("user_review_photo");
+        storageRef = storage.getReference().child("user_profile_picture");
 
         //닉네임 이메일 사진 데이터 불러오기
         db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -334,7 +334,7 @@ public class EditInfo extends AppCompatActivity {
                                     });
                                     if(finalURI != null) {
                                         // 사진에 변경사항이 있다면
-                                        // 사진을 가리키는 참조 생성 (user_review_photo/<파일이름>)
+                                        // 사진을 가리키는 참조 생성 (user_profile_picture/<파일이름>)
                                         final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
                                         // Storage에 사진 업로드
                                         photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -382,7 +382,7 @@ public class EditInfo extends AppCompatActivity {
                         if(finalURI != null) {
                             // 사진에 변경사항이 있다면
                             // finalURI를 DStorage에 저장
-                            // 사진을 가리키는 참조 생성 (user_review_photo/<파일이름>)
+                            // 사진을 가리키는 참조 생성 (user_profile_picture/<파일이름>)
                             final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
                             // Storage에 사진 업로드
                             photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
