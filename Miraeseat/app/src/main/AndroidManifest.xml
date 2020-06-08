@@ -38,11 +38,11 @@
         <!--오나현-->
         <activity
             android:name=".LoginPage"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
 
         <activity
             android:name=".SignUpPage"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".find.FindInfoPage"
