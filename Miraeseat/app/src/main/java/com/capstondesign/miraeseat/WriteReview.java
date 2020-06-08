@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -44,7 +43,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -56,8 +54,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static com.capstondesign.miraeseat.SignUpPage.SIGN_UP_SUCCESS;
 
 public class WriteReview extends AppCompatActivity {
     private static final String TAG = "WriteReview";
@@ -168,6 +164,7 @@ public class WriteReview extends AppCompatActivity {
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                // 최소 평점 0.5점으로
                 if(rating <= 0.5f)
                     ratingBar.setRating(0.5f);
             }
@@ -177,12 +174,9 @@ public class WriteReview extends AppCompatActivity {
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 makeDialog();
-
             }
         });
-
 
         //취소버튼
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -215,6 +209,7 @@ public class WriteReview extends AppCompatActivity {
 
                     final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
 
+                    // 이 아래로 이어지는 코드도... 위의 onSuccess에 넣거나 순서 제어 코드를 추가해야 할 듯
                     photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -231,12 +226,11 @@ public class WriteReview extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
 
-                                FieldValue timestamp = FieldValue.serverTimestamp();
                                 reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
                                 seatNumber = floorSpinner.getSelectedItem().toString()+"층 "+rowSpinner.getSelectedItem().toString()+"열 "
                                         +seatSpinner.getSelectedItem().toString()+"번";
 
-                                Review userReview = new Review(userNick, timestamp, reviewDate, "극장이름", seatNumber, downloadUri.toString(),
+                                Review userReview = new Review(userNick, null, reviewDate, "극장이름", seatNumber, downloadUri.toString(),
                                         ratingBar.getRating(), edtReview.getText().toString());
 
                                 // DB 업로드
@@ -264,10 +258,8 @@ public class WriteReview extends AppCompatActivity {
                         }
                     });
                 }
-
             }
         });
-
     }
 
     private void makeDialog(){
@@ -382,14 +374,6 @@ public class WriteReview extends AppCompatActivity {
 
             return 1;
         }
-
-
-       /* }
-        else
-        {
-            return 1;
-        }*/
-
     }
 
     @Override
@@ -520,7 +504,6 @@ public class WriteReview extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_TAKE_ALBUM);
     }
 
-
     //사진 crop할 수 있도록 하는 함수
     public void cropImage(){
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
@@ -560,7 +543,7 @@ public class WriteReview extends AppCompatActivity {
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //builder.setTitle(null);
-        builder.setMessage("리뷰 작성을 취소하시겠습니까?");
+        builder.setMessage("후기 작성을 취소하시겠습니까?");
 
         builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
             @Override

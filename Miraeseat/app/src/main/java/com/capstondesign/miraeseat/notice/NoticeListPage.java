@@ -67,8 +67,6 @@ public class NoticeListPage extends AppCompatActivity {
         adapter = new NoticeAdapter();
         recyclerView.setAdapter(adapter);
 
-
-
         adapter.setOnNoticeClickListener(new OnNoticeClickListener() {
             @Override
             public void onItemClick(NoticeAdapter.ViewHolder holder, View view, int position) {

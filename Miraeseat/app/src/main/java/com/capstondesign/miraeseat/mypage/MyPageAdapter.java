@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.R;
 
 import java.util.ArrayList;
@@ -65,9 +66,10 @@ public class MyPageAdapter extends BaseAdapter {
 
             info.setText(infoList.get(position).getListInfo());
             ratingBar.setRating(infoList.get(position).getListRatingbar());
-            image.setImageResource(infoList.get(position).getListImage());
             content.setText(infoList.get(position).getListWriting());
             date.setText(infoList.get(position).getListDate());
+
+            Glide.with(mContext).load(infoList.get(position).getListImagePath()).into(image);
 
             btnMenu = (ImageButton)convertView.findViewById(R.id.listMenu);
             btnMenu.setTag(position);

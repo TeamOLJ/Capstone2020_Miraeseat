@@ -1,10 +1,13 @@
 package com.capstondesign.miraeseat;
 
-import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
 
 public class Review {
     private String ownerNick;
-    private FieldValue timestamp;
+    @ServerTimestamp
+    private Date timestamp;
     private String reviewDate;
     private String theaterName;
     private String seatNum;
@@ -14,7 +17,7 @@ public class Review {
 
     public Review() {}
 
-    public Review(String ownerNick, FieldValue timestamp, String reviewDate, String theaterName, String seatNum, String imagepath, float rating, String reviewText) {
+    public Review(String ownerNick, Date timestamp, String reviewDate, String theaterName, String seatNum, String imagepath, float rating, String reviewText) {
         this.ownerNick = ownerNick;
         this.timestamp = timestamp;
         this.reviewDate = reviewDate;
@@ -27,7 +30,7 @@ public class Review {
 
     public String getOwnerNick() { return ownerNick; }
 
-    public FieldValue getTimestamp() { return timestamp; }
+    public Date getTimestamp() { return timestamp; }
 
     public String getReviewDate() { return reviewDate; }
 

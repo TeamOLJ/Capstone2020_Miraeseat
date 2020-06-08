@@ -4,14 +4,14 @@ public class mypageList_item {
 
     private String listInfo;
     private Float listRatingbar;
-    private int listImage;
+    private String listImagePath;
     private String listWriting;
     private String listDate;
 
-    public mypageList_item(String listInfo, Float listRatingbar, int listImage, String listWriting, String listDate) {
+    public mypageList_item(String listInfo, Float listRatingbar, String listImagePath, String listWriting, String listDate) {
         this.listInfo = listInfo;
         this.listRatingbar = listRatingbar;
-        this.listImage = listImage;
+        this.listImagePath = listImagePath;
         this.listWriting = listWriting;
         this.listDate = listDate;
     }
@@ -34,12 +34,12 @@ public class mypageList_item {
     }
 
 
-    public int getListImage() {
-        return listImage;
+    public String getListImagePath() {
+        return listImagePath;
     }
 
-    public void setListImage(int listImage) {
-        this.listImage = listImage;
+    public void setListImagePath(String listImagePath) {
+        this.listImagePath = listImagePath;
     }
 
     public String getListWriting() {
