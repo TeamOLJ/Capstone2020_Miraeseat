@@ -158,9 +158,10 @@ public class MyPage extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             // 각각의 쿼리 반환값을 mData에 추가
                             userReview = document.toObject(Review.class);
+                            Log.d(TAG, "문서 아이디: "+document.getId());
 
                             // 문서 내용에서 필요한 값만 취해서 mypageList_item 객체로 mData에 추가
-                            mData.add(new mypageList_item(userReview.getTheaterName()+" "+userReview.getSeatNum(),
+                            mData.add(new mypageList_item(document.getId(), userReview.getTheaterName(), userReview.getSeatNum(),
                                     userReview.getRating(), userReview.getImagepath(), userReview.getReviewText(), userReview.getReviewDate()));
                         }
 
@@ -179,6 +180,7 @@ public class MyPage extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == 1) {
+            Log.d(TAG, "응답값 받아왔음");
             initUI();
         }
     }

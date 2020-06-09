@@ -46,7 +46,7 @@
 
         <activity
             android:name=".find.FindInfoPage"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity android:name=".notice.NoticeListPage"></activity>
 
@@ -54,7 +54,7 @@
 
         <activity
             android:name=".UnsubscribePage"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
         </activity>
 
         <!--이명주-->
@@ -63,10 +63,10 @@
         <activity android:name=".hall.HallInfo"></activity>
 
         <activity android:name=".EditReview"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
 
         <activity android:name=".EditInfo"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
 
         <activity android:name=".WriteReview"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">

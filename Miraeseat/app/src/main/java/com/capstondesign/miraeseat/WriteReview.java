@@ -239,7 +239,7 @@ public class WriteReview extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
                                                 Log.d(TAG, "좌석 후기 업로드 성공");
-                                                Toast.makeText(getApplicationContext(), "리뷰가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), "후기가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
                                                 // setResult(SIGN_UP_SUCCESS) 라든지... 리뷰 목록 아이템 업데이트 관련 코드가 추가될 수도.
                                                 finish();
                                             }
@@ -338,7 +338,7 @@ public class WriteReview extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + ".jpg";
         File imageFile = null;
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures");
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures","Miraeseat");
 
         if(!storageDir.exists()){
             storageDir.mkdirs();
