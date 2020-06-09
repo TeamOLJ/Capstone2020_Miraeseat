@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -83,9 +84,9 @@ public class EditReview extends AppCompatActivity {
     ImageView image;
     RatingBar ratingBar;
 
-    Spinner floorSpinner;
-    Spinner rowSpinner;
-    Spinner seatSpinner;
+    TextView textFloorNum;
+    TextView textRowNum;
+    TextView textSeatNum;
 
     TextInputLayout inputlayoutReview;
     EditText edtReview;
@@ -115,9 +116,9 @@ public class EditReview extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.edit_photo);
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
 
-        floorSpinner = (Spinner)findViewById(R.id.floorSpinner);
-        rowSpinner = (Spinner)findViewById(R.id.rowSpinner);
-        seatSpinner = (Spinner)findViewById(R.id.seatnumSpinner);
+        textFloorNum = (TextView)findViewById(R.id.textFloorNum);
+        textRowNum = (TextView)findViewById(R.id.textRowNum);
+        textSeatNum = (TextView)findViewById(R.id.textSeatNum);
 
         inputlayoutReview = (TextInputLayout)findViewById(R.id.textlayoutReview);
         edtReview = inputlayoutReview.getEditText();
@@ -132,7 +133,7 @@ public class EditReview extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference().child("user_review_photo");
 
-        //해당 리뷰의 사진, 글 이미지뷰랑 텍스트뷰에 불러오기
+        // 해당 리뷰 내용을 불러와 세팅하기
         Intent intent = getIntent();
         documentID = intent.getStringExtra("documentID");
 
@@ -143,7 +144,6 @@ public class EditReview extends AppCompatActivity {
         final String imageBefore = intent.getStringExtra("imagepath");
         Glide.with(EditReview.this).load(imageBefore).into(image);
 
-        // Spinner는 어떻게 set하지...?
         String seatNumber = intent.getStringExtra("seatNum");
         String[] getfloor = seatNumber.split("층 ");
         String[] getrow = getfloor[1].split("열 ");
@@ -153,35 +153,9 @@ public class EditReview extends AppCompatActivity {
         String row = getrow[0];
         String num = getnum[0];
 
-        // Spinner 관련 코드들
-        List floors = new ArrayList<String>();
-        for (int i = 1; i <= 3; i++) {
-            floors.add(Integer.toString(i));
-        }
-
-        List rows = new ArrayList<String>();
-        for (int i = 1; i <= 10; i++) {
-            rows.add(Integer.toString(i));
-        }
-
-        List seats = new ArrayList<String>();
-        for (int i = 1; i <= 20; i++) {
-            seats.add(Integer.toString(i));
-        }
-
-        ArrayAdapter<String> spinnerArrayAdapter;
-
-        spinnerArrayAdapter = new ArrayAdapter<String>(EditReview.this, android.R.layout.simple_spinner_dropdown_item, floors);
-        floorSpinner.setAdapter(spinnerArrayAdapter);
-        floorSpinner.setSelection(spinnerArrayAdapter.getPosition(floor));
-
-        spinnerArrayAdapter = new ArrayAdapter<String>(EditReview.this, android.R.layout.simple_spinner_dropdown_item, rows);
-        rowSpinner.setAdapter(spinnerArrayAdapter);
-        rowSpinner.setSelection(spinnerArrayAdapter.getPosition(row));
-
-        spinnerArrayAdapter = new ArrayAdapter<String>(EditReview.this, android.R.layout.simple_spinner_dropdown_item, seats);
-        seatSpinner.setAdapter(spinnerArrayAdapter);
-        seatSpinner.setSelection(spinnerArrayAdapter.getPosition(num));
+        textFloorNum.setText(floor);
+        textRowNum.setText(row);
+        textSeatNum.setText(num);
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,8 +206,8 @@ public class EditReview extends AppCompatActivity {
                     // 수정된 정보 DB에 업데이트
                     if(user != null) {
 
-                        // 사진을 변경한 경우
                         if(finalURI != null) {
+                            // 사진을 변경한 경우
                             final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
 
                             photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -260,6 +234,7 @@ public class EditReview extends AppCompatActivity {
                             });
                         }
                         else {
+                            // 사진을 변경하지 않은 경우
                             updateDB(imageBefore);
                         }
                     }
@@ -276,7 +251,6 @@ public class EditReview extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "좌석 후기 수정 성공");
                         Toast.makeText(getApplicationContext(), "후기가 수정 되었습니다.", Toast.LENGTH_LONG).show();
                         setResult(1);
                         finish();

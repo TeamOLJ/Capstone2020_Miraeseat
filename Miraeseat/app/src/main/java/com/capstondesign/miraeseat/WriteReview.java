@@ -133,8 +133,9 @@ public class WriteReview extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference().child("user_review_photo");
 
-        // Spinner 관련 코드들
-        List floors = new ArrayList<Integer>();
+        // Spinner 관련 임시 코드
+        // DB에서 정보를 읽어오거나... 처음부터 Spinner 설정을 못 하게 변경하거나...
+        List floors = new ArrayList<String>();
         for (int i = 1; i <= 3; i++) {
             floors.add(Integer.toString(i));
         }
@@ -149,15 +150,15 @@ public class WriteReview extends AppCompatActivity {
             seats.add(Integer.toString(i));
         }
 
-        ArrayAdapter<Integer> spinnerArrayAdapter;
+        ArrayAdapter<String> spinnerArrayAdapter;
 
-        spinnerArrayAdapter = new ArrayAdapter<Integer>(WriteReview.this, android.R.layout.simple_spinner_dropdown_item, floors);
+        spinnerArrayAdapter = new ArrayAdapter<String>(WriteReview.this, R.layout.spinner_item, floors);
         floorSpinner.setAdapter(spinnerArrayAdapter);
 
-        spinnerArrayAdapter = new ArrayAdapter<Integer>(WriteReview.this, android.R.layout.simple_spinner_dropdown_item, rows);
+        spinnerArrayAdapter = new ArrayAdapter<String>(WriteReview.this, R.layout.spinner_item, rows);
         rowSpinner.setAdapter(spinnerArrayAdapter);
 
-        spinnerArrayAdapter = new ArrayAdapter<Integer>(WriteReview.this, android.R.layout.simple_spinner_dropdown_item, seats);
+        spinnerArrayAdapter = new ArrayAdapter<String>(WriteReview.this, R.layout.spinner_item, seats);
         seatSpinner.setAdapter(spinnerArrayAdapter);
 
         // ratingbar

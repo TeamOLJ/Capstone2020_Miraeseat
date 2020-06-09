@@ -1,5 +1,6 @@
 package com.capstondesign.miraeseat.mypage;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,17 +8,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.EditInfo;
+import com.capstondesign.miraeseat.EditReview;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.Review;
 import com.capstondesign.miraeseat.UnsubscribePage;
@@ -37,7 +42,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MyPage extends AppCompatActivity {
+public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnClickListener {
     private static final String TAG = "MyPage";
 
     static final int IS_INFO_MODIFIED = 1234;
@@ -105,7 +110,6 @@ public class MyPage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), UnsubscribePage.class);
                 startActivity(intent);
-                //회원 탈퇴 페이지 액티비티 생성
             }
         });
     }
@@ -158,14 +162,13 @@ public class MyPage extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : querySnapshot) {
                             // 각각의 쿼리 반환값을 mData에 추가
                             userReview = document.toObject(Review.class);
-                            Log.d(TAG, "문서 아이디: "+document.getId());
 
                             // 문서 내용에서 필요한 값만 취해서 mypageList_item 객체로 mData에 추가
                             mData.add(new mypageList_item(document.getId(), userReview.getTheaterName(), userReview.getSeatNum(),
                                     userReview.getRating(), userReview.getImagepath(), userReview.getReviewText(), userReview.getReviewDate()));
                         }
 
-                        myPageAdapter = new MyPageAdapter(MyPage.this, mData);
+                        myPageAdapter = new MyPageAdapter(MyPage.this, mData, MyPage.this);
                         listView.setAdapter(myPageAdapter);
                     }
 
@@ -180,9 +183,73 @@ public class MyPage extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == 1) {
-            Log.d(TAG, "응답값 받아왔음");
             initUI();
         }
+    }
+
+    // 어댑터의 버튼 클릭을 처리하기 위해 MyPageAdapter의 ListBtnClickListener를 상속받았음
+    // ListBtnClickLister 내부에 선언했던 onListBtnClick 함수를 오버라이드
+    @Override
+    public void onListBtnClick(View view, final int position) {
+        PopupMenu popupMenu = new PopupMenu(MyPage.this, view);
+        popupMenu.inflate(R.menu.list_menu);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    // 수정 버튼을 누른 경우
+                    case R.id.item_modify:
+                        Intent intent = new Intent(MyPage.this, EditReview.class);
+                        intent.putExtra("documentID", mData.get(position).getDocumentID());
+                        intent.putExtra("imagepath", mData.get(position).getImagePath());
+                        intent.putExtra("seatNum", mData.get(position).getSeatNum());
+                        intent.putExtra("rating", mData.get(position).getSeatRating());
+                        intent.putExtra("reviewContext", mData.get(position).getReviewContext());
+                        startActivityForResult(intent, 1234);
+                        return true;
+                    // 삭제 버튼을 누른 경우
+                    case R.id.item_delete:
+                        showConfirmMsg(position);
+                        return true;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void showConfirmMsg(final int position)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //builder.setTitle(null);
+        builder.setMessage("후기를 삭제하시겠습니까? 삭제한 후기는 되돌릴 수 없습니다.");
+
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                // DB에서 해당 문서를 삭제
+                db.collection("SeatReview").document(mData.get(position).getDocumentID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(MyPage.this, "후기가 삭제되었습니다.", Toast.LENGTH_LONG).show();
+
+                        // 리스트뷰의 리스트에서도 해당 아이템 삭제
+                        mData.remove(position);
+                        // 어댑터 새로고침
+                        myPageAdapter.notifyDataSetChanged();
+                        listView.setAdapter(myPageAdapter);
+                    }
+                });
+
+            }
+        });
+        builder.setNegativeButton("취소", null);
+
+        builder.setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

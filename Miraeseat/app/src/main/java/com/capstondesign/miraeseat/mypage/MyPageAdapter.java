@@ -2,6 +2,7 @@ package com.capstondesign.miraeseat.mypage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,13 +17,20 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.EditReview;
 import com.capstondesign.miraeseat.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class MyPageAdapter extends BaseAdapter implements PopupMenu.OnMenuItemClickListener {
+public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
+
     Context mContext;
     ArrayList<mypageList_item> infoList;
     LayoutInflater inflater;
@@ -37,10 +45,21 @@ public class MyPageAdapter extends BaseAdapter implements PopupMenu.OnMenuItemCl
     mypageList_item oneListItem;
     int selectedPosition;
 
+    // Firebase Instance variables
+    private FirebaseFirestore db;
 
-    public MyPageAdapter(Context context, ArrayList<mypageList_item> list_itemArrayList) {
+    // 버튼 클릭 이벤트를 위한 Listener 인터페이스 정의
+    public interface ListBtnClickListener {
+        void onListBtnClick(View view, int position);
+    }
+
+    private ListBtnClickListener listBtnClickListener = null;
+
+
+    public MyPageAdapter(Context context, ArrayList<mypageList_item> list_itemArrayList, ListBtnClickListener clickListener) {
         this.mContext = context;
         this.infoList = list_itemArrayList;
+        this.listBtnClickListener = clickListener;
     }
 
     @Override
@@ -64,7 +83,7 @@ public class MyPageAdapter extends BaseAdapter implements PopupMenu.OnMenuItemCl
         {
             inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            convertView = inflater.inflate(R.layout.mypage_item,parent,false);
+            convertView = inflater.inflate(R.layout.mypage_item, parent,false);
 
             oneListItem = infoList.get(position);
 
@@ -83,40 +102,18 @@ public class MyPageAdapter extends BaseAdapter implements PopupMenu.OnMenuItemCl
 
             btnMenu = (ImageButton)convertView.findViewById(R.id.listMenu);
             btnMenu.setTag(position);
-            btnMenu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    selectedPosition = position;
-                    PopupMenu popupMenu = new PopupMenu(mContext, view);
-                    popupMenu.setOnMenuItemClickListener(MyPageAdapter.this);
-                    popupMenu.inflate(R.menu.list_menu);
-                    popupMenu.show();
-                }
-            });
+            // "this" - MyPageAdapter.java의 onClick 함수를 호출함
+            btnMenu.setOnClickListener(this);
         }
 
         return convertView;
     }
 
     @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item_modify:
-//                Toast.makeText(mContext, infoList.get(selectedPosition).getSeatNum(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(mContext, EditReview.class);
-                intent.putExtra("documentID", infoList.get(selectedPosition).getDocumentID());
-                intent.putExtra("imagepath", infoList.get(selectedPosition).getImagePath());
-                intent.putExtra("seatNum", infoList.get(selectedPosition).getSeatNum());
-                intent.putExtra("rating", infoList.get(selectedPosition).getSeatRating());
-                intent.putExtra("reviewContext", infoList.get(selectedPosition).getReviewContext());
-
-                Activity origin = (Activity)mContext;
-                origin.startActivityForResult(intent, 1234);
-                return true;
-            case R.id.item_delete:
-                Toast.makeText(mContext, "삭제 버튼", Toast.LENGTH_SHORT).show();
-                return true;
-        }
-        return false;
+    public void onClick(View view) {
+        // ListBtnClickListener(MainActivity)의 onListBtnClick() 함수 호출
+        if(listBtnClickListener != null)
+            listBtnClickListener.onListBtnClick(view, (Integer) view.getTag());
     }
+
 }
