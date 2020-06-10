@@ -22,6 +22,4 @@ public class UserClass {
     public String getImagepath() { return imagepath; }
 
     public void setNick(String nick) { this.nick = nick; }
-
-    // imagepath 관련 함수
 }

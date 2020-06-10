@@ -51,7 +51,7 @@
         android:id="@+id/nickName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="닉네임"
+        android:text="@string/hint_nick"
         android:layout_gravity="center"
         android:layout_margin="10dp"
         />
@@ -62,7 +62,7 @@
 
         <Button
             android:id="@+id/mypage_edit"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="회원정보수정"
@@ -70,10 +70,10 @@
 
         <Button
             android:id="@+id/mypage_withdrawl"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="회원탈퇴"
+            android:text="@string/unsubscribe"
 
             />
 
@@ -82,13 +82,50 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="내가 쓴 리뷰"
+        android:text="내가 쓴 후기"
+        android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
         android:layout_margin="10dp"/>
 
-    <ListView
-        android:id="@+id/mypage_list"
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" >
+
+        <ListView
+            android:id="@+id/mypage_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
+
+        <RelativeLayout
+            android:id="@+id/no_review_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="아직 작성한 후기가 없습니다!" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/loading_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="로딩 중..." />
+
+        </RelativeLayout>
+
+    </FrameLayout>
 
 </LinearLayout>
 

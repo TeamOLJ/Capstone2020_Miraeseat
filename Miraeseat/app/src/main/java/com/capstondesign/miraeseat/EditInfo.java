@@ -4,6 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -40,6 +44,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -55,7 +61,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditInfo extends AppCompatActivity {
     private static final String TAG = "EditInfo";
-
 
     static final int MY_PERMISSION_CAMERA = 1111;
     static final int REQUEST_TAKE_PHOTO = 2222;
@@ -93,9 +98,14 @@ public class EditInfo extends AppCompatActivity {
     private Boolean isPwdValid = false;
     private Boolean isPwdChecked = false;
 
+    String userUID;
+    String userEmail;
     String prevNick;
 
     DrawerHandler drawer;
+
+    Bitmap originalBitmap;
+    Bitmap rotatedBitmap = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,16 +141,18 @@ public class EditInfo extends AppCompatActivity {
         // Firebase
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        final String userEmail = user.getEmail();
+        userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference().child("user_review_photo");
+        storageRef = storage.getReference().child("user_profile_picture");
 
         //닉네임 이메일 사진 데이터 불러오기
-        db.collection("UserInfo").document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
-                edtEmail.setText(userEmail);
+                userEmail = loginedUser.getEmail();
+                edtEmail.setText(loginedUser.getEmail());
+                Log.d(TAG, "loginedUser.getEmail():"+loginedUser.getEmail());
                 prevNick = loginedUser.getNick();
                 edtNickname.setText(prevNick);
                 if(loginedUser.getImagepath() != null) {
@@ -169,6 +181,7 @@ public class EditInfo extends AppCompatActivity {
                 isNickChecked = false;
                 if(!Pattern.matches("[+ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]{2,7}", s.toString())) {
                     isNickValid = false;
+                    inputLayoutNickname.setErrorTextAppearance(R.style.InputError_Red);
                     inputLayoutNickname.setError("2~7글자의 한글, 영문, 숫자를 사용할 수 있습니다.");
                 }
                 else {
@@ -239,18 +252,33 @@ public class EditInfo extends AppCompatActivity {
             }
         });
 
+        // 닉네임 중복여부 확인
         btnCheckNick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isNickValid) {
+                    Query existingNicks = db.collection("UserInfo").whereEqualTo("nick", edtNickname.getText().toString());
 
-                // 닉네임이 DB에 이미 존재하는지 확인
-
-                // if 존재하지 않으면 (사용 가능한 닉네임이면):
-
-                isNickChecked = true;
-                // inputLayoutNick.setError(null);
-                // inputLayoutNick.setErrorEnabled(false);
-                // 입력칸 하단에 "사용 가능한 닉네임입니다!" 출력
+                    existingNicks.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                QuerySnapshot querySnapshot = task.getResult();
+                                if (querySnapshot.isEmpty()) {
+                                    // 쿼리가 리턴하는 값이 없는 경우 = 중복된 닉네임이 아닌 경우
+                                    isNickChecked = true;
+                                    inputLayoutNickname.setErrorTextAppearance(R.style.InputError_Green);
+                                    inputLayoutNickname.setError("사용 가능한 닉네임입니다!");
+                                } else {
+                                    // 리턴값이 있는 경우 = 사용 중인 닉네임인 경우
+                                    isNickChecked = false;
+                                    inputLayoutNickname.setErrorTextAppearance(R.style.InputError_Red);
+                                    inputLayoutNickname.setError("이미 사용 중인 닉네임입니다.");
+                                }
+                            }
+                        }
+                    });
+                }
             }
         });
 
@@ -319,7 +347,7 @@ public class EditInfo extends AppCompatActivity {
                                     });
                                     if(finalURI != null) {
                                         // 사진에 변경사항이 있다면
-                                        // 사진을 가리키는 참조 생성 (user_review_photo/<파일이름>)
+                                        // 사진을 가리키는 참조 생성 (user_profile_picture/<파일이름>)
                                         final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
                                         // Storage에 사진 업로드
                                         photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -367,7 +395,7 @@ public class EditInfo extends AppCompatActivity {
                         if(finalURI != null) {
                             // 사진에 변경사항이 있다면
                             // finalURI를 DStorage에 저장
-                            // 사진을 가리키는 참조 생성 (user_review_photo/<파일이름>)
+                            // 사진을 가리키는 참조 생성 (user_profile_picture/<파일이름>)
                             final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
                             // Storage에 사진 업로드
                             photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -409,7 +437,7 @@ public class EditInfo extends AppCompatActivity {
 
     // 데이터베이스 업데이트 함수
     private void updateDB(final UserClass user) {
-        db.collection("UserInfo").document(user.getEmail()).set(user)
+        db.collection("UserInfo").document(userUID).set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -432,7 +460,6 @@ public class EditInfo extends AppCompatActivity {
     //프로필 사진 눌렀을 때 메뉴
     private void makeDialog(){
 
-        //default;
         selectedPhotoMenu = 0;
 
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(EditInfo.this);
@@ -507,7 +534,7 @@ public class EditInfo extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + ".jpg";
         File imageFile = null;
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures");
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "Miraeseat");
 
         if(!storageDir.exists()){
             storageDir.mkdirs();
@@ -547,7 +574,6 @@ public class EditInfo extends AppCompatActivity {
 
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -558,8 +584,35 @@ public class EditInfo extends AppCompatActivity {
                         Log.i("REQUEST_TAKE_PHOTO","OK!!!!!!");
                         galleryAddPic();
 
-                        edit_photo.setImageURI(imageURI);
                         finalURI = imageURI;
+
+                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
+                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), edit_photo.getWidth(), edit_photo.getHeight());
+
+                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+                        switch(orientation) {
+
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                rotatedBitmap = rotateImage(originalBitmap, 90);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                rotatedBitmap = rotateImage(originalBitmap, 180);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                rotatedBitmap = rotateImage(originalBitmap, 270);
+                                break;
+
+                            case ExifInterface.ORIENTATION_NORMAL:
+                            default:
+                                rotatedBitmap = originalBitmap;
+                        }
+
+                        edit_photo.setImageBitmap(rotatedBitmap);
+
                     }catch(Exception e){
                         Log.e("REQUEST_TAKE_PHOTO",e.toString());
                     }
@@ -591,6 +644,52 @@ public class EditInfo extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    // 사진 회전 함수
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(File res, int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(res.getAbsolutePath(),options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeFile(res.getAbsolutePath(),options);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height;
+            final int halfWidth = width;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     //앨범에서 사진 가져오기

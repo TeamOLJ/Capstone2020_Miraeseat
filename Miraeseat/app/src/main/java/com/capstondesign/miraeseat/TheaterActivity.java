@@ -41,7 +41,6 @@ public class TheaterActivity extends AppCompatActivity {
 
         TI = new TheaterItem(this, seatplan_layout);
 
-
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
     }
 

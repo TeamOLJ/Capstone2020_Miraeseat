@@ -38,40 +38,40 @@
         <activity android:name=".TheaterActivity" /> <!-- 오나현 -->
         <activity
             android:name=".LoginPage"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
+
         <activity
             android:name=".SignUpPage"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
         <activity
             android:name=".find.FindInfoPage"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".notice.NoticeListPage" />
-        <activity android:name=".notice.NoticeContext" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity android:name=".notice.NoticeListPage"></activity>
+
+        <activity android:name=".notice.NoticeContext"></activity>
+
         <activity
             android:name=".UnsubscribePage"
-            android:windowSoftInputMode="stateAlwaysHidden" /> <!-- 이명주 -->
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+        </activity>
+
+        <!--이명주-->
         <activity
             android:name=".seatpage.seatPage"
             android:theme="@style/seatTheme" />
-        <activity android:name=".hall.HallInfo" />
-        <activity
-            android:name=".EditReview"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".EditInfo"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".WriteReview"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".mypage.MyPage"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".hall.HallInfo"></activity>
 
+        <activity android:name=".EditReview"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
+
+        <activity android:name=".EditInfo"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
+
+        <activity android:name=".WriteReview"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
         </activity>
 
 

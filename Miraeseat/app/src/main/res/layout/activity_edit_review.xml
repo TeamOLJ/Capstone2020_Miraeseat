@@ -34,7 +34,7 @@
                 android:id="@+id/titleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_info_text1"
+                android:text="@string/edit_review_text1"
                 android:layout_gravity="center"
                 android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title" />
 
@@ -52,47 +52,164 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-    <ImageView
-        android:id="@+id/write_photo"
-        android:layout_width="match_parent"
-        android:layout_height="250dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="평점  "
-            android:layout_gravity="center_vertical"
-            android:textSize="18sp" />
-
-        <RatingBar
-            android:id="@+id/write_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:numStars="5" />
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:text="후기  "
-        android:layout_gravity="center_vertical"
-        android:textSize="18sp" />
-
-    <EditText
-        android:id="@+id/write_text"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:gravity="top"
-        android:maxLines="8"
-        />
+        android:fillViewport="true" >
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/edit_photo"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
+
+            <LinearLayout
+                android:id="@+id/seatNumLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_below="@id/edit_photo" >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/hint_seat"
+                    android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
+
+                <TextView
+                    android:id="@+id/textFloorNum"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:text=""
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:text="층"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/textRowNum"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:text=""
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp"
+                    android:text="열"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/textSeatNum"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_gravity="center_vertical"
+                    android:text=""
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:layout_marginRight="10dp"
+                    android:text="번"
+                    android:textSize="18sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ratingLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/seatNumLayout" >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/hint_rating"
+                    android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="12"
+                    android:layout_gravity="center_vertical" >
+
+                    <RatingBar
+                        android:id="@+id/write_rating"
+                        style="@style/Widget.AppCompat.RatingBar.Indicator"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:isIndicator="false"
+                        android:numStars="5"
+                        android:rating="0"
+                        android:stepSize="0.5" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/reviewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:layout_below="@id/ratingLayout"
+                android:layout_marginLeft="10dp"
+                android:text="@string/hint_review"
+                android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textlayoutReview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/reviewTitle"
+                android:layout_marginHorizontal="10dp"
+                app:hintEnabled="false"
+                app:counterEnabled="true"
+                app:counterMaxLength="500" >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtReview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:hint="" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </LinearLayout>
