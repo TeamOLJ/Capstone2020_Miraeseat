@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -75,8 +77,8 @@ public class EditInfo extends AppCompatActivity {
 
     CircleImageView edit_photo;
 
-    ImageButton btnCancel;
-    ImageButton btnSave;
+    Button btnCancel;
+    Button btnSave;
 
     Button btnCheckNick;
 
@@ -93,15 +95,24 @@ public class EditInfo extends AppCompatActivity {
 
     String prevNick;
 
+    DrawerHandler drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_info);
 
+        drawer = new DrawerHandler(this);
+        setSupportActionBar(drawer.toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+
         edit_photo = (CircleImageView) findViewById(R.id.edit_photo);
 
-        btnCancel = (ImageButton)findViewById(R.id.edit_cancel);
-        btnSave = (ImageButton)findViewById(R.id.edit_save);
+        btnCancel = (Button)findViewById(R.id.btnCancel);
+        btnSave = (Button)findViewById(R.id.btnSave);
 
         btnCheckNick = (Button)findViewById(R.id.btnCheckNick);
 
@@ -243,7 +254,7 @@ public class EditInfo extends AppCompatActivity {
             }
         });
 
-        //취소 버튼
+//        //취소 버튼
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -421,6 +432,9 @@ public class EditInfo extends AppCompatActivity {
     //프로필 사진 눌렀을 때 메뉴
     private void makeDialog(){
 
+        //default;
+        selectedPhotoMenu = 0;
+
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(EditInfo.this);
         alt_bld.setTitle("프로필 변경").setCancelable(false);
 
@@ -429,6 +443,7 @@ public class EditInfo extends AppCompatActivity {
                 selectedPhotoMenu = whichButton;
             }
         });
+
 
         alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -622,4 +637,15 @@ public class EditInfo extends AppCompatActivity {
         }
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                finish();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

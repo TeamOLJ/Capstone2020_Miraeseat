@@ -89,15 +89,15 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         int height = (int) getResources().getDimension(R.dimen.poster_height);
         int margin = (int) getResources().getDimension(R.dimen.poster_margin);
 
-        LinearLayout.LayoutParams pm = new LinearLayout.LayoutParams(width, height);
-        pm.setMargins(margin, margin, margin, margin);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+        params.setMargins(margin, margin, margin, margin);
 
         for (int i = 0; i < 5; ++i) {
             ImageButton imageButton = new ImageButton(this);
             imageButton.setId(type + i);
             imageButton.setId(type + i);
             imageButton.setImageResource(R.drawable.theater1);  //type에 따라 다른 그림이 나오도록 바꾸기
-            imageButton.setLayoutParams(pm);
+            imageButton.setLayoutParams(params);
             imageButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageButton.setOnClickListener(PosterOnClickListner);  //다른 버튼 클릭 리스너
             view_theater.addView(imageButton);

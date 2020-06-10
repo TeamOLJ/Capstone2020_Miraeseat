@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"
-    tools:context=".seatPage">
+    tools:context=".seatpage.seatPage">
 
     <LinearLayout
         android:layout_width="match_parent"

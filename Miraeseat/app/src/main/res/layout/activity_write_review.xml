@@ -7,57 +7,71 @@
     android:orientation="vertical"
     tools:context=".WriteReview">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="horizontal">
+        android:background="@color/total_background"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="1dp">
 
-        <Button style="@style/homebt"
-            android:id="@+id/btnCancel"
-            android:text="취소"
-            android:background="#00ff0000"
-            android:layout_gravity="left" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/main_color"
+            app:elevation="1dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="@dimen/btn_width"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/btnCancel_text" />
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/write_review_text1"
+                android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="@dimen/btn_width"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="@dimen/btnSave_right_margin"
+                android:background="@android:color/transparent"
+                android:text="@string/btnSave_text" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/write_photo"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="3.5"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/write_photo"
+            android:layout_alignTop="@id/write_photo"
+            android:layout_alignRight="@id/write_photo"
+            android:layout_alignBottom="@id/write_photo"
+            android:layout_margin="1dp"
             android:gravity="center"
-            android:text="리뷰 작성" />
+            android:text="이미지 추가" />
 
-        <Button style="@style/homebt"
-            android:id="@+id/btnSave"
-            android:text="저장"
-            android:background="#00ff0000"
-            android:layout_gravity="right" />
-
-    </LinearLayout>
-
-<RelativeLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/write_photo"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/write_photo"
-        android:layout_alignTop="@id/write_photo"
-        android:layout_alignRight="@id/write_photo"
-        android:layout_alignBottom="@id/write_photo"
-        android:layout_margin="1dp"
-        android:gravity="center"
-        android:text="이미지 추가"/>
-
-</RelativeLayout>
-
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,16 +80,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:text="평점  "
-            android:layout_gravity="center_vertical"
             android:textSize="18sp" />
 
         <RatingBar
             android:id="@+id/write_rating"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
             android:numStars="5" />
 
     </LinearLayout>
@@ -83,20 +97,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:text="후기  "
-        android:layout_gravity="center_vertical"
         android:textSize="18sp" />
 
     <EditText
         android:id="@+id/write_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:hint="최소 00자로 입력해주세요"
         android:layout_marginLeft="10dp"
         android:gravity="top"
-        android:maxLines="8"
-        />
+        android:hint="최소 00자로 입력해주세요"
+        android:maxLines="8" />
 
 
 </LinearLayout>

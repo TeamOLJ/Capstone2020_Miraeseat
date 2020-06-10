@@ -16,10 +16,18 @@ import androidx.core.view.ViewCompat;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.TheaterActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class HallInfo extends AppCompatActivity {
+public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
+
+    private GoogleMap map;
 
     Button btnSeat;
 
@@ -30,11 +38,13 @@ public class HallInfo extends AppCompatActivity {
 
     DrawerHandler drawer;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hall_info);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         drawer = new DrawerHandler(this);
         drawer.init();
@@ -54,6 +64,7 @@ public class HallInfo extends AppCompatActivity {
         //임시데이터
         mData.add(new HallList_item(R.mipmap.ic_launcher, "오페라의 유령","2020/04/04-2020/05/05","타비소 마세메네, 힐러리 라이터..."));
         mData.add(new HallList_item(R.mipmap.ic_launcher, "드라큘라","2020/04/22-2020/06/12","김준수, 류정한, 전동석..."));
+        mData.add(new HallList_item(R.mipmap.ic_launcher, "드라큘라","2020/04/22-2020/06/12","김준수, 류정한, 전동석..."));
 
         hallAdapter = new HallAdapter(HallInfo.this,mData);
         listView.setAdapter(hallAdapter);
@@ -65,6 +76,7 @@ public class HallInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TheaterActivity.class);
+                intent.putExtra("hall_name", "hello"); //무슨 오류가 난다... 뭔지 모르겠다
                 startActivity(intent);
             }
         });
@@ -90,5 +102,23 @@ public class HallInfo extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onMapReady(final GoogleMap googleMap) {
+
+        map = googleMap;
+
+        //공연장 API에서 위도,경도,공연장이름 불러와서 맵에 띄우기
+
+        LatLng SEOUL = new LatLng(37.56, 126.97);
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(SEOUL);
+        markerOptions.title("서울");
+        markerOptions.snippet("한국의 수도");
+        map.addMarker(markerOptions);
+
+        map.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
+        map.animateCamera(CameraUpdateFactory.zoomTo(12));
     }
 }

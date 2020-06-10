@@ -18,19 +18,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="***REMOVED***" />
+
         <activity android:name=".Image"></activity>
         <activity android:name=".search.temp">
+
         </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateAlwaysHidden">
-
-             <intent-filter>
-             <action android:name="android.intent.action.MAIN" />
-
-             <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
         </activity>
         <activity
             android:name=".search.SearchActivity"
@@ -51,7 +51,7 @@
             android:name=".UnsubscribePage"
             android:windowSoftInputMode="stateAlwaysHidden" /> <!-- 이명주 -->
         <activity
-            android:name=".seatPage"
+            android:name=".seatpage.seatPage"
             android:theme="@style/seatTheme" />
         <activity android:name=".hall.HallInfo" />
         <activity
@@ -65,11 +65,19 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".mypage.MyPage"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.myapplication"
+            android:authorities="com.capstondesign.miraeseat"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

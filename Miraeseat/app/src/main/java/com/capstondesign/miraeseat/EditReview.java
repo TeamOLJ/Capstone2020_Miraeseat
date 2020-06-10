@@ -11,14 +11,15 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -44,22 +45,32 @@ public class EditReview extends AppCompatActivity {
     ImageView image;
     EditText review;
 
-    ImageButton btnSave;
-    ImageButton btnCancel;
+    Button btnSave;
+    Button btnCancel;
 
+    int selectedPhotoMenu;
+
+    DrawerHandler drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_review);
 
+        drawer = new DrawerHandler(this);
+        setSupportActionBar(drawer.toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+
 
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
         image = (ImageView) findViewById(R.id.write_photo);
         review = (EditText) findViewById(R.id.write_text);
 
-        btnSave = (ImageButton) findViewById(R.id.btnSave);
-        btnCancel = (ImageButton) findViewById(R.id.btnCancel);
+        btnSave = (Button) findViewById(R.id.btnSave);
+        btnCancel = (Button) findViewById(R.id.btnCancel);
 
 
 
@@ -109,33 +120,40 @@ public class EditReview extends AppCompatActivity {
 
     //프로필 사진 눌렀을 때 메뉴
     private void makeDialog(){
-
+        //default;
+        selectedPhotoMenu = 0;
 
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(EditReview.this);
-        alt_bld.setTitle("프로필 변경").setCancelable(false).setPositiveButton("사진촬영",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
-                        //사진촬영
-                        getCamera();
-                    }
-                }).setNeutralButton("앨범선택",
+        alt_bld.setTitle("프로필 변경").setCancelable(false);
 
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
-                        //앨범에서 선택
-                        getAlbum();
-                    }
-                }).setNegativeButton("취소   ",
+        alt_bld.setSingleChoiceItems(R.array.array_photo, 0, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                selectedPhotoMenu = whichButton;
+            }
+        });
 
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 취소 선택");
-                        // 취소 클릭. dialog 닫기.
-                        dialog.cancel();
-                    }
-                });
+
+        alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if(selectedPhotoMenu == 0 ) {
+                    // 사진촬영
+                    Log.v("알림", "다이얼로그 > 사진촬영 선택");
+                    getCamera();
+                } else if(selectedPhotoMenu == 1) {
+                    // 앨범에서 선택
+                    Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                    getAlbum();
+                }
+            }
+        });
+
+        alt_bld.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v("알림", "다이얼로그 > 취소 선택");
+                dialog.cancel();
+            }
+        });
 
         checkPermission();
 
@@ -309,6 +327,5 @@ public class EditReview extends AppCompatActivity {
             }
         }
     }
-
 
 }
