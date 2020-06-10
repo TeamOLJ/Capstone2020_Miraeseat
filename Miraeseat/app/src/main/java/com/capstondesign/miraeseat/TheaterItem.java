@@ -11,6 +11,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -22,8 +23,10 @@ public class TheaterItem {
     private int WIDTH;
     private int HEIGHT;
 
+
     private Context ctx;
     private ViewGroup seatplan_layout;
+
 
     private TableLayout.LayoutParams btnRow_params;
     private TableRow.LayoutParams btn_params, vertical_space_params, horizontal_space_params;
@@ -38,6 +41,7 @@ public class TheaterItem {
 
     int[][] start_end_indexes = {{15, 30}, {11, 34}, {10, 35}, {9, 36}, {8, 37}, {7, 38}, {7, 38}, {6, 39}, {5, 40}, {5, 40}, {4, 41}, {3, 42}, {3, 42}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44},
             {2, 43}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}};
+
 
 
     TheaterItem(Context ctx, ViewGroup viewGroup) {
@@ -104,7 +108,6 @@ public class TheaterItem {
 
         return tableLayout;
     }
-
 
     private TableRow CreateRow(int row_index, int start_index, int end_index) { //테이블 행과 내부 버튼 생성
         btnRow = new TableRow(ctx);
@@ -190,5 +193,6 @@ public class TheaterItem {
 
     private boolean IsOverLess(int num, int start, int end) {
         return (num > start) && (num <= end);
+
     }
 }

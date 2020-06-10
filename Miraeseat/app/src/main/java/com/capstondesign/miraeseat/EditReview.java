@@ -4,19 +4,29 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,12 +37,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class EditReview extends AppCompatActivity {
+    private static final String TAG = "EditReview";
 
     static final int MY_PERMISSION_CAMERA = 1111;
     static final int REQUEST_TAKE_PHOTO = 2222;
@@ -42,13 +69,36 @@ public class EditReview extends AppCompatActivity {
     String mCurrentPhotoPath;
     Uri imageURI;
     Uri photoURI, albumURI;
+    Uri finalURI = null;
 
-    RatingBar ratingBar;
+    int selectedPhotoMenu;
+
+    // Firebase Instance variables
+    private FirebaseUser user;
+    private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+
+    String documentID;
+
     ImageView image;
-    EditText review;
+    RatingBar ratingBar;
+
+
+    TextView textFloorNum;
+    TextView textRowNum;
+    TextView textSeatNum;
+
+    TextInputLayout inputlayoutReview;
+    EditText edtReview;
 
     Button btnSave;
     Button btnCancel;
+
+    Bitmap originalBitmap;
+    Bitmap rotatedBitmap = null;
+
+    boolean isContextChanged = false;
 
     DrawerHandler drawer;
 
@@ -64,33 +114,81 @@ public class EditReview extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false);
 
-
+        image = (ImageView) findViewById(R.id.edit_photo);
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
-        image = (ImageView) findViewById(R.id.write_photo);
-        review = (EditText) findViewById(R.id.write_text);
+
+
+        textFloorNum = (TextView)findViewById(R.id.textFloorNum);
+        textRowNum = (TextView)findViewById(R.id.textRowNum);
+        textSeatNum = (TextView)findViewById(R.id.textSeatNum);
+
+        inputlayoutReview = (TextInputLayout)findViewById(R.id.textlayoutReview);
+        edtReview = inputlayoutReview.getEditText();
+        edtReview.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 
         btnSave = (Button) findViewById(R.id.btnSave);
         btnCancel = (Button) findViewById(R.id.btnCancel);
 
+        // Firebase
+        db = FirebaseFirestore.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference().child("user_review_photo");
 
+        // 해당 리뷰 내용을 불러와 세팅하기
+        Intent intent = getIntent();
+        documentID = intent.getStringExtra("documentID");
 
-        //해당 리뷰의 사진, 글 이미지뷰랑 텍스트뷰에 불러오기
+        final float ratedBefore = intent.getFloatExtra("rating", 0);
+        ratingBar.setRating(ratedBefore);
+        edtReview.setText(intent.getStringExtra("reviewContext"));
+
+        final String imageBefore = intent.getStringExtra("imagepath");
+        Glide.with(EditReview.this).load(imageBefore).into(image);
+
+        String seatNumber = intent.getStringExtra("seatNum");
+        String[] getfloor = seatNumber.split("층 ");
+        String[] getrow = getfloor[1].split("열 ");
+        String[] getnum = getrow[1].split("번");
+
+        String floor = getfloor[0];
+        String row = getrow[0];
+        String num = getnum[0];
+
+        textFloorNum.setText(floor);
+        textRowNum.setText(row);
+        textSeatNum.setText(num);
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 makeDialog();
-
             }
         });
 
+        edtReview.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                isContextChanged = true;
+            }
+        });
 
         //취소버튼
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if(isContextChanged)
+                    showEndMsg();
+                else
+                    finish();
             }
         });
 
@@ -99,54 +197,110 @@ public class EditReview extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (image.getDrawable()==null) {
-                    Toast.makeText(getApplicationContext(),"이미지를 업로드해주세요",Toast.LENGTH_LONG).show();
-                } else if (ratingBar.getRating()==0) {
-                    Toast.makeText(getApplicationContext(),"별점을 매겨주세요",Toast.LENGTH_LONG).show();
-                } else if (review.getText().toString().getBytes().length <= 10) {
-                    Toast.makeText(getApplicationContext(),"리뷰글을 작성해주세요 (10자 이상)",Toast.LENGTH_LONG).show();
+                if(ratingBar.getRating() != ratedBefore)
+                    isContextChanged = true;
+
+                if(!isContextChanged) {
+                    Toast.makeText(getApplicationContext(),"수정 사항이 없습니다.",Toast.LENGTH_LONG).show();
+                } else if (edtReview.getText().toString().getBytes().length <= 10) {
+                    Toast.makeText(getApplicationContext(), "후기는 10글자 이상 작성하셔야 합니다.", Toast.LENGTH_LONG).show();
                 } else {
+                    // 수정된 정보 DB에 업데이트
+                    if(user != null) {
 
-                    //해당 계정정보, 사진, 리뷰글, 리뷰작성날짜, 별점 데이터 저장
-                    Toast.makeText(getApplicationContext(), "리뷰가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
-                    finish();
+                        if(finalURI != null) {
+                            // 사진을 변경한 경우
+                            final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
+
+                            photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                @Override
+                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                    if (!task.isSuccessful()) {
+                                        throw task.getException();
+                                    }
+
+                                    // Continue with the task to get the download URL
+                                    return photoRef.getDownloadUrl();
+                                }
+                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()) {
+                                        Uri downloadUri = task.getResult();
+                                        updateDB(downloadUri.toString());
+                                    } else {
+                                        // Handle failures
+                                        // ...
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            // 사진을 변경하지 않은 경우
+                            updateDB(imageBefore);
+                        }
+                    }
                 }
-
-
             }
         });
     }
 
+    private void updateDB(String imagepath) {
+        db.collection("SeatReview").document(documentID)
+                .update("imagepath", imagepath,
+                        "rating", ratingBar.getRating(),
+                        "reviewText", edtReview.getText().toString())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "후기가 수정 되었습니다.", Toast.LENGTH_LONG).show();
+                        setResult(1);
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error writing document(DB)", e);
+            }
+        });
+    }
 
-    //프로필 사진 눌렀을 때 메뉴
     private void makeDialog(){
 
+        // default:
+        selectedPhotoMenu = 0;
 
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(EditReview.this);
-        alt_bld.setTitle("프로필 변경").setCancelable(false).setPositiveButton("사진촬영",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
-                        //사진촬영
-                        getCamera();
-                    }
-                }).setNeutralButton("앨범선택",
+        alt_bld.setTitle("사진 변경하기").setCancelable(false);
 
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
-                        //앨범에서 선택
-                        getAlbum();
-                    }
-                }).setNegativeButton("취소   ",
 
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 취소 선택");
-                        // 취소 클릭. dialog 닫기.
-                        dialog.cancel();
-                    }
-                });
+        alt_bld.setSingleChoiceItems(R.array.array_photo, 0, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                selectedPhotoMenu = whichButton;
+            }
+        });
+
+        alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if(selectedPhotoMenu == 0 ) {
+                    // 사진촬영
+                    Log.v("알림", "다이얼로그 > 사진촬영 선택");
+                    getCamera();
+                } else if(selectedPhotoMenu == 1) {
+                    // 앨범에서 선택
+                    Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                    getAlbum();
+                }
+            }
+        });
+
+        alt_bld.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v("알림", "다이얼로그 > 취소 선택");
+                dialog.cancel();
+            }
+        });
 
         checkPermission();
 
@@ -188,7 +342,7 @@ public class EditReview extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + ".jpg";
         File imageFile = null;
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures");
+        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "Miraeseat");
 
         if(!storageDir.exists()){
             storageDir.mkdirs();
@@ -244,7 +398,36 @@ public class EditReview extends AppCompatActivity {
                         Log.i("REQUEST_TAKE_PHOTO","OK!!!!!!");
                         galleryAddPic();
 
-                        image.setImageURI(imageURI);
+                        finalURI = imageURI;
+
+                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
+                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), image.getWidth(), image.getHeight());
+
+                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+                        switch(orientation) {
+
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                rotatedBitmap = rotateImage(originalBitmap, 90);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                rotatedBitmap = rotateImage(originalBitmap, 180);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                rotatedBitmap = rotateImage(originalBitmap, 270);
+                                break;
+
+                            case ExifInterface.ORIENTATION_NORMAL:
+                            default:
+                                rotatedBitmap = originalBitmap;
+                        }
+
+                        image.setImageBitmap(rotatedBitmap);
+                        isContextChanged = true;
+
                     }catch(Exception e){
                         Log.e("REQUEST_TAKE_PHOTO",e.toString());
                     }
@@ -272,9 +455,57 @@ public class EditReview extends AppCompatActivity {
                     galleryAddPic();
                     //사진 변환 error
                     image.setImageURI(albumURI);
+                    finalURI = albumURI;
+                    isContextChanged = true;
                 }
                 break;
         }
+    }
+
+    // 사진 회전 함수
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(File res, int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(res.getAbsolutePath(),options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeFile(res.getAbsolutePath(),options);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height;
+            final int halfWidth = width;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     //앨범에서 사진 가져오기
@@ -319,6 +550,32 @@ public class EditReview extends AppCompatActivity {
                 Toast.makeText(this,"카메라 권한 승인 거절",Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+
+    private void showEndMsg()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //builder.setTitle(null);
+        builder.setMessage("후기 수정을 취소하시겠습니까?");
+
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        });
+        builder.setNegativeButton("취소", null);
+
+        builder.setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        showEndMsg();
     }
 
 }

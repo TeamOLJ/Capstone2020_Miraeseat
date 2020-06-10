@@ -1,4 +1,4 @@
-package com.capstondesign.miraeseat;
+package com.capstondesign.miraeseat.seatpage;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.capstondesign.miraeseat.Image;
+import com.capstondesign.miraeseat.R;
 
 import java.util.ArrayList;
 
@@ -79,7 +82,7 @@ public class SeatAdapter extends BaseAdapter {
             image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(view.getContext(),Image.class);
+                    Intent intent = new Intent(view.getContext(), Image.class);
                     context.startActivity(intent);
                 }
             });

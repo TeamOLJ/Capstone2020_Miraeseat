@@ -2,59 +2,69 @@ package com.capstondesign.miraeseat.mypage;
 
 public class mypageList_item {
 
-    private String listInfo;
-    private Float listRatingbar;
-    private int listImage;
-    private String listWriting;
-    private String listDate;
+    private String documentID;
+    private String theaterName;
+    private String seatNum;
+    private Float seatRating;
+    private String imagePath;
+    private String reviewContext;
+    private String reviewDate;
 
-    public mypageList_item(String listInfo, Float listRatingbar, int listImage, String listWriting, String listDate) {
-        this.listInfo = listInfo;
-        this.listRatingbar = listRatingbar;
-        this.listImage = listImage;
-        this.listWriting = listWriting;
-        this.listDate = listDate;
+    public mypageList_item(String documentID, String theaterName, String seatNum, Float seatRating, String imagePath, String reviewContext, String reviewDate) {
+        this.documentID = documentID;
+        this.theaterName = theaterName;
+        this.seatNum = seatNum;
+        this.seatRating = seatRating;
+        this.imagePath = imagePath;
+        this.reviewContext = reviewContext;
+        this.reviewDate = reviewDate;
     }
 
+    public String getDocumentID() { return documentID; }
 
-    public String getListInfo() {
-        return listInfo;
+    public void setDocumentID(String documentID) { this.documentID = documentID; }
+
+    public String getTheaterName() {
+        return theaterName;
     }
 
-    public void setListInfo(String listInfo) {
-        this.listInfo = listInfo;
+    public void setTheaterName(String theaterName) {
+        this.theaterName = theaterName;
     }
 
-    public Float getListRatingbar() {
-        return listRatingbar;
+    public String getSeatNum() { return seatNum; }
+
+    public void setSeatNum(String seatNum) { this.seatNum = seatNum; }
+
+    public Float getSeatRating() {
+        return seatRating;
     }
 
-    public void setListRatingbar(Float listRatingbar) {
-        this.listRatingbar = listRatingbar;
+    public void setSeatRating(Float seatRating) {
+        this.seatRating = seatRating;
     }
 
-
-    public int getListImage() {
-        return listImage;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setListImage(int listImage) {
-        this.listImage = listImage;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
-    public String getListWriting() {
-        return listWriting;
+    public String getReviewContext() {
+        return reviewContext;
     }
 
-    public void setListWriting(String listWriting) {
-        this.listWriting = listWriting;
+    public void setReviewContext(String reviewContext) {
+        this.reviewContext = reviewContext;
     }
 
-    public String getListDate() {
-        return listDate;
+    public String getReviewDate() {
+        return reviewDate;
     }
 
-    public void setListDate(String listDate) {
-        this.listDate = listDate;
+    public void setReviewDate(String listDate) {
+        this.reviewDate = reviewDate;
     }
 }

@@ -1,98 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/LogoImage"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="152dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginRight="100dp"
-        app:srcCompat="@drawable/logo_temp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="27dp"
-        android:onClick="onLogoButtonClicked"
-        android:contentDescription="@string/logo_desc" />
+        android:layout_height="match_parent" >
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/InputEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="20dp"
-        app:hintEnabled="false"
-        android:layout_below="@id/LogoImage">
+        <ImageView
+            android:id="@+id/LogoImage"
+            android:layout_width="match_parent"
+            android:layout_height="152dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginRight="100dp"
+            app:srcCompat="@drawable/logo_temp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="27dp"
+            android:contentDescription="@string/logo_desc" />
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/InputEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_email" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="20dp"
+            app:hintEnabled="false"
+            android:layout_below="@id/LogoImage">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/InputPwd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_below="@id/InputEmail"
-        app:hintEnabled="false"
-        app:passwordToggleEnabled="true">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_email"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/InputPwd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="@string/hint_pwd" />
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_below="@id/InputEmail"
+            app:hintEnabled="false"
+            app:passwordToggleEnabled="true">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="@string/hint_pwd" />
 
-    <CheckBox
-        android:id="@+id/checkAutoLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="20dp"
-        android:text="@string/keep_loggedin"
-        android:layout_below="@id/InputPwd"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_below="@id/checkAutoLogin"
-        android:background="@color/main_color"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:text="@string/login"/>
+        <CheckBox
+            android:id="@+id/checkAutoLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/keep_loggedin"
+            android:layout_below="@id/InputPwd"/>
 
-    <Button
-        android:id="@+id/btnFindPwd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btnLogin"
-        android:layout_centerHorizontal="true"
-        android:background="#00ff0000"
-        android:textColor="#4C4C4C"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:text="@string/find_pwd" />
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_below="@id/checkAutoLogin"
+            android:background="@color/main_color"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="@string/login"/>
 
-    <Button
-        android:id="@+id/btnSignUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btnFindPwd"
-        android:layout_centerHorizontal="true"
-        android:background="#00ff0000"
-        android:textColor="#4C4C4C"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:text="@string/sign_up" />
-</RelativeLayout>
+        <Button
+            android:id="@+id/btnFindPwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnLogin"
+            android:layout_centerHorizontal="true"
+            android:background="#00ff0000"
+            android:textColor="#4C4C4C"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="@string/find_pwd" />
+
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnFindPwd"
+            android:layout_centerHorizontal="true"
+            android:background="#00ff0000"
+            android:textColor="#4C4C4C"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="@string/sign_up" />
+
+    </RelativeLayout>
+
+</ScrollView>

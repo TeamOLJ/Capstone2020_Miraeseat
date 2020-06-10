@@ -9,4 +9,7 @@
     <color name="sub_color">#A6A6A6</color>
 
     <color name="seatbutton_clicked_color">#FF6161</color>
+
+    <color name="is_unique_info">#59DA50</color>
+    <color name="textlayout_error">#FF3636</color>
 </resources>

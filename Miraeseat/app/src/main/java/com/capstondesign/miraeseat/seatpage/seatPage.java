@@ -1,4 +1,4 @@
-package com.capstondesign.miraeseat;
+package com.capstondesign.miraeseat.seatpage;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,9 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.capstondesign.miraeseat.R;
+import com.capstondesign.miraeseat.WriteReview;
 
 import java.util.ArrayList;
 

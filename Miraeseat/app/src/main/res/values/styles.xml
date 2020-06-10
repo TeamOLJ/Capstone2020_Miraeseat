@@ -15,6 +15,11 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="seatTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_round</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
     <!--이명주-->
     <style name="homebt">
@@ -54,5 +59,14 @@
     <!--장혜진-->
     <style  name="seatbutton" parent="android:Widget.Button">
         <item name="android:background">@drawable/seatbutton</item>
+    </style>
+
+    <!-- TextInputLayout의 Error 색상을 변경하기 위한 스타일 코드 -->
+    <style name="InputError" parent="TextAppearance.Design.Error"/>
+    <style name="InputError.Green">
+        <item name="android:textColor">@color/is_unique_info</item>
+    </style>
+    <style name="InputError.Red">
+        <item name="android:textColor">@color/textlayout_error</item>
     </style>
 </resources>

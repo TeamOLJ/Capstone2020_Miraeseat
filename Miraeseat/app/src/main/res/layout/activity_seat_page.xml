@@ -6,20 +6,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"
-    tools:context=".seatPage">
+    tools:context=".seatpage.seatPage">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/seatInfo"
+            android:id="@+id/seatNum"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:gravity="center_vertical"
             android:text="1구역 12열 12"
-            android:textSize="18sp" />
+            android:textSize="24sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,26 +28,61 @@
             android:layout_weight="2"
             android:text="" />
 
-        <ImageView
-            android:layout_width="wrap_content"
+        <ImageButton
+            android:id="@+id/btnSlide"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:scaleType="fitXY"
             app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:text="닫기"
-            />
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnWrite"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="리뷰쓰기"
-        />
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="7dp"
+            android:text="총 평점 :"/>
+
+        <RatingBar
+            android:id="@+id/avgRating"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"/>
+
+
+        <TextView
+            android:id="@+id/avgText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" / 5.0"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"/>
+
+
+        <Button
+            android:id="@+id/btnWrite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="리뷰쓰기"
+            />
+    </LinearLayout>
 
     <View
         android:background="#000000"
@@ -55,10 +90,19 @@
         android:layout_height="1dp"
         android:layout_margin="5dp"/>
 
+    <TextView
+        android:id="@+id/cntReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="리뷰 수 : 1"
+        android:layout_marginLeft="5dp"
+        />
+
     <ListView
         android:id="@+id/seat_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         >
 
     </ListView>

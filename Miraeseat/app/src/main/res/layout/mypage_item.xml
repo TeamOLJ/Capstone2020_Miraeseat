@@ -42,7 +42,7 @@
                     android:layout_gravity="right"
                     android:layout_marginRight="10dp"
                     android:scaleType="fitCenter"
-                    android:src="@mipmap/down_arrow" />
+                    android:src="@drawable/ic_arrow_drop_down_black_24dp" />
 
 
             </LinearLayout>
