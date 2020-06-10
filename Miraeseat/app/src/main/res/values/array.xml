@@ -5,7 +5,6 @@
         <item>앨범에서 선택하기</item>
     </string-array>
 
-<<<<<<< HEAD
     <!-- width
          height
          margin_left
@@ -23,24 +22,4 @@
         <item>32</item>
         <item>44</item>
     </string-array>
-=======
-    <!-- width, height, margin_left, margin_top, area_space_vertical, area_space_horiaontal-->
-    <string-array name="charlotte_ratio">
-        <item>0.888</item>
-        <item>0.692</item>
-        <item>0.055</item>
-        <item>0.208</item>
-        <item>0.0375</item>
-        <item>0.261</item>
-    </string-array>
-
-    <integer-array name="charlotte">
-        <item>366</item>
-        <item>503</item>
-        <item>22</item>
-        <item>152</item>
-        <item>15</item>
-        <item>190</item>
-    </integer-array>
->>>>>>> Myeong
 </resources>

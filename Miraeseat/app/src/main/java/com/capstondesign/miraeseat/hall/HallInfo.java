@@ -102,7 +102,6 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         return super.onOptionsItemSelected(item);
     }
 
-<<<<<<< HEAD
     @Override
     public void onBackPressed() {
         if (drawer.drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
@@ -110,7 +109,8 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         } else {
             finish();
         }
-=======
+    }
+
     public void onMapReady(final GoogleMap googleMap) {
 
         map = googleMap;
@@ -127,6 +127,5 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
 
         map.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
         map.animateCamera(CameraUpdateFactory.zoomTo(12));
->>>>>>> Myeong
     }
 }
