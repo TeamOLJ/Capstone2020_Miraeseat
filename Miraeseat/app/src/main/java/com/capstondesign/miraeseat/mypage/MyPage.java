@@ -139,6 +139,7 @@ public class MyPage extends AppCompatActivity {
         startActivity(intent);
     }
 
+
     // 뒤로가기 버튼(홈버튼)을 누르면 창이 꺼지는 메소드
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

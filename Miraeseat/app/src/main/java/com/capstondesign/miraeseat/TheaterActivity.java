@@ -2,12 +2,10 @@ package com.capstondesign.miraeseat;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +21,8 @@ public class TheaterActivity extends AppCompatActivity {
     private ViewGroup seatplan_layout;
     private ImageView seatplan;
     float dX, dY;
+    private ImageView imageView;
+
 
     FirebaseFirestore db;
     TheaterItem TI;
@@ -41,6 +41,7 @@ public class TheaterActivity extends AppCompatActivity {
 
         TI = new TheaterItem(this, seatplan_layout);
 
+
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
     }
 
@@ -57,6 +58,7 @@ public class TheaterActivity extends AppCompatActivity {
             TI.init();
             TI.execute();
         }
+
     }
 
     private void GetSeatplanImage(String TheaterName) {
@@ -69,6 +71,7 @@ public class TheaterActivity extends AppCompatActivity {
     public void onFloatingButtonClicked(View v) {
         finish();
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

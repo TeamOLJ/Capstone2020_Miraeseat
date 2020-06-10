@@ -432,6 +432,9 @@ public class EditInfo extends AppCompatActivity {
     //프로필 사진 눌렀을 때 메뉴
     private void makeDialog(){
 
+        //default;
+        selectedPhotoMenu = 0;
+
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(EditInfo.this);
         alt_bld.setTitle("프로필 변경").setCancelable(false);
 
@@ -440,6 +443,7 @@ public class EditInfo extends AppCompatActivity {
                 selectedPhotoMenu = whichButton;
             }
         });
+
 
         alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

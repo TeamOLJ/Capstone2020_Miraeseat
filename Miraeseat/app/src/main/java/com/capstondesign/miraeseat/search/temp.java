@@ -8,8 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.capstondesign.miraeseat.R;
-import com.capstondesign.miraeseat.TheaterActivity;
-import com.capstondesign.miraeseat.seatPage;
+import com.capstondesign.miraeseat.seatpage.seatPage;
 
 public class temp extends AppCompatActivity {
 

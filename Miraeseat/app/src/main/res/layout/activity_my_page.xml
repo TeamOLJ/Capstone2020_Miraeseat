@@ -84,6 +84,7 @@
         android:layout_height="wrap_content"
         android:text="내가 쓴 리뷰"
         android:layout_margin="10dp"/>
+
     <ListView
         android:id="@+id/mypage_list"
         android:layout_width="match_parent"

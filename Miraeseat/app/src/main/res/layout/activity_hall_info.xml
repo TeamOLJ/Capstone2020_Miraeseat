@@ -52,13 +52,13 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/hall_map"
+        <fragment
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:background="#ffffff"
-            android:gravity="center"
-            android:text="지도 api 자리" />
+            android:id="@+id/map"
+            tools:context=".MapsActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment" />
+
 
         //버튼 이미지버튼으로 나중에 바꾸기
 
@@ -75,10 +75,14 @@
             android:text="현재 공연 정보" />
 
 
-        <ListView
-            android:id="@+id/hall_playlist"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <ListView
+                android:id="@+id/hall_playlist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false"
+                android:listSelector="@android:color/transparent"/>
+
+
 
     </LinearLayout>
 

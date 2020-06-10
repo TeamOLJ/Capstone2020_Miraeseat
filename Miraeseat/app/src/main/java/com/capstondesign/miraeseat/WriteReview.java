@@ -46,6 +46,8 @@ public class WriteReview extends AppCompatActivity {
     ImageView image;
     EditText review;
 
+    int selectedPhotoMenu;
+
     Button btnSave;
     Button btnCancel;
 
@@ -118,31 +120,41 @@ public class WriteReview extends AppCompatActivity {
     //프로필 사진 눌렀을 때 메뉴
     private void makeDialog(){
 
+        //default;
+        selectedPhotoMenu = 0;
+
+
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(WriteReview.this);
-        alt_bld.setTitle("리뷰 사진 추가").setCancelable(false).setPositiveButton("사진촬영",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
-                        //사진촬영
-                        getCamera();
-                    }
-                }).setNeutralButton("앨범선택",
+        alt_bld.setTitle("프로필 변경").setCancelable(false);
 
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
-                        //앨범에서 선택
-                        getAlbum();
-                    }
-                }).setNegativeButton("취소   ",
+        alt_bld.setSingleChoiceItems(R.array.array_photo, 0, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                selectedPhotoMenu = whichButton;
+            }
+        });
 
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 취소 선택");
-                        // 취소 클릭. dialog 닫기.
-                        dialog.cancel();
-                    }
-                });
+
+        alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if(selectedPhotoMenu == 0 ) {
+                    // 사진촬영
+                    Log.v("알림", "다이얼로그 > 사진촬영 선택");
+                    getCamera();
+                } else if(selectedPhotoMenu == 1) {
+                    // 앨범에서 선택
+                    Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                    getAlbum();
+                }
+            }
+        });
+
+        alt_bld.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v("알림", "다이얼로그 > 취소 선택");
+                dialog.cancel();
+            }
+        });
 
         checkPermission();
 

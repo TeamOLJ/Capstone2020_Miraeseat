@@ -74,7 +74,7 @@ public class MyPageAdapter extends BaseAdapter {
             btnMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //메뉴를 불러오고 싶은데 어떻게 해야되는지 모르겠음 ㅠㅠ
+
 
                 }
             });
