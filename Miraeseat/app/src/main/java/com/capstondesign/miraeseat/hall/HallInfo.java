@@ -90,6 +90,7 @@ public class HallInfo extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+<<<<<<< HEAD
     @Override
     public void onBackPressed() {
         if (drawer.drawerLayout.isDrawerOpen(Gravity.RIGHT)) {

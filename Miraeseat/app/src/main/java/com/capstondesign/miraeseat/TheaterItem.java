@@ -31,6 +31,7 @@ public class TheaterItem {
     private TableLayout btnTableLayout;
     private TableRow btnRow;
     private Button btn;
+    private Button previous_btn = null;
     private TextView empty_view;
 
     private String[] table_info;
@@ -160,6 +161,9 @@ public class TheaterItem {
     public View.OnClickListener SeatButtonOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+
+
             String result = null;
             String[] tag = v.getTag().toString().split("_"); //버튼의 태그 받아와서 행/열 번호로 나누기
 
