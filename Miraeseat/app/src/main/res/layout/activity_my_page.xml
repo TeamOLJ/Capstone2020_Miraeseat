@@ -23,13 +23,17 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:elevation="1dp" >
 
-            <TextView
-                android:id="@+id/titleText"
-                android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/logo"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:text="@string/my_page_text1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_gravity="center"
-                android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title" />
+                android:background="@android:color/transparent"
+                android:onClick="onLogoButtonClicked"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/logo_temp" />
 
         </androidx.appcompat.widget.Toolbar>
 

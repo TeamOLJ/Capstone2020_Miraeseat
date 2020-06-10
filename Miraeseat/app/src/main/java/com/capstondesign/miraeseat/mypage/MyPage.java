@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.EditInfo;
+import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.UnsubscribePage;
 import com.capstondesign.miraeseat.UserClass;
@@ -131,6 +132,12 @@ public class MyPage extends AppCompatActivity {
         if(resultCode == 1) {
             initUI();
         }
+    }
+
+    public void onLogoButtonClicked(View v) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     // 뒤로가기 버튼(홈버튼)을 누르면 창이 꺼지는 메소드

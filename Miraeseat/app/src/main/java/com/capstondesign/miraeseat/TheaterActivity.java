@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,11 +20,10 @@ public class TheaterActivity extends AppCompatActivity {
     private int half_width, half_height;
     private ScaleGestureDetector mScaleGestureDetector;
     private float mScaleFactor = 1.0f;
-    private ViewGroup mlayout;
+    private ViewGroup seatplan_layout;
+    private ImageView seatplan;
     float dX, dY;
-    private ImageView imageView;
 
-    DrawerHandler drawer;
     FirebaseFirestore db;
     TheaterItem TI;
 
@@ -33,28 +33,38 @@ public class TheaterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_theater);
 
         final String TheaterName = getIntent().getStringExtra("hall_name");
+
+        seatplan_layout = (ViewGroup) findViewById(R.id.seatplanLayout);
+        seatplan = (ImageView) findViewById(R.id.seatplan);
+
         GetSeatplanImage(TheaterName);
 
-        TI = new TheaterItem(this, (ViewGroup)findViewById(R.id.seatplanLayout));
-        TI.init();
-        TI.execute();
+        TI = new TheaterItem(this, seatplan_layout);
 
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
     }
 
-
-    private void GetSeatplanImage(String name) {//DB에서 공연장 이름으로 이미지 받아오기
-        imageView = (ImageView)findViewById(R.id.seatplan);
-
-        Glide.with(getApplicationContext()).load("https://firebasestorage.googleapis.com/v0/b/capstone2020-e540d.appspot.com/o/theater_seat_plan%2Fcharlotte90.jpg?alt=media&token=c58ec0c9-de25-4fc4-b001-d16c6aca986a").into(imageView);
-    }
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        mlayout = (ViewGroup)findViewById(R.id.seatplanLayout);
-        half_width = mlayout.getWidth()/2;
-        half_height = mlayout.getHeight()/2;
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus == true) {
+            half_width = seatplan_layout.getWidth() / 2;
+            half_height = seatplan_layout.getHeight() / 2;
+
+            //onCreate 때는 seatplan의 크기 측정 불가. 화면에 이미지가 생성된 후 측정 가능.
+            TI.getSize(seatplan.getWidth(), seatplan.getHeight());
+            TI.init();
+            TI.execute();
+        }
     }
+
+    private void GetSeatplanImage(String TheaterName) {
+        //DB에서 공연장 이름으로 이미지 받아오기
+
+        Glide.with(getApplicationContext()).load("https://firebasestorage.googleapis.com/v0/b/capstone2020-e540d.appspot.com/o/theater_seat_plan%2Fcharlotte.jpg?alt=media&token=80453ebf-d7c5-4274-83c8-beba34bc5caa").into(seatplan);
+    }
+
 
     public void onFloatingButtonClicked(View v) {
         finish();
@@ -66,8 +76,8 @@ public class TheaterActivity extends AppCompatActivity {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                dX = mlayout.getX()-event.getRawX();
-                dY = mlayout.getY()-event.getRawY();
+                dX = seatplan_layout.getX() - event.getRawX();
+                dY = seatplan_layout.getY() - event.getRawY();
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -75,8 +85,8 @@ public class TheaterActivity extends AppCompatActivity {
                 float tmpY = event.getRawY() + dY;
                 //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
 
-                if(Math.abs(tmpX) < half_width*(mScaleFactor-1) && Math.abs(tmpY) < half_height*(mScaleFactor-1)) {
-                    mlayout.animate().x(tmpX).y(tmpY).setDuration(0).start();
+                if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
+                    seatplan_layout.animate().x(tmpX).y(tmpY).setDuration(0).start();
                 }
                 break;
 
@@ -92,8 +102,8 @@ public class TheaterActivity extends AppCompatActivity {
             mScaleFactor *= detector.getScaleFactor();
             mScaleFactor = Math.max(1f,
                     Math.min(mScaleFactor, 5.0f));
-            mlayout.setScaleX(mScaleFactor);
-            mlayout.setScaleY(mScaleFactor);
+            seatplan_layout.setScaleX(mScaleFactor);
+            seatplan_layout.setScaleY(mScaleFactor);
 
             return true;
         }

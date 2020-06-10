@@ -50,4 +50,9 @@
         <item name="android:layout_marginBottom">5dp</item>
         <item name="android:background">@null</item>
     </style>
+
+    <!--장혜진-->
+    <style  name="seatbutton" parent="android:Widget.Button">
+        <item name="android:background">@drawable/seatbutton</item>
+    </style>
 </resources>

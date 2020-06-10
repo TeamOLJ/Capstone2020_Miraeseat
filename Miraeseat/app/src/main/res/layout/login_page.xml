@@ -16,6 +16,7 @@
         app:srcCompat="@drawable/logo_temp"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="27dp"
+        android:onClick="onLogoButtonClicked"
         android:contentDescription="@string/logo_desc" />
 
     <com.google.android.material.textfield.TextInputLayout

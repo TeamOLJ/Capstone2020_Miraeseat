@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -48,8 +49,7 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
             Intent intent = new Intent(activity, NoticeListPage.class);
             activity.startActivity(intent);
         } else if (id == R.id.menu_use) {
-            Intent intent = new Intent(activity, SignUpPage.class);
-            activity.startActivity(intent);
+
         } else if (id == R.id.menu_settings) {
 
         }
@@ -57,5 +57,4 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
         drawerLayout.closeDrawer(Gravity.RIGHT);
         return true;
     }
-
 }
