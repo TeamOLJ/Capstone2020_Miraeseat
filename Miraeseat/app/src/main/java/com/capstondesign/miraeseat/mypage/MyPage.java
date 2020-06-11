@@ -171,6 +171,8 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                                     userReview.getRating(), userReview.getImagepath(), userReview.getReviewText(), userReview.getReviewDate()));
                         }
 
+                        // mData까지도 문제가 없다...
+
                         myPageAdapter = new MyPageAdapter(MyPage.this, mData, MyPage.this);
                         listView.setAdapter(myPageAdapter);
                     }
