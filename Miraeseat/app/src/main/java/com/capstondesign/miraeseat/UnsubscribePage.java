@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -36,6 +37,7 @@ public class UnsubscribePage extends AppCompatActivity {
     TextView titleText;
 
     TextInputLayout textLayoutPwd;
+    EditText edtUnsubPwd;
 
     Button btnUnsubscribe;
 
@@ -59,7 +61,7 @@ public class UnsubscribePage extends AppCompatActivity {
         textLayoutPwd = (TextInputLayout)findViewById(R.id.unsubscribePwd);
         btnUnsubscribe = (Button)findViewById(R.id.btnUnsubscribe);
 
-        final EditText edtUnsubPwd = textLayoutPwd.getEditText();
+        edtUnsubPwd = textLayoutPwd.getEditText();
 
         db = FirebaseFirestore.getInstance();
 
@@ -79,72 +81,77 @@ public class UnsubscribePage extends AppCompatActivity {
             }
         });
 
-        btnUnsubscribe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String givenPwd = edtUnsubPwd.getText().toString();
-
-                if(givenPwd.getBytes().length <= 0)
-                {
-                    textLayoutPwd.setError("비밀번호를 입력하세요.");
-                }
-                else
-                {
-                    user = FirebaseAuth.getInstance().getCurrentUser();
-                    final String userEmail = user.getEmail();
-
-                    // Get auth credentials from the user for re-authentication.
-                    AuthCredential credential = EmailAuthProvider.getCredential(userEmail, givenPwd);
-
-                    // Prompt the user to re-provide their sign-in credentials
-                    user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()) {
-                                Log.d(TAG, "User re-authenticated.");
-                                user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Log.d(TAG, "User account deleted.");
-                                            SaveSharedPreference.setIsAutoLogin(getApplicationContext(), false);
-                                            // 회원 기타 정보 삭제
-                                            db.collection("UserInfo").document(userEmail).delete()
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            Log.d(TAG, "User information successfully deleted from DB.");
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Log.w(TAG, "Error deleting document(DB)", e);
-                                                        }
-                                                    });
-                                            // 회원의 리뷰 전체 삭제
-                                            // ...
-                                            // 메인화면으로 돌아감
-                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            startActivity(intent);
-                                        }
-                                        else {
-                                            Log.w(TAG, "User account is not deleted.", task.getException());
-                                        }
-                                    }
-                                });
-                            }
-                            else {
-                                textLayoutPwd.setError("잘못 된 입력입니다. 비밀번호를 확인하세요.");
-                            }
-                        }
-                    });
-                }
-            }
-        });
+        btnUnsubscribe.setOnClickListener(clickUnsubListener);
     }
+
+    OnOneOffClickListener clickUnsubListener = new OnOneOffClickListener() {
+        @Override
+        public void onOneClick(View v) {
+            String givenPwd = edtUnsubPwd.getText().toString();
+
+            if(givenPwd.getBytes().length <= 0)
+            {
+                textLayoutPwd.setError("비밀번호를 입력하세요.");
+            }
+            else
+            {
+                user = FirebaseAuth.getInstance().getCurrentUser();
+                final String userEmail = user.getEmail();
+
+                // Get auth credentials from the user for re-authentication.
+                AuthCredential credential = EmailAuthProvider.getCredential(userEmail, givenPwd);
+
+                // Prompt the user to re-provide their sign-in credentials
+                user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            Log.d(TAG, "User re-authenticated.");
+                            user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "User account deleted.");
+                                        SaveSharedPreference.setIsAutoLogin(getApplicationContext(), false);
+                                        // 회원 기타 정보 삭제
+                                        db.collection("UserInfo").document(userEmail).delete()
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d(TAG, "User information successfully deleted from DB.");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error deleting document(DB)", e);
+                                                    }
+                                                });
+                                        // 회원의 리뷰 전체 삭제
+                                        // ...
+                                        // 메인화면으로 돌아감
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                    }
+                                    else {
+                                        // Log.w(TAG, "User account is not deleted.", task.getException());
+                                        reset();
+                                        Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            reset();
+                            textLayoutPwd.setError("잘못 된 입력입니다. 비밀번호를 확인하세요.");
+                        }
+                    }
+                });
+            }
+        }
+    };
 
     // 뒤로가기 버튼(홈버튼)을 누르면 창이 꺼지는 메소드
     @Override
