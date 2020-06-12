@@ -79,6 +79,7 @@ public class EditReview extends AppCompatActivity {
     private FirebaseStorage storage;
     private StorageReference storageRef;
 
+    String userUID;
     String documentID;
 
     ImageView image;
@@ -136,8 +137,9 @@ public class EditReview extends AppCompatActivity {
         // Firebase
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference().child("user_review_photo");
+        storageRef = storage.getReference().child("user_upload_image/"+userUID+"/review_photo");
 
         // 해당 리뷰 내용을 불러와 세팅하기
         Intent intent = getIntent();

@@ -149,7 +149,7 @@ public class EditInfo extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference().child("user_profile_picture");
+        storageRef = storage.getReference().child("user_upload_image/"+userUID+"/profile_picture");
 
         //닉네임 이메일 사진 데이터 불러오기
         db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

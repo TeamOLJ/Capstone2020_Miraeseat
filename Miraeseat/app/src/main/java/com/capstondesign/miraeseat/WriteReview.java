@@ -135,7 +135,7 @@ public class WriteReview extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference().child("user_review_photo");
+        storageRef = storage.getReference().child("user_upload_image/"+userUID+"/review_photo");
 
         // Spinner 관련 임시 코드
         // DB에서 정보를 읽어오거나... 처음부터 Spinner 설정을 못 하게 변경하거나...
