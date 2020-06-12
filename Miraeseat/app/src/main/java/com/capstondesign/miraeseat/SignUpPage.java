@@ -38,6 +38,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class SignUpPage extends AppCompatActivity {
@@ -464,6 +466,14 @@ public class SignUpPage extends AppCompatActivity {
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
+
+                                                                // make collection to save reviews
+                                                                Map<String, Object> data = new HashMap<>();
+                                                                data.put("dummy", "text");
+
+                                                                db.collection("SeatReview").document(FirebaseAuth.getInstance().getUid()).set(data);
+                                                                db.collection("SeatReview").document(FirebaseAuth.getInstance().getUid()).collection("Reviews").add(data);
+
                                                                 Log.d(TAG, "Signup Info successfully written to DB.");
                                                                 setResult(SIGN_UP_SUCCESS);
                                                                 FirebaseAuth.getInstance().signOut();

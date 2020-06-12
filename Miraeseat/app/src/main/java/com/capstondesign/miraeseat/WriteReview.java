@@ -252,7 +252,7 @@ public class WriteReview extends AppCompatActivity {
                                 Review userReview = new Review(userNick, null, reviewDate, "극장이름", seatNumber, savedImageUri, ratingPoint, newReview);
 
                                 // DB 업로드
-                                db.collection("SeatReview").add(userReview)
+                                db.collection("SeatReview").document(userUID).collection("Reviews").add(userReview)
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
@@ -288,7 +288,7 @@ public class WriteReview extends AppCompatActivity {
                             ratingPoint, newReview);
 
                     // DB 업로드
-                    db.collection("SeatReview").add(userReview)
+                    db.collection("SeatReview").document(userUID).collection("Reviews").add(userReview)
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
