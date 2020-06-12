@@ -107,6 +107,7 @@ public class EditInfo extends AppCompatActivity {
     String userUID;
     String userEmail;
     String prevNick;
+    String prevImagePath;
 
     DrawerHandler drawer;
 
@@ -161,9 +162,10 @@ public class EditInfo extends AppCompatActivity {
                 Log.d(TAG, "loginedUser.getEmail():"+loginedUser.getEmail());
                 prevNick = loginedUser.getNick();
                 edtNickname.setText(prevNick);
+                prevImagePath = loginedUser.getImagepath();
                 if(loginedUser.getImagepath() != null) {
                     // edit_photo 에 loginedUser.getImagepath()의 이미지 보이게
-                    Glide.with(getApplicationContext()).load(loginedUser.getImagepath()).into(edit_photo);
+                    Glide.with(getApplicationContext()).load(prevImagePath).into(edit_photo);
                     currentPhoto = loginedUser.getImagepath();
                 }
                 else {
@@ -389,6 +391,10 @@ public class EditInfo extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Uri> task) {
                                             if (task.isSuccessful()) {
+                                                // Storage에서 이전 사진 삭제
+                                                StorageReference oldPhotoRef = storage.getReferenceFromUrl(prevImagePath);
+                                                oldPhotoRef.delete();
+
                                                 // 업로드한 사진을 가리키는 주소
                                                 Uri downloadUri = task.getResult();
                                                 finalURI = null;
@@ -441,6 +447,10 @@ public class EditInfo extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()) {
+                                    // Storage에서 이전 사진 삭제
+                                    StorageReference oldPhotoRef = storage.getReferenceFromUrl(prevImagePath);
+                                    oldPhotoRef.delete();
+
                                     Uri downloadUri = task.getResult();
                                     finalURI = null;
                                     currentPhoto = downloadUri.toString();

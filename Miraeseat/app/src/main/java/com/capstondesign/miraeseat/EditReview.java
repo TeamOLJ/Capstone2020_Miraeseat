@@ -81,6 +81,7 @@ public class EditReview extends AppCompatActivity {
 
     String userUID;
     String documentID;
+    String serverImagePath;
 
     ImageView image;
     RatingBar ratingBar;
@@ -149,7 +150,8 @@ public class EditReview extends AppCompatActivity {
         ratingBar.setRating(ratedBefore);
         edtReview.setText(intent.getStringExtra("reviewContext"));
 
-        imageBefore = intent.getStringExtra("imagepath");
+        serverImagePath = intent.getStringExtra("imagepath");
+        imageBefore = serverImagePath;
         Glide.with(EditReview.this).load(imageBefore).into(image);
 
         String seatNumber = intent.getStringExtra("seatNum");
@@ -246,6 +248,10 @@ public class EditReview extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()) {
+                                    // Storage에서 이전 사진 삭제
+                                    StorageReference oldPhotoRef = storage.getReferenceFromUrl(serverImagePath);
+                                    oldPhotoRef.delete();
+
                                     Uri downloadUri = task.getResult();
                                     finalURI = null;
                                     imageBefore = downloadUri.toString();
@@ -545,15 +551,14 @@ public class EditReview extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_TAKE_ALBUM);
     }
 
-
     //사진 crop할 수 있도록 하는 함수
     public void cropImage(){
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         cropIntent.setDataAndType(photoURI,"image/*");
-        cropIntent.putExtra("aspectX",1);
-        cropIntent.putExtra("aspectY",1);
+        cropIntent.putExtra("aspectX",4);
+        cropIntent.putExtra("aspectY",3);
         cropIntent.putExtra("scale",true);
         cropIntent.putExtra("output",albumURI);
         startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);

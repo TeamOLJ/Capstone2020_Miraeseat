@@ -40,6 +40,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -238,11 +240,16 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
         builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                final String reviewImagePath = mData.get(position).getImagePath();
 
                 // DB에서 해당 문서를 삭제
                 db.collection("SeatReview").document(mData.get(position).getDocumentID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        // Storage에서 사진 삭제
+                        StorageReference oldPhotoRef = FirebaseStorage.getInstance().getReferenceFromUrl(reviewImagePath);
+                        oldPhotoRef.delete();
+
                         Toast.makeText(MyPage.this, "후기가 삭제되었습니다.", Toast.LENGTH_LONG).show();
 
                         // 리스트뷰의 리스트에서도 해당 아이템 삭제
