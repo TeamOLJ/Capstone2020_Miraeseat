@@ -469,10 +469,8 @@ public class SignUpPage extends AppCompatActivity {
 
                                                                 // make collection to save reviews
                                                                 Map<String, Object> data = new HashMap<>();
-                                                                data.put("dummy", "text");
-
+                                                                data.put("userNick", userNick);
                                                                 db.collection("SeatReview").document(FirebaseAuth.getInstance().getUid()).set(data);
-                                                                db.collection("SeatReview").document(FirebaseAuth.getInstance().getUid()).collection("Reviews").add(data);
 
                                                                 Log.d(TAG, "Signup Info successfully written to DB.");
                                                                 setResult(SIGN_UP_SUCCESS);

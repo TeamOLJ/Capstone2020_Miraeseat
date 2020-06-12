@@ -492,6 +492,7 @@ public class EditInfo extends AppCompatActivity {
 
                         // 닉네임이 변경된 경우 기존 리뷰의 닉네임도 변경해야 함
                         if (!prevNick.equals(user.getNick())) {
+                            db.collection("SeatReview").document(userUID).update("userNick", user.getNick());
                             db.collection("SeatReview").document(userUID).collection("Reviews").get()
                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override

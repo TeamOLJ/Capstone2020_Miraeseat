@@ -26,7 +26,14 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UnsubscribePage extends AppCompatActivity {
     private static final String TAG = "UnsubscribePage";
@@ -97,6 +104,7 @@ public class UnsubscribePage extends AppCompatActivity {
             {
                 user = FirebaseAuth.getInstance().getCurrentUser();
                 final String userEmail = user.getEmail();
+                final String userUID = user.getUid();
 
                 // Get auth credentials from the user for re-authentication.
                 AuthCredential credential = EmailAuthProvider.getCredential(userEmail, givenPwd);
@@ -114,7 +122,7 @@ public class UnsubscribePage extends AppCompatActivity {
                                         Log.d(TAG, "User account deleted.");
                                         SaveSharedPreference.setIsAutoLogin(getApplicationContext(), false);
                                         // 회원 기타 정보 삭제
-                                        db.collection("UserInfo").document(userEmail).delete()
+                                        db.collection("UserInfo").document(userUID).delete()
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
@@ -127,8 +135,39 @@ public class UnsubscribePage extends AppCompatActivity {
                                                         Log.w(TAG, "Error deleting document(DB)", e);
                                                     }
                                                 });
+
                                         // 회원의 리뷰 전체 삭제
-                                        // ...
+                                        db.collection("SeatReview").document(userUID).collection("Reviews").get()
+                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            List<String> docIdlist = new ArrayList<>();
+                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                docIdlist.add(document.getId());
+                                                            }
+                                                            Log.d(TAG, docIdlist.toString());
+                                                            updateFirestore((ArrayList) docIdlist, userUID);
+                                                        } else {
+                                                            Log.d(TAG, "Error getting documents: ", task.getException());
+                                                        }
+                                                    }
+                                                });
+
+                                        db.collection("SeatReview").document(userUID).delete()
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d(TAG, "User SeatReview successfully deleted from DB.");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error deleting SeatReview document(DB)", e);
+                                                    }
+                                                });
+
                                         // 메인화면으로 돌아감
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                         // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
@@ -152,6 +191,29 @@ public class UnsubscribePage extends AppCompatActivity {
             }
         }
     };
+
+    void updateFirestore(ArrayList list, String userUID) {
+
+        // Get a new write batch
+        WriteBatch batch = db.batch();
+
+        // Iterate through the list
+        for (int k = 0; k < list.size(); k++) {
+
+            // Update each list item
+            DocumentReference ref = db.collection("SeatReview").document(userUID).collection("Reviews").document(list.get(k).toString());
+            batch.delete(ref);
+
+        }
+
+        // Commit the batch
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                // Yay its all done in one go!
+            }
+        });
+    }
 
     // 뒤로가기 버튼(홈버튼)을 누르면 창이 꺼지는 메소드
     @Override
