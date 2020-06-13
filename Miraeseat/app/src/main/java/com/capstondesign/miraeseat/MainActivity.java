@@ -2,6 +2,7 @@ package com.capstondesign.miraeseat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import android.content.Intent;
@@ -95,10 +96,12 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         for (int i = 0; i < 5; ++i) {
             ImageButton imageButton = new ImageButton(this);
             imageButton.setId(type + i);
-            imageButton.setId(type + i);
-            imageButton.setImageResource(R.drawable.theater1);  //type에 따라 다른 그림이 나오도록 바꾸기
+            imageButton.setImageResource(R.drawable.logo_temp);  //type에 따라 다른 그림이 나오도록 바꾸기
             imageButton.setLayoutParams(params);
-            imageButton.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                imageButton.setElevation(1);
+            }
             imageButton.setOnClickListener(PosterOnClickListner);  //다른 버튼 클릭 리스너
             view_theater.addView(imageButton);
         }

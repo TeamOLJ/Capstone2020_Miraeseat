@@ -53,6 +53,10 @@
             android:name=".find.FindInfoPage"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
+        <activity
+            android:name=".mypage.MyPage"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
         <activity android:name=".notice.NoticeListPage"></activity>
 
         <activity android:name=".notice.NoticeContext"></activity>

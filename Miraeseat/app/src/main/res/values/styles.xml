@@ -56,11 +56,6 @@
         <item name="android:background">@null</item>
     </style>
 
-    <!--장혜진-->
-    <style  name="seatbutton" parent="android:Widget.Button">
-        <item name="android:background">@drawable/seatbutton</item>
-    </style>
-
     <!-- TextInputLayout의 Error 색상을 변경하기 위한 스타일 코드 -->
     <style name="InputError" parent="TextAppearance.Design.Error"/>
     <style name="InputError.Green">

@@ -9,16 +9,18 @@
          height
          margin_left
          margin_top
+         vertical_space_area
          horizontal_space_area
          max_row
          max_column
          -->
     <string-array name="charlotte_ratio">
-        <item>0.892</item>
-        <item>0.655</item>
-        <item>0.058</item>
-        <item>0.2</item>
-        <item>0.245</item> <!--또는 0.228-->
+        <item>0.893</item>
+        <item>0.656</item>
+        <item>0.057</item>
+        <item>0.199</item>
+        <item>0.039</item>
+        <item>0.240</item> <!--또는 0.228-->
         <item>32</item>
         <item>44</item>
     </string-array>
