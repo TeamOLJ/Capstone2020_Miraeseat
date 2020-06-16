@@ -275,7 +275,7 @@ public class EditReview extends AppCompatActivity {
     };
 
     private void updateDB(String imagepath) {
-        db.collection("SeatReview").document(userUID).collection("Reviews").document(documentID)
+        db.collection("SeatReview").document(documentID)
                 .update("imagepath", imagepath,
                         "rating", newRating,
                         "reviewText", newReview)

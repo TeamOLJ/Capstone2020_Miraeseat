@@ -31,6 +31,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,8 @@ public class UnsubscribePage extends AppCompatActivity {
 
     FirebaseUser user;
     FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
 
     TextView titleText;
 
@@ -71,6 +75,7 @@ public class UnsubscribePage extends AppCompatActivity {
         edtUnsubPwd = textLayoutPwd.getEditText();
 
         db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
 
         edtUnsubPwd.addTextChangedListener(new TextWatcher() {
             @Override
@@ -137,7 +142,7 @@ public class UnsubscribePage extends AppCompatActivity {
                                                 });
 
                                         // 회원의 리뷰 전체 삭제
-                                        db.collection("SeatReview").document(userUID).collection("Reviews").get()
+                                        db.collection("SeatReview").whereEqualTo("ownerUser", userUID).get()
                                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -147,26 +152,16 @@ public class UnsubscribePage extends AppCompatActivity {
                                                                 docIdlist.add(document.getId());
                                                             }
                                                             Log.d(TAG, docIdlist.toString());
-                                                            updateFirestore((ArrayList) docIdlist, userUID);
+                                                            updateFirestore((ArrayList) docIdlist);
                                                         } else {
                                                             Log.d(TAG, "Error getting documents: ", task.getException());
                                                         }
                                                     }
                                                 });
 
-                                        db.collection("SeatReview").document(userUID).delete()
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d(TAG, "User SeatReview successfully deleted from DB.");
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.w(TAG, "Error deleting SeatReview document(DB)", e);
-                                                    }
-                                                });
+                                        // 회원이 업로드한 이미지 전체 삭제
+                                        // storage.getReference().child("user_upload_image/"+userUID).delete();
+                                        // 저장소 폴더를 단번에 삭제할 수 있는 방법은 없나?
 
                                         // 메인화면으로 돌아감
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -192,7 +187,7 @@ public class UnsubscribePage extends AppCompatActivity {
         }
     };
 
-    void updateFirestore(ArrayList list, String userUID) {
+    void updateFirestore(ArrayList list) {
 
         // Get a new write batch
         WriteBatch batch = db.batch();
@@ -201,7 +196,7 @@ public class UnsubscribePage extends AppCompatActivity {
         for (int k = 0; k < list.size(); k++) {
 
             // Update each list item
-            DocumentReference ref = db.collection("SeatReview").document(userUID).collection("Reviews").document(list.get(k).toString());
+            DocumentReference ref = db.collection("SeatReview").document(list.get(k).toString());
             batch.delete(ref);
 
         }

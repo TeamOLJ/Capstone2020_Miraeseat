@@ -397,8 +397,10 @@ public class EditInfo extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Uri> task) {
                                             if (task.isSuccessful()) {
                                                 // Storage에서 이전 사진 삭제
-                                                StorageReference oldPhotoRef = storage.getReferenceFromUrl(prevImagePath);
-                                                oldPhotoRef.delete();
+                                                if(prevImagePath != null) {
+                                                    StorageReference oldPhotoRef = storage.getReferenceFromUrl(prevImagePath);
+                                                    oldPhotoRef.delete();
+                                                }
 
                                                 // 업로드한 사진을 가리키는 주소
                                                 Uri downloadUri = task.getResult();
@@ -453,8 +455,10 @@ public class EditInfo extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()) {
                                     // Storage에서 이전 사진 삭제
-                                    StorageReference oldPhotoRef = storage.getReferenceFromUrl(prevImagePath);
-                                    oldPhotoRef.delete();
+                                    if(prevImagePath != null) {
+                                        StorageReference oldPhotoRef = storage.getReferenceFromUrl(prevImagePath);
+                                        oldPhotoRef.delete();
+                                    }
 
                                     Uri downloadUri = task.getResult();
                                     finalURI = null;
@@ -490,27 +494,6 @@ public class EditInfo extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         // Log.d(TAG, "Modified Info successfully written to DB.");
 
-                        // 닉네임이 변경된 경우 기존 리뷰의 닉네임도 변경해야 함
-                        if (!prevNick.equals(user.getNick())) {
-                            db.collection("SeatReview").document(userUID).update("userNick", user.getNick());
-                            db.collection("SeatReview").document(userUID).collection("Reviews").get()
-                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                List<String> docIdlist = new ArrayList<>();
-                                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                                    docIdlist.add(document.getId());
-                                                }
-                                                Log.d(TAG, docIdlist.toString());
-                                                updateFirestore((ArrayList) docIdlist, user.getNick());
-                                            } else {
-                                                Log.d(TAG, "Error getting documents: ", task.getException());
-                                            }
-                                        }
-                                    });
-                        }
-
                         SaveSharedPreference.setUserNickName(getApplicationContext(), user.getNick());
                         Toast.makeText(getApplicationContext(), "회원정보가 수정되었습니다.", Toast.LENGTH_LONG).show();
                         setResult(1);
@@ -526,29 +509,6 @@ public class EditInfo extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
                     }
                 });
-    }
-
-    void updateFirestore(ArrayList list, String newNick) {
-
-        // Get a new write batch
-        WriteBatch batch = db.batch();
-
-        // Iterate through the list
-        for (int k = 0; k < list.size(); k++) {
-
-            // Update each list item
-            DocumentReference ref = db.collection("SeatReview").document(userUID).collection("Reviews").document(list.get(k).toString());
-            batch.update(ref, "ownerNick", newNick);
-
-        }
-
-        // Commit the batch
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                // Yay its all done in one go!
-            }
-        });
     }
 
     //프로필 사진 눌렀을 때 메뉴

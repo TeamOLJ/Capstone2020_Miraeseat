@@ -223,8 +223,6 @@ public class WriteReview extends AppCompatActivity {
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(),"후기는 10글자 이상 작성하셔야 합니다.",Toast.LENGTH_LONG).show();
             } else {
-                userNick = SaveSharedPreference.getUserNickName(getApplicationContext());
-
                 if(savedImageUri == null) {
                     // 사진 저장부터 시도하는 경우
 
@@ -249,10 +247,10 @@ public class WriteReview extends AppCompatActivity {
 
                                 reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
 
-                                Review userReview = new Review(userNick, null, reviewDate, "극장이름", seatNumber, savedImageUri, ratingPoint, newReview);
+                                Review userReview = new Review(userUID, null, reviewDate, "극장이름", seatNumber, savedImageUri, ratingPoint, newReview);
 
                                 // DB 업로드
-                                db.collection("SeatReview").document(userUID).collection("Reviews").add(userReview)
+                                db.collection("SeatReview").add(userReview)
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
@@ -284,11 +282,11 @@ public class WriteReview extends AppCompatActivity {
                     // 사진 저장은 성공했는데 후기 저장은 실패한 경우
                     reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
 
-                    Review userReview = new Review(userNick, null, reviewDate, "극장이름", seatNumber, savedImageUri,
+                    Review userReview = new Review(userUID, null, reviewDate, "극장이름", seatNumber, savedImageUri,
                             ratingPoint, newReview);
 
                     // DB 업로드
-                    db.collection("SeatReview").document(userUID).collection("Reviews").add(userReview)
+                    db.collection("SeatReview").add(userReview)
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {

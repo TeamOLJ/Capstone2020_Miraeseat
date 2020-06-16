@@ -466,14 +466,9 @@ public class SignUpPage extends AppCompatActivity {
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
-
-                                                                // make collection to save reviews
-                                                                Map<String, Object> data = new HashMap<>();
-                                                                data.put("userNick", userNick);
-                                                                db.collection("SeatReview").document(FirebaseAuth.getInstance().getUid()).set(data);
-
-                                                                Log.d(TAG, "Signup Info successfully written to DB.");
+                                                                // Log.d(TAG, "Signup Info successfully written to DB.");
                                                                 setResult(SIGN_UP_SUCCESS);
+
                                                                 FirebaseAuth.getInstance().signOut();
                                                                 Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
                                                                 // 메인화면으로 복귀

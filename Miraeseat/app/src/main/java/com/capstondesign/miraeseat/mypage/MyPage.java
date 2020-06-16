@@ -145,7 +145,7 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
     public void loadReviewData() {
         mData = new ArrayList<mypageList_item>();
 
-        db.collection("SeatReview").document(userUID).collection("Reviews").orderBy("timestamp", Query.Direction.DESCENDING)
+        db.collection("SeatReview").whereEqualTo("ownerUser", userUID).orderBy("timestamp", Query.Direction.DESCENDING)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -243,7 +243,7 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                 final String reviewImagePath = mData.get(position).getImagePath();
 
                 // DB에서 해당 문서를 삭제
-                db.collection("SeatReview").document(userUID).collection("Reviews").document(mData.get(position).getDocumentID())
+                db.collection("SeatReview").document(mData.get(position).getDocumentID())
                         .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
