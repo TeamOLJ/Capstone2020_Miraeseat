@@ -94,9 +94,8 @@
         android:id="@+id/cntReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="리뷰 수 : 1"
         android:layout_marginLeft="5dp"
-        />
+        android:text="후기 수 : " />
 
     <FrameLayout
         android:layout_width="match_parent"

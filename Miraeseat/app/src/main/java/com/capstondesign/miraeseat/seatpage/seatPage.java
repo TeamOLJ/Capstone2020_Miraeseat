@@ -46,6 +46,7 @@ import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnClickListener {
@@ -71,6 +72,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
     RelativeLayout loadingLayout;
 
     int countReview;
+    float countRating;
 
     ArrayList<seatList_item> seatItemData;
 
@@ -203,10 +205,14 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
 
                                     countReview += 1;
 
+                                    countRating += foundReview.getRating();
+
                                     seatAdapter.notifyDataSetChanged();
                                     listView.setAdapter(seatAdapter);
 
                                     cntReview.setText("후기 수: "+countReview);
+                                    avgRating.setRating(countRating/countReview);
+                                    avgText.setText(new DecimalFormat("##.#").format(countRating/countReview));
                                 }
                             });
                         }
@@ -257,8 +263,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == 1) {
-            seatAdapter.notifyDataSetChanged();
-            listView.setAdapter(seatAdapter);
+            loadReviewData();
         }
     }
 
@@ -287,8 +292,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                         // 리스트뷰의 리스트에서도 해당 아이템 삭제
                         seatItemData.remove(position);
                         // 어댑터 새로고침
-                        seatAdapter.notifyDataSetChanged();
-                        listView.setAdapter(seatAdapter);
+                        loadReviewData();
                     }
                 });
 
@@ -366,5 +370,10 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                     alertDialog.dismiss();
             }
         });
+    }
+
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.no_change,R.anim.translate_down);
     }
 }

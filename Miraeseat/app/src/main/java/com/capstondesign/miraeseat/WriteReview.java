@@ -483,6 +483,7 @@ public class WriteReview extends AppCompatActivity {
                 if(resultCode == Activity.RESULT_OK){
                     if(data.getData() != null){
                         try {
+                            album = true;
                             File albumFile = null;
                             albumFile = createImageFile();
                             photoURI = data.getData();

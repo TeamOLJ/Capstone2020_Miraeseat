@@ -677,7 +677,7 @@ public class EditInfo extends AppCompatActivity {
                         Log.e("REQUEST_TAKE_PHOTO",e.toString());
                     }
                 }else{
-//                    Toast.makeText(EditInfo.this,"저장공간에 접근할 수 없는 기기 입니다.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditInfo.this,"저장공간에 접근할 수 없는 기기 입니다.",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case REQUEST_TAKE_ALBUM:
@@ -685,6 +685,7 @@ public class EditInfo extends AppCompatActivity {
                 if(resultCode == Activity.RESULT_OK){
                     if(data.getData() != null){
                         try {
+                            album = true;
                             File albumFile = null;
                             albumFile = createImageFile();
                             photoURI = data.getData();
