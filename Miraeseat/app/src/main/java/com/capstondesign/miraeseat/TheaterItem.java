@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TheaterItem {
+    final static String TAG = "TheaterItem";
+
     int[] tmp_row = {0, 20, 32}; //n초과 m 이하로 충/구역을 나누어야 하기 때문에 0부터 시작
     ArrayList<Integer> tmp_col = new ArrayList<Integer>(Arrays.asList(14, 30));
     int tmp_maxRow, tmp_maxCol;
@@ -26,6 +28,7 @@ public class TheaterItem {
     private int WIDTH;
     private int HEIGHT;
 
+    private String selectedSeat = null;
 
     private Context ctx;
     private ViewGroup seatplan_layout;
@@ -213,9 +216,12 @@ public class TheaterItem {
                 previous_btn = (Button) v;
             }
 
-
         }
     };
+
+    public String getSelectedSeat() {
+        return selectedSeat;
+    }
 
 
     private boolean IsOverLess(int num, int start, int end) {
@@ -250,7 +256,9 @@ public class TheaterItem {
             }
             index[0] -= tmp_row[floor - 1];
 
-            result += (index[0] + "열 " + index[1]);
+            result += (index[0] + "열 " + index[1] + "번");
+
+            selectedSeat = result;
 
             Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
 

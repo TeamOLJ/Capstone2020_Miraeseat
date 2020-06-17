@@ -116,6 +116,9 @@ public class WriteReview extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false);
 
+        Intent intent = getIntent();
+        String selectedSeat = intent.getStringExtra("selectedSeat");
+
         textAddPhoto = (TextView)findViewById(R.id.textAddPhoto);
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
         image = (ImageView) findViewById(R.id.write_photo);
@@ -146,12 +149,12 @@ public class WriteReview extends AppCompatActivity {
         }
 
         List rows = new ArrayList<Integer>();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 40; i++) {
             rows.add(Integer.toString(i));
         }
 
         List seats = new ArrayList<Integer>();
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 50; i++) {
             seats.add(Integer.toString(i));
         }
 
@@ -165,6 +168,18 @@ public class WriteReview extends AppCompatActivity {
 
         spinnerArrayAdapter = new ArrayAdapter<String>(WriteReview.this, R.layout.spinner_item, seats);
         seatSpinner.setAdapter(spinnerArrayAdapter);
+
+        String[] getfloor = selectedSeat.split("층 ");
+        String[] getrow = getfloor[1].split("열 ");
+        String[] getnum = getrow[1].split("번");
+
+        String floor = getfloor[0];
+        String row = getrow[0];
+        String num = getnum[0];
+
+        floorSpinner.setSelection(Integer.parseInt(floor)-1);
+        rowSpinner.setSelection(Integer.parseInt(row)-1);
+        seatSpinner.setSelection(Integer.parseInt(num)-1);
 
         // ratingbar
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {

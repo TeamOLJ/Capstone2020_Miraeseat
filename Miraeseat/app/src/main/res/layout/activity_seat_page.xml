@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:gravity="center_vertical"
-            android:text="1구역 12열 12"
+            android:text="@string/defalut_seat_number"
             android:textSize="24sp" />
 
         <TextView
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="7dp"
-            android:text="총 평점 :"/>
+            android:text="@string/average_rating"/>
 
         <RatingBar
             android:id="@+id/avgRating"
@@ -70,7 +70,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" / 5.0"
+            android:text="@string/max_rating"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"/>
 
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text="리뷰쓰기"
+            android:text="@string/write_review_text1"
             />
     </LinearLayout>
 
@@ -94,8 +94,8 @@
         android:id="@+id/cntReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="후기 수 : " />
+        android:text="@string/defalut_num_of_review"
+        android:layout_marginLeft="5dp" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -118,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="아직 작성한 후기가 없습니다!" />
+                android:text="@string/no_review_yet" />
 
         </RelativeLayout>
 
@@ -132,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="로딩 중..." />
+                android:text="@string/loading_text" />
 
         </RelativeLayout>
 

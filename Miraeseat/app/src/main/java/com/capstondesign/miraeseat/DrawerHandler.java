@@ -59,24 +59,9 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
             Intent intent = new Intent(activity, NoticeListPage.class);
             activity.startActivity(intent);
         } else if (id == R.id.menu_use) {
-
-            if(currentUser == null) {
-                Toast.makeText(activity,"로그인을 먼저 해주세요.",Toast.LENGTH_LONG).show();
-            }
-            else {
-                Intent intent = new Intent(activity, WriteReview.class);
-                activity.startActivity(intent);
-            }
+            // 이용방법
         } else if (id == R.id.menu_settings) {
-            if(currentUser == null) {
-                Toast.makeText(activity,"로그인을 먼저 해주세요.",Toast.LENGTH_LONG).show();
-            }
-            else {
-                Intent intent = new Intent(activity, seatPage.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.translate_up,R.anim.no_change);
-
-            }
+            // 설정
         }
 
         drawerLayout.closeDrawer(Gravity.RIGHT);

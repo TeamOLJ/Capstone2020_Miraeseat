@@ -76,7 +76,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
 
     ArrayList<seatList_item> seatItemData;
 
-    // SeatPage Activity를 시작할 때, 이전 intent로부터 극장 이름, 좌석 위치 값을 extra로 받아왔어야 함
+    // SeatPage Activity를 시작할 때, 이전 intent로부터 극장 이름, 좌석 위치 값을 extra로 받아와야 함
     String theaterName;
     String seatNumber;
 
@@ -121,9 +121,11 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
         noReviewLayout = (RelativeLayout)findViewById(R.id.no_review_layout);
         loadingLayout = (RelativeLayout)findViewById(R.id.loading_layout);
 
-        // 이전 intent로부터 받아온 값 (지금은 일단 임시값 저장)
-        theaterName = "극장이름";
-        seatNumber = "1층 1열 1번";
+        // 이전 intent로부터 받아온 값
+        Intent intent = getIntent();
+
+        theaterName = intent.getStringExtra("theaterName");
+        seatNumber = intent.getStringExtra("seatNumber");
         seat.setText(seatNumber);
 
         loadReviewData();
@@ -148,6 +150,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                 }
                 else {
                     Intent intent = new Intent(getApplicationContext(), WriteReview.class);
+                    intent.putExtra("selectedSeat", seatNumber);
                     startActivityForResult(intent, 1234);
                 }
             }
