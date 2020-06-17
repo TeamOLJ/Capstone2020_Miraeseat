@@ -1,13 +1,18 @@
 package com.capstondesign.miraeseat;
 
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -42,6 +47,7 @@ public class TheaterActivity extends AppCompatActivity {
         TI = new TheaterItem(this, seatplan_layout);
 
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+
     }
 
     @Override

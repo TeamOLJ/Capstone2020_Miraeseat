@@ -90,12 +90,15 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
         return false;
     }
 
+
+    //로고 버튼 작동
     public void onLogoButtonClicked(View v) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         this.startActivity(intent);
     }
 
+    //뒤로가기 버튼 작동
     public void onBackPressed() {
         if (drawer.drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
             drawer.drawerLayout.closeDrawer(Gravity.RIGHT);
@@ -104,6 +107,7 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
         }
     }
 
+    //네비게이션 작동
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
