@@ -57,6 +57,7 @@
             android:name=".mypage.MyPage"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
+
         <activity android:name=".notice.NoticeListPage"></activity>
 
         <activity android:name=".notice.NoticeContext"></activity>
@@ -83,10 +84,6 @@
 
         <activity android:name=".WriteReview"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-        </activity>
-
-        <activity android:name=".mypage.MyPage"
-            android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
 
 

@@ -3,8 +3,11 @@ package com.capstondesign.miraeseat;
 
 import android.content.Context;
 import android.os.Bundle;
+<<<<<<< HEAD
 import android.util.AttributeSet;
 import android.util.Log;
+=======
+>>>>>>> Myeong
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -57,6 +60,7 @@ public class TheaterActivity extends AppCompatActivity {
         if (hasFocus == true) {
             half_width = seatplan_layout.getWidth() / 2;
             half_height = seatplan_layout.getHeight() / 2;
+
 
             //onCreate 때는 seatplan의 크기 측정 불가. 화면에 이미지가 생성된 후 측정 가능.
             TI.getSize(seatplan.getWidth(), seatplan.getHeight());
