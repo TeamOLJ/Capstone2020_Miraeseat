@@ -17,7 +17,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.ArrayAdapter;
@@ -25,7 +24,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +68,7 @@ public class EditReview extends AppCompatActivity {
     Uri imageURI;
     Uri photoURI, albumURI;
     Uri finalURI = null;
+    Boolean album;
 
     int selectedPhotoMenu;
 
@@ -324,10 +323,10 @@ public class EditReview extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 if (photoFile != null) {
-                    Uri providerUri = FileProvider.getUriForFile(this, getPackageName(), photoFile);
-                    imageURI = providerUri;
+                    photoURI = FileProvider.getUriForFile(this, getPackageName(), photoFile);
+                    imageURI = photoURI;
 
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerUri);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
                 }
             } else {
@@ -396,37 +395,38 @@ public class EditReview extends AppCompatActivity {
                 if(resultCode == Activity.RESULT_OK){
                     try{
                         Log.i("REQUEST_TAKE_PHOTO","OK!!!!!!");
-                        galleryAddPic();
+                        album = false; //false일경우 :사진촬영
+                        cropImage();
 
                         finalURI = imageURI;
 
-                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
-                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), image.getWidth(), image.getHeight());
-
-                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-
-                        switch(orientation) {
-
-                            case ExifInterface.ORIENTATION_ROTATE_90:
-                                rotatedBitmap = rotateImage(originalBitmap, 90);
-                                break;
-
-                            case ExifInterface.ORIENTATION_ROTATE_180:
-                                rotatedBitmap = rotateImage(originalBitmap, 180);
-                                break;
-
-                            case ExifInterface.ORIENTATION_ROTATE_270:
-                                rotatedBitmap = rotateImage(originalBitmap, 270);
-                                break;
-
-                            case ExifInterface.ORIENTATION_NORMAL:
-                            default:
-                                rotatedBitmap = originalBitmap;
-                        }
-
-                        image.setImageBitmap(rotatedBitmap);
-                        isContextChanged = true;
+//                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
+//                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), image.getWidth(), image.getHeight());
+//
+//                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+//                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+//
+//                        switch(orientation) {
+//
+//                            case ExifInterface.ORIENTATION_ROTATE_90:
+//                                rotatedBitmap = rotateImage(originalBitmap, 90);
+//                                break;
+//
+//                            case ExifInterface.ORIENTATION_ROTATE_180:
+//                                rotatedBitmap = rotateImage(originalBitmap, 180);
+//                                break;
+//
+//                            case ExifInterface.ORIENTATION_ROTATE_270:
+//                                rotatedBitmap = rotateImage(originalBitmap, 270);
+//                                break;
+//
+//                            case ExifInterface.ORIENTATION_NORMAL:
+//                            default:
+//                                rotatedBitmap = originalBitmap;
+//                        }
+//
+//                        image.setImageBitmap(rotatedBitmap);
+//                        isContextChanged = true;
 
                     }catch(Exception e){
                         Log.e("REQUEST_TAKE_PHOTO",e.toString());
@@ -518,15 +518,24 @@ public class EditReview extends AppCompatActivity {
 
 
     //사진 crop할 수 있도록 하는 함수
-    public void cropImage(){
+    public void cropImage() throws IOException {
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         cropIntent.setDataAndType(photoURI,"image/*");
-        cropIntent.putExtra("aspectX",1);
-        cropIntent.putExtra("aspectY",1);
         cropIntent.putExtra("scale",true);
-        cropIntent.putExtra("output",albumURI);
+
+        if(album==false){
+            File albumFile = null;
+            albumFile = createImageFile();
+            albumURI = Uri.fromFile(albumFile);
+            cropIntent.putExtra("output",albumURI);
+        }
+        else if(album==true)
+        {
+            cropIntent.putExtra("output",albumURI);
+        }
+
         startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);
     }
 

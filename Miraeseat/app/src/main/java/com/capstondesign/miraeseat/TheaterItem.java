@@ -58,14 +58,15 @@ public class TheaterItem {
     public void init() {
         table_info = ctx.getResources().getStringArray(R.array.charlotte_ratio);
 
-        int horizontal_space = Math.round(Float.parseFloat(table_info[4]) * HEIGHT);
-        tmp_maxRow = Integer.parseInt(table_info[5]);
-        tmp_maxCol = Integer.parseInt(table_info[6]);
+        int vertical_space = Math.round(Float.parseFloat(table_info[4]) * WIDTH);
+        int horizontal_space = Math.round(Float.parseFloat(table_info[5]) * HEIGHT);
+        tmp_maxRow = Integer.parseInt(table_info[6]);
+        tmp_maxCol = Integer.parseInt(table_info[7]);
 
         btnRow_params = new TableLayout.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
         btn_params = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f);
 
-        vertical_space_params = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 2f);
+        vertical_space_params = new TableRow.LayoutParams(vertical_space, 0);
         horizontal_space_params = new TableRow.LayoutParams(0, horizontal_space);
     }
 

@@ -67,6 +67,7 @@ public class WriteReview extends AppCompatActivity {
     String mCurrentPhotoPath;
     Uri imageURI;
     Uri photoURI, albumURI, finalURI;
+    Boolean album;
 
     int selectedPhotoMenu;
 
@@ -324,6 +325,7 @@ public class WriteReview extends AppCompatActivity {
                 if (photoFile != null) {
                     Uri providerUri = FileProvider.getUriForFile(this, getPackageName(), photoFile);
                     imageURI = providerUri;
+                    photoURI = providerUri;
 
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerUri);
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
@@ -386,36 +388,37 @@ public class WriteReview extends AppCompatActivity {
                 if(resultCode == Activity.RESULT_OK){
                     try{
                         Log.i("REQUEST_TAKE_PHOTO","OK!!!!!!");
-                        galleryAddPic();
+                        album = false; //false일경우 :사진촬영
+                        cropImage();
 
                         finalURI = imageURI;
 
-                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
-                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), image.getWidth(), image.getHeight());
-
-                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-
-                        switch(orientation) {
-
-                            case ExifInterface.ORIENTATION_ROTATE_90:
-                                rotatedBitmap = rotateImage(originalBitmap, 90);
-                                break;
-
-                            case ExifInterface.ORIENTATION_ROTATE_180:
-                                rotatedBitmap = rotateImage(originalBitmap, 180);
-                                break;
-
-                            case ExifInterface.ORIENTATION_ROTATE_270:
-                                rotatedBitmap = rotateImage(originalBitmap, 270);
-                                break;
-
-                            case ExifInterface.ORIENTATION_NORMAL:
-                            default:
-                                rotatedBitmap = originalBitmap;
-                        }
-
-                        image.setImageBitmap(rotatedBitmap);
+//                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
+//                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), image.getWidth(), image.getHeight());
+//
+//                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
+//                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+//
+//                        switch(orientation) {
+//
+//                            case ExifInterface.ORIENTATION_ROTATE_90:
+//                                rotatedBitmap = rotateImage(originalBitmap, 90);
+//                                break;
+//
+//                            case ExifInterface.ORIENTATION_ROTATE_180:
+//                                rotatedBitmap = rotateImage(originalBitmap, 180);
+//                                break;
+//
+//                            case ExifInterface.ORIENTATION_ROTATE_270:
+//                                rotatedBitmap = rotateImage(originalBitmap, 270);
+//                                break;
+//
+//                            case ExifInterface.ORIENTATION_NORMAL:
+//                            default:
+//                                rotatedBitmap = originalBitmap;
+//                        }
+//
+//                        image.setImageBitmap(rotatedBitmap);
                         textAddPhoto.setVisibility(View.INVISIBLE);
 
                     }catch(Exception e){
@@ -507,15 +510,24 @@ public class WriteReview extends AppCompatActivity {
     }
 
     //사진 crop할 수 있도록 하는 함수
-    public void cropImage(){
+    public void cropImage() throws IOException {
         Intent cropIntent = new Intent("com.android.camera.action.CROP");
         cropIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         cropIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         cropIntent.setDataAndType(photoURI,"image/*");
-        cropIntent.putExtra("aspectX",4);
-        cropIntent.putExtra("aspectY",3);
         cropIntent.putExtra("scale",true);
-        cropIntent.putExtra("output",albumURI);
+
+        if(album==false){
+            File albumFile = null;
+            albumFile = createImageFile();
+            albumURI = Uri.fromFile(albumFile);
+            cropIntent.putExtra("output",albumURI);
+        }
+        else if(album==true)
+        {
+            cropIntent.putExtra("output",albumURI);
+        }
+
         startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);
     }
 

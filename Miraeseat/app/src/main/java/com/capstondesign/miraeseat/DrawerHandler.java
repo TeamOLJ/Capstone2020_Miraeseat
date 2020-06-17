@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.capstondesign.miraeseat.notice.NoticeListPage;
+import com.capstondesign.miraeseat.seatpage.seatPage;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -67,7 +68,15 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
                 activity.startActivity(intent);
             }
         } else if (id == R.id.menu_settings) {
+            if(currentUser == null) {
+                Toast.makeText(activity,"로그인을 먼저 해주세요.",Toast.LENGTH_LONG).show();
+            }
+            else {
+                Intent intent = new Intent(activity, seatPage.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.translate_up,R.anim.no_change);
 
+            }
         }
 
         drawerLayout.closeDrawer(Gravity.RIGHT);

@@ -65,7 +65,9 @@
         <!--이명주-->
         <activity
             android:name=".seatpage.seatPage"
-            android:theme="@style/seatTheme" />
+            android:theme="@style/seatTheme">
+
+        </activity>
 
         <activity android:name=".hall.HallInfo"></activity>
 
@@ -77,6 +79,10 @@
 
         <activity android:name=".WriteReview"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+        </activity>
+
+        <activity android:name=".mypage.MyPage"
+            android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
 
 
