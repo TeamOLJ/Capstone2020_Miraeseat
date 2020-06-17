@@ -3,11 +3,6 @@ package com.capstondesign.miraeseat;
 
 import android.content.Context;
 import android.os.Bundle;
-<<<<<<< HEAD
-import android.util.AttributeSet;
-import android.util.Log;
-=======
->>>>>>> Myeong
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;

@@ -1,13 +1,9 @@
 package com.capstondesign.miraeseat;
 
 import android.content.Context;
-<<<<<<< HEAD
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-=======
-import android.view.MotionEvent;
->>>>>>> Myeong
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,17 +21,11 @@ public class TheaterItem {
     int[] tmp_row = {0, 20, 32}; //n초과 m 이하로 충/구역을 나누어야 하기 때문에 0부터 시작
     ArrayList<Integer> tmp_col = new ArrayList<Integer>(Arrays.asList(14, 30));
     int tmp_maxRow, tmp_maxCol;
-<<<<<<< HEAD
     final int PADDING = 3;
 
     private int WIDTH;
     private int HEIGHT;
-=======
 
-    private int WIDTH;
-    private int HEIGHT;
-
->>>>>>> Myeong
 
     private Context ctx;
     private ViewGroup seatplan_layout;
@@ -43,28 +33,18 @@ public class TheaterItem {
 
     private TableLayout.LayoutParams btnRow_params;
     private TableRow.LayoutParams btn_params, vertical_space_params, horizontal_space_params;
-<<<<<<< HEAD
-
-=======
->>>>>>> Myeong
 
     private TableLayout btnTableLayout;
     private TableRow btnRow;
     private Button btn;
-<<<<<<< HEAD
     private Button previous_btn = null;
-=======
->>>>>>> Myeong
+
     private TextView empty_view;
 
     private String[] table_info;
 
     int[][] start_end_indexes = {{15, 30}, {11, 34}, {10, 35}, {9, 36}, {8, 37}, {7, 38}, {7, 38}, {6, 39}, {5, 40}, {5, 40}, {4, 41}, {3, 42}, {3, 42}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44},
             {2, 43}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}};
-<<<<<<< HEAD
-=======
-
->>>>>>> Myeong
 
 
     TheaterItem(Context ctx, ViewGroup viewGroup) {
