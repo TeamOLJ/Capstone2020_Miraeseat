@@ -88,6 +88,7 @@ public class WriteReview extends AppCompatActivity {
     ImageView image;
 
     TextInputLayout inputlayoutReview;
+    EditText edtReview;
 
     Spinner floorSpinner;
     Spinner rowSpinner;
@@ -95,6 +96,8 @@ public class WriteReview extends AppCompatActivity {
 
     Button btnSave;
     Button btnCancel;
+
+    String savedImageUri = null;
 
     Bitmap originalBitmap;
     Bitmap rotatedBitmap = null;
@@ -122,7 +125,7 @@ public class WriteReview extends AppCompatActivity {
         seatSpinner = (Spinner)findViewById(R.id.seatnumSpinner);
 
         inputlayoutReview = (TextInputLayout)findViewById(R.id.textlayoutReview);
-        final EditText edtReview = inputlayoutReview.getEditText();
+        edtReview = inputlayoutReview.getEditText();
         edtReview.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 
         btnSave = (Button) findViewById(R.id.btnSave);
@@ -133,7 +136,7 @@ public class WriteReview extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference().child("user_review_photo");
+        storageRef = storage.getReference().child("user_upload_image/"+userUID+"/review_photo");
 
         // Spinner 관련 임시 코드
         // DB에서 정보를 읽어오거나... 처음부터 Spinner 설정을 못 하게 변경하거나...
@@ -174,12 +177,7 @@ public class WriteReview extends AppCompatActivity {
         });
 
         //리뷰사진 촬영 및 업로드
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeDialog();
-            }
-        });
+        image.setOnClickListener(clickImageListener);
 
         //취소버튼
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -190,29 +188,47 @@ public class WriteReview extends AppCompatActivity {
         });
 
         //저장버튼
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnSave.setOnClickListener(clickSaveListener);
+    }
 
-                if (image.getDrawable()==null) {
-                    Toast.makeText(getApplicationContext(),"이미지를 업로드 해 주세요.",Toast.LENGTH_LONG).show();
-                } else if (ratingBar.getRating() == 0) {
-                    Toast.makeText(getApplicationContext(),"평점을 매겨 주세요.",Toast.LENGTH_LONG).show();
-                } else if (edtReview.getText().toString().getBytes().length <= 10) {
-                    Toast.makeText(getApplicationContext(),"후기는 10글자 이상 작성하셔야 합니다.",Toast.LENGTH_LONG).show();
-                } else {
-                    // 리뷰를 작성하는 회원의 닉네임을 DB에서 읽어옴
-                    db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
-                            userNick = loginedUser.getNick();
-                        }
-                    });
+    OnOneOffClickListener clickImageListener = new OnOneOffClickListener() {
+        @Override
+        public void onOneClick(View v) {
+            makeDialog();
+        }
+    };
+
+    OnOneOffClickListener clickSaveListener = new OnOneOffClickListener() {
+        @Override
+        public void onOneClick(View v) {
+
+            // Do stuff
+
+            clickImageListener.disable();
+
+            seatNumber = floorSpinner.getSelectedItem().toString()+"층 "+rowSpinner.getSelectedItem().toString()+"열 "
+                    +seatSpinner.getSelectedItem().toString()+"번";
+            final float ratingPoint = ratingBar.getRating();
+            final String newReview = edtReview.getText().toString();
+
+            if (image.getDrawable()==null) {
+                reset();
+                clickImageListener.reset();
+                Toast.makeText(getApplicationContext(),"이미지를 업로드 해 주세요.",Toast.LENGTH_LONG).show();
+            } else if (ratingBar.getRating() == 0) {
+                reset();
+                clickImageListener.reset();
+                Toast.makeText(getApplicationContext(),"평점을 매겨 주세요.",Toast.LENGTH_LONG).show();
+            } else if (edtReview.getText().toString().getBytes().length <= 10) {
+                reset();
+                clickImageListener.reset();
+                Toast.makeText(getApplicationContext(),"후기는 10글자 이상 작성하셔야 합니다.",Toast.LENGTH_LONG).show();
+            } else {
+                if(savedImageUri == null) {
+                    // 사진 저장부터 시도하는 경우
 
                     final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
 
-                    // 이 아래로 이어지는 코드도... 위의 onSuccess에 넣거나 순서 제어 코드를 추가해야 할 듯
                     photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                         @Override
                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -227,14 +243,12 @@ public class WriteReview extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
-                                Uri downloadUri = task.getResult();
+                                // Uri downloadUri = task.getResult();
+                                savedImageUri = task.getResult().toString();
 
                                 reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
-                                seatNumber = floorSpinner.getSelectedItem().toString()+"층 "+rowSpinner.getSelectedItem().toString()+"열 "
-                                        +seatSpinner.getSelectedItem().toString()+"번";
 
-                                Review userReview = new Review(userNick, null, reviewDate, "극장이름", seatNumber, downloadUri.toString(),
-                                        ratingBar.getRating(), edtReview.getText().toString());
+                                Review userReview = new Review(userUID, null, reviewDate, "극장이름", seatNumber, savedImageUri, ratingPoint, newReview);
 
                                 // DB 업로드
                                 db.collection("SeatReview").add(userReview)
@@ -243,27 +257,60 @@ public class WriteReview extends AppCompatActivity {
                                             public void onSuccess(DocumentReference documentReference) {
                                                 Log.d(TAG, "좌석 후기 업로드 성공");
                                                 Toast.makeText(getApplicationContext(), "후기가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
-                                                // setResult(SIGN_UP_SUCCESS) 라든지... 리뷰 목록 아이템 업데이트 관련 코드가 추가될 수도.
+                                                setResult(1);
                                                 finish();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error writing document(DB)", e);
+                                                // Log.w(TAG, "Error writing document(DB)", e);
+                                                Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                                                reset();
+                                                clickImageListener.reset();
                                             }
                                         });
 
                             } else {
-                                // Handle failures
-                                // ...
+                                Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                                reset();
+                                clickImageListener.reset();
                             }
                         }
                     });
                 }
+                else {
+                    // 사진 저장은 성공했는데 후기 저장은 실패한 경우
+                    reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
+
+                    Review userReview = new Review(userUID, null, reviewDate, "극장이름", seatNumber, savedImageUri,
+                            ratingPoint, newReview);
+
+                    // DB 업로드
+                    db.collection("SeatReview").add(userReview)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Log.d(TAG, "좌석 후기 업로드 성공");
+                                    Toast.makeText(getApplicationContext(), "후기가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
+                                    // setResult(SIGN_UP_SUCCESS) 라든지... 리뷰 목록 아이템 업데이트 관련 코드가 추가될 수도.
+                                    finish();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Log.w(TAG, "Error writing document(DB)", e);
+                                    Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                                    reset();
+                                    clickImageListener.reset();
+                                }
+                            });
+                }
             }
-        });
-    }
+            // this.reset(); // or you can reset somewhere else with clickListener.reset();
+        }
+    };
 
     private void makeDialog(){
 
@@ -281,6 +328,8 @@ public class WriteReview extends AppCompatActivity {
 
         alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                clickImageListener.reset();
+
                 if(selectedPhotoMenu == 0 ) {
                     // 사진촬영
                     Log.v("알림", "다이얼로그 > 사진촬영 선택");
@@ -297,6 +346,7 @@ public class WriteReview extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.v("알림", "다이얼로그 > 취소 선택");
+                clickImageListener.reset();
                 dialog.cancel();
             }
         });
@@ -392,6 +442,7 @@ public class WriteReview extends AppCompatActivity {
                         cropImage();
 
                         finalURI = imageURI;
+                        savedImageUri = null;
 
 //                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
 //                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), image.getWidth(), image.getHeight());
@@ -449,6 +500,7 @@ public class WriteReview extends AppCompatActivity {
                     //사진 변환 error
                     image.setImageURI(albumURI);
                     finalURI = albumURI;
+                    savedImageUri = null;
                     textAddPhoto.setVisibility(View.INVISIBLE);
                 }
                 break;

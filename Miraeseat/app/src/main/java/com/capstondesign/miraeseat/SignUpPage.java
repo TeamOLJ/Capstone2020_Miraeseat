@@ -38,6 +38,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class SignUpPage extends AppCompatActivity {
@@ -56,6 +58,11 @@ public class SignUpPage extends AppCompatActivity {
     private TextInputLayout inputLayoutNick;
     private TextInputLayout inputLayoutPwd;
     private TextInputLayout inputLayoutCheckPwd;
+
+    EditText edtEmail;
+    EditText edtNick;
+    EditText edtPwd;
+    EditText edtCheckPwd;
 
     CheckBox checkTermCondition;
     CheckBox checkPersonalInfo;
@@ -84,6 +91,9 @@ public class SignUpPage extends AppCompatActivity {
     // 비밀번호 확인 값과 비밀번호 값이 동일한지 확인
     private Boolean isPwdChecked = false;
 
+    private Boolean isSignUpSucess = false;
+    private String signedUpEmail = null;
+
     DrawerHandler drawer;
 
     @Override
@@ -106,10 +116,10 @@ public class SignUpPage extends AppCompatActivity {
         inputLayoutPwd = (TextInputLayout)findViewById(R.id.textlayoutPwd);
         inputLayoutCheckPwd = (TextInputLayout)findViewById(R.id.textlayoutPwdCheck);
 
-        final EditText edtEmail = inputLayoutEmail.getEditText();
-        final EditText edtNick = inputLayoutNick.getEditText();
-        final EditText edtPwd = inputLayoutPwd.getEditText();
-        final EditText edtCheckPwd = inputLayoutCheckPwd.getEditText();
+        edtEmail = inputLayoutEmail.getEditText();
+        edtNick = inputLayoutNick.getEditText();
+        edtPwd = inputLayoutPwd.getEditText();
+        edtCheckPwd = inputLayoutCheckPwd.getEditText();
 
         checkTermCondition = (CheckBox)findViewById(R.id.checkTermCondition);
         checkPersonalInfo = (CheckBox)findViewById(R.id.checkPersonalInfoCollection);
@@ -318,6 +328,10 @@ public class SignUpPage extends AppCompatActivity {
                         }
                     });
                 }
+                else {
+                    inputLayoutEmail.setErrorTextAppearance(R.style.InputError_Red);
+                    inputLayoutEmail.setError("유효하지 않은 이메일 형식입니다.");
+                }
             }
         });
 
@@ -349,6 +363,10 @@ public class SignUpPage extends AppCompatActivity {
                         }
                     });
                 }
+                else {
+                    inputLayoutNick.setErrorTextAppearance(R.style.InputError_Red);
+                    inputLayoutNick.setError("2~7글자의 한글, 영문, 숫자를 사용할 수 있습니다.");
+                }
             }
         });
 
@@ -368,66 +386,89 @@ public class SignUpPage extends AppCompatActivity {
             }
         });
 
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 위에서부터 차례로 빈칸 존재하는지 확인
-                // 빈칸이 두 개 이상이면 가장 윗 줄에만 오류 메시지 띄움
-                if(edtEmail.getText().toString().getBytes().length <= 0) {
-                    inputLayoutEmail.setError("이메일을 입력하세요.");
-                    edtEmail.requestFocus(); //해당 입력칸에 커서를 이동시키는 함수
-                }
-                else if(edtNick.getText().toString().getBytes().length <= 0) {
-                    inputLayoutNick.setError("닉네임을 입력하세요.");
-                    edtNick.requestFocus();
-                }
-                else if(edtPwd.getText().toString().getBytes().length <= 0) {
-                    inputLayoutPwd.setError("비밀번호를 입력하세요.");
-                    edtPwd.requestFocus();
-                }
-                else if(edtCheckPwd.getText().toString().getBytes().length <= 0) {
-                    inputLayoutCheckPwd.setError("비밀번호를 한 번 더 입력해주세요.");
-                    edtCheckPwd.requestFocus();
-                }   // 모든 칸이 채워져 있는 경우에 다음 검사 실행:
-                else if (!isEmailChecked) {
-                    // 중복확인 여부 체크
-                    inputLayoutEmail.setError("이메일 중복확인을 해주세요.");
-                }
-                else if (!isNickChecked) {
-                    inputLayoutNick.setError("닉네임 중복 확인을 해주세요.");
-                }
-                else {
-                    // 모든 칸이 채워져있고 중복확인도 체크했다면:
-                    // 모든 칸의 값이 유효한지 확인
-                    if(isEmailValid && isNickValid && isPwdValid && isPwdChecked) {
-                        // 약관 동의 여부 확인
-                        if(!checkTermCondition.isChecked()) {
-                            // 약관 동의에 체크표시 하지 않았다면 해당 약관 체크박스의 배경색을 붉게 바꿈
-                            checkTermCondition.setBackgroundColor(Color.parseColor("#FFA7A7"));
-                            Toast.makeText(getApplicationContext(), "이용 약관 동의가 필요합니다.", Toast.LENGTH_LONG).show();
-                        }
-                        if(!checkPersonalInfo.isChecked()) {
-                            checkPersonalInfo.setBackgroundColor(Color.parseColor("#FFA7A7"));
-                            Toast.makeText(getApplicationContext(), "개인정보 수집 동의가 필요합니다.", Toast.LENGTH_LONG).show();
-                        }
-                        if(checkTermCondition.isChecked() && checkPersonalInfo.isChecked()) {
-                            // 약관 동의에도 모두 체크했다면!
-                            // Firebase 인증 기능으로 사용자 추가
-                            signupAuth.createUserWithEmailAndPassword(edtEmail.getText().toString(), edtPwd.getText().toString())
+        btnSignUp.setOnClickListener(clickSignUpListener);
+    }
+
+    OnOneOffClickListener clickSignUpListener = new OnOneOffClickListener() {
+        @Override
+        public void onOneClick(View v) {
+            final String userEmail = edtEmail.getText().toString();
+            final String userNick = edtNick.getText().toString();
+            String userPwd = edtPwd.getText().toString();
+            String userPwdCheck = edtCheckPwd.getText().toString();
+
+            // 위에서부터 차례로 빈칸 존재하는지 확인
+            // 빈칸이 두 개 이상이면 가장 윗 줄에만 오류 메시지 띄움
+            if(userEmail.getBytes().length <= 0) {
+                reset();
+                inputLayoutEmail.setError("이메일을 입력하세요.");
+                edtEmail.requestFocus(); //해당 입력칸에 커서를 이동시키는 함수
+            }
+            else if(userNick.getBytes().length <= 0) {
+                reset();
+                inputLayoutNick.setError("닉네임을 입력하세요.");
+                edtNick.requestFocus();
+            }
+            else if(userPwd.getBytes().length <= 0) {
+                reset();
+                inputLayoutPwd.setError("비밀번호를 입력하세요.");
+                edtPwd.requestFocus();
+            }
+            else if(userPwdCheck.getBytes().length <= 0) {
+                reset();
+                inputLayoutCheckPwd.setError("비밀번호를 한 번 더 입력해주세요.");
+                edtCheckPwd.requestFocus();
+            }   // 모든 칸이 채워져 있는 경우에 다음 검사 실행:
+            else if (!isEmailChecked) {
+                // 중복확인 여부 체크
+                reset();
+                inputLayoutEmail.setError("이메일 중복확인을 해주세요.");
+            }
+            else if (!isNickChecked) {
+                reset();
+                inputLayoutNick.setError("닉네임 중복 확인을 해주세요.");
+            }
+            else {
+                // 모든 칸이 채워져있고 중복확인도 체크했다면:
+                // 모든 칸의 값이 유효한지 확인
+                if(isEmailValid && isNickValid && isPwdValid && isPwdChecked) {
+                    // 약관 동의 여부 확인
+                    if(!checkTermCondition.isChecked()) {
+                        // 약관 동의에 체크표시 하지 않았다면 해당 약관 체크박스의 배경색을 붉게 바꿈
+                        reset();
+                        checkTermCondition.setBackgroundColor(Color.parseColor("#FFA7A7"));
+                        Toast.makeText(getApplicationContext(), "이용 약관 동의가 필요합니다.", Toast.LENGTH_LONG).show();
+                    }
+                    if(!checkPersonalInfo.isChecked()) {
+                        reset();
+                        checkPersonalInfo.setBackgroundColor(Color.parseColor("#FFA7A7"));
+                        Toast.makeText(getApplicationContext(), "개인정보 수집 동의가 필요합니다.", Toast.LENGTH_LONG).show();
+                    }
+                    if(checkTermCondition.isChecked() && checkPersonalInfo.isChecked()) {
+                        // 약관 동의에도 모두 체크했다면!
+                        // Firebase 인증 기능으로 사용자 추가
+
+                        if(!isSignUpSucess || userEmail != signedUpEmail) {
+                            // 회원가입을 처음 시도하는 경우
+                            signupAuth.createUserWithEmailAndPassword(userEmail, userPwd)
                                     .addOnCompleteListener(SignUpPage.this, new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if(task.isSuccessful()) {
                                                 // 회원가입 성공
-                                                Log.d(TAG, "createUserWithEmail:success");
+                                                // Log.d(TAG, "createUserWithEmail:success");
+                                                isSignUpSucess = true;
+                                                signedUpEmail = userEmail;
+
                                                 // 입력된 모든 정보를 데이터베이스에 추가
-                                                UserClass newUser = new UserClass(edtEmail.getText().toString(), edtNick.getText().toString(), null);
+                                                UserClass newUser = new UserClass(userEmail, userNick, null);
                                                 db.collection("UserInfo").document(FirebaseAuth.getInstance().getUid()).set(newUser)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
-                                                                Log.d(TAG, "Signup Info successfully written to DB.");
+                                                                // Log.d(TAG, "Signup Info successfully written to DB.");
                                                                 setResult(SIGN_UP_SUCCESS);
+
                                                                 FirebaseAuth.getInstance().signOut();
                                                                 Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
                                                                 // 메인화면으로 복귀
@@ -440,25 +481,54 @@ public class SignUpPage extends AppCompatActivity {
                                                         .addOnFailureListener(new OnFailureListener() {
                                                             @Override
                                                             public void onFailure(@NonNull Exception e) {
-                                                                Log.w(TAG, "Error writing document(DB)", e);
+                                                                //Log.w(TAG, "Error writing document(DB)", e);
+                                                                reset();
+                                                                Toast.makeText(getApplicationContext(), "회원가입에 실패했습니다. 인터넷 연결을 확인하시고 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
                                                             }
                                                         });
                                             }
                                             else {
                                                 // 회원가입 실패
-                                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                                // Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                                reset();
                                                 Toast.makeText(getApplicationContext(), "회원가입에 실패했습니다. 인터넷 연결을 확인하시고 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
                                             }
                                         }
                                     });
                         }
+                        else {
+                            // 회원가입에는 성공했으나 회원정보를 DB에 저장하는 데에 실패한 경우
+                            UserClass newUser = new UserClass(userEmail, userNick, null);
+                            db.collection("UserInfo").document(FirebaseAuth.getInstance().getUid()).set(newUser)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "Signup Info successfully written to DB.");
+                                            setResult(SIGN_UP_SUCCESS);
+                                            FirebaseAuth.getInstance().signOut();
+                                            Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
+                                            // 메인화면으로 복귀
+                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                            // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            //Log.w(TAG, "Error writing document(DB)", e);
+                                            reset();
+                                            Toast.makeText(getApplicationContext(), "회원가입에 실패했습니다. 인터넷 연결을 확인하시고 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                        }
+
                     }
                 }
-
             }
-        });
-    }
-
+        }
+    };
 
     private void showEndMsg()
     {

@@ -78,11 +78,12 @@ public class EditReview extends AppCompatActivity {
     private FirebaseStorage storage;
     private StorageReference storageRef;
 
+    String userUID;
     String documentID;
+    String serverImagePath;
 
     ImageView image;
     RatingBar ratingBar;
-
 
     TextView textFloorNum;
     TextView textRowNum;
@@ -93,6 +94,11 @@ public class EditReview extends AppCompatActivity {
 
     Button btnSave;
     Button btnCancel;
+
+    float ratedBefore;
+    float newRating;
+    String imageBefore;
+    String newReview;
 
     Bitmap originalBitmap;
     Bitmap rotatedBitmap = null;
@@ -131,18 +137,20 @@ public class EditReview extends AppCompatActivity {
         // Firebase
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference().child("user_review_photo");
+        storageRef = storage.getReference().child("user_upload_image/"+userUID+"/review_photo");
 
         // 해당 리뷰 내용을 불러와 세팅하기
         Intent intent = getIntent();
         documentID = intent.getStringExtra("documentID");
 
-        final float ratedBefore = intent.getFloatExtra("rating", 0);
+        ratedBefore = intent.getFloatExtra("rating", 0);
         ratingBar.setRating(ratedBefore);
         edtReview.setText(intent.getStringExtra("reviewContext"));
 
-        final String imageBefore = intent.getStringExtra("imagepath");
+        serverImagePath = intent.getStringExtra("imagepath");
+        imageBefore = serverImagePath;
         Glide.with(EditReview.this).load(imageBefore).into(image);
 
         String seatNumber = intent.getStringExtra("seatNum");
@@ -158,12 +166,7 @@ public class EditReview extends AppCompatActivity {
         textRowNum.setText(row);
         textSeatNum.setText(num);
 
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeDialog();
-            }
-        });
+        image.setOnClickListener(clickImageListener);
 
         edtReview.addTextChangedListener(new TextWatcher() {
             @Override
@@ -192,63 +195,89 @@ public class EditReview extends AppCompatActivity {
         });
 
         //저장버튼
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnSave.setOnClickListener(clickSaveListener);
+    }
 
-                if(ratingBar.getRating() != ratedBefore)
-                    isContextChanged = true;
+    OnOneOffClickListener clickImageListener = new OnOneOffClickListener() {
+        @Override
+        public void onOneClick(View v) {
+            makeDialog();
+        }
+    };
 
-                if(!isContextChanged) {
-                    Toast.makeText(getApplicationContext(),"수정 사항이 없습니다.",Toast.LENGTH_LONG).show();
-                } else if (edtReview.getText().toString().getBytes().length <= 10) {
-                    Toast.makeText(getApplicationContext(), "후기는 10글자 이상 작성하셔야 합니다.", Toast.LENGTH_LONG).show();
-                } else {
-                    // 수정된 정보 DB에 업데이트
-                    if(user != null) {
+    OnOneOffClickListener clickSaveListener = new OnOneOffClickListener() {
+        @Override
+        public void onOneClick(View v) {
+            clickImageListener.disable();
 
-                        if(finalURI != null) {
-                            // 사진을 변경한 경우
-                            final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
+            newRating = ratingBar.getRating();
+            newReview = edtReview.getText().toString();
 
-                            photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                @Override
-                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                    if (!task.isSuccessful()) {
-                                        throw task.getException();
-                                    }
 
-                                    // Continue with the task to get the download URL
-                                    return photoRef.getDownloadUrl();
+            if(newRating != ratedBefore)
+                isContextChanged = true;
+
+            if(!isContextChanged) {
+                reset();
+                clickImageListener.reset();
+                Toast.makeText(getApplicationContext(),"수정 사항이 없습니다.",Toast.LENGTH_LONG).show();
+            } else if (newReview.getBytes().length <= 10) {
+                reset();
+                clickImageListener.reset();
+                Toast.makeText(getApplicationContext(), "후기는 10글자 이상 작성하셔야 합니다.", Toast.LENGTH_LONG).show();
+            } else {
+                // 수정된 정보 DB에 업데이트
+                if(user != null) {
+
+                    if(finalURI != null) {
+                        // 사진을 변경한 경우
+                        final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
+
+                        photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                            @Override
+                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                if (!task.isSuccessful()) {
+                                    throw task.getException();
                                 }
-                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Uri> task) {
-                                    if (task.isSuccessful()) {
-                                        Uri downloadUri = task.getResult();
-                                        updateDB(downloadUri.toString());
-                                    } else {
-                                        // Handle failures
-                                        // ...
-                                    }
+
+                                // Continue with the task to get the download URL
+                                return photoRef.getDownloadUrl();
+                            }
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()) {
+                                    // Storage에서 이전 사진 삭제
+                                    StorageReference oldPhotoRef = storage.getReferenceFromUrl(serverImagePath);
+                                    oldPhotoRef.delete();
+
+                                    Uri downloadUri = task.getResult();
+                                    finalURI = null;
+                                    imageBefore = downloadUri.toString();
+                                    updateDB(imageBefore);
+                                } else {
+                                    // Handle failures
+                                    reset();
+                                    clickImageListener.reset();
+                                    Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
                                 }
-                            });
-                        }
-                        else {
-                            // 사진을 변경하지 않은 경우
-                            updateDB(imageBefore);
-                        }
+                            }
+                        });
+                    }
+                    else {
+                        // 사진을 변경하지 않은 경우
+                        updateDB(imageBefore);
                     }
                 }
             }
-        });
-    }
+        }
+    };
 
     private void updateDB(String imagepath) {
         db.collection("SeatReview").document(documentID)
                 .update("imagepath", imagepath,
-                        "rating", ratingBar.getRating(),
-                        "reviewText", edtReview.getText().toString())
+                        "rating", newRating,
+                        "reviewText", newReview)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -257,11 +286,14 @@ public class EditReview extends AppCompatActivity {
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "Error writing document(DB)", e);
-            }
-        });
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document(DB)", e);
+                        clickImageListener.reset();
+                        clickSaveListener.reset();
+                        Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     private void makeDialog(){
@@ -281,6 +313,8 @@ public class EditReview extends AppCompatActivity {
 
         alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                clickImageListener.reset();
+
                 if(selectedPhotoMenu == 0 ) {
                     // 사진촬영
                     Log.v("알림", "다이얼로그 > 사진촬영 선택");
@@ -297,6 +331,7 @@ public class EditReview extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.v("알림", "다이얼로그 > 취소 선택");
+                clickImageListener.reset();
                 dialog.cancel();
             }
         });
@@ -515,7 +550,6 @@ public class EditReview extends AppCompatActivity {
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         startActivityForResult(intent, REQUEST_TAKE_ALBUM);
     }
-
 
     //사진 crop할 수 있도록 하는 함수
     public void cropImage() throws IOException {

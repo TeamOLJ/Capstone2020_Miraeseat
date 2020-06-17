@@ -5,7 +5,7 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class Review {
-    private String ownerNick;
+    private String ownerUser;
     @ServerTimestamp
     private Date timestamp;
     private String reviewDate;
@@ -17,8 +17,8 @@ public class Review {
 
     public Review() {}
 
-    public Review(String ownerNick, Date timestamp, String reviewDate, String theaterName, String seatNum, String imagepath, float rating, String reviewText) {
-        this.ownerNick = ownerNick;
+    public Review(String ownerUser, Date timestamp, String reviewDate, String theaterName, String seatNum, String imagepath, float rating, String reviewText) {
+        this.ownerUser = ownerUser;
         this.timestamp = timestamp;
         this.reviewDate = reviewDate;
         this.theaterName = theaterName;
@@ -28,7 +28,7 @@ public class Review {
         this.reviewText = reviewText;
     }
 
-    public String getOwnerNick() { return ownerNick; }
+    public String getOwnerUser() { return ownerUser; }
 
     public Date getTimestamp() { return timestamp; }
 

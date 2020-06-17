@@ -40,6 +40,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -52,6 +54,7 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
 
     FirebaseUser user;
     FirebaseFirestore db;
+    String userUID;
 
     Button mypage_edit;
     Button mypage_withdrawl;
@@ -121,7 +124,7 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
         // Firebase
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        final String userUID = user.getUid();
+        userUID = user.getUid();
 
         // 프로필사진 & 닉네임 데이터베이스에서 읽어오기
         db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -142,8 +145,7 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
     public void loadReviewData() {
         mData = new ArrayList<mypageList_item>();
 
-        db.collection("SeatReview")
-                .whereEqualTo("ownerNick", nickname.getText().toString()).orderBy("timestamp", Query.Direction.DESCENDING)
+        db.collection("SeatReview").whereEqualTo("ownerUser", userUID).orderBy("timestamp", Query.Direction.DESCENDING)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -170,6 +172,8 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                             mData.add(new mypageList_item(document.getId(), userReview.getTheaterName(), userReview.getSeatNum(),
                                     userReview.getRating(), userReview.getImagepath(), userReview.getReviewText(), userReview.getReviewDate()));
                         }
+
+                        // mData까지도 문제가 없다...
 
                         myPageAdapter = new MyPageAdapter(MyPage.this, mData, MyPage.this);
                         listView.setAdapter(myPageAdapter);
@@ -236,20 +240,26 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
         builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                final String reviewImagePath = mData.get(position).getImagePath();
 
                 // DB에서 해당 문서를 삭제
-                db.collection("SeatReview").document(mData.get(position).getDocumentID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(MyPage.this, "후기가 삭제되었습니다.", Toast.LENGTH_LONG).show();
+                db.collection("SeatReview").document(mData.get(position).getDocumentID())
+                        .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Storage에서 사진 삭제
+                                StorageReference oldPhotoRef = FirebaseStorage.getInstance().getReferenceFromUrl(reviewImagePath);
+                                oldPhotoRef.delete();
 
-                        // 리스트뷰의 리스트에서도 해당 아이템 삭제
-                        mData.remove(position);
-                        // 어댑터 새로고침
-                        myPageAdapter.notifyDataSetChanged();
-                        listView.setAdapter(myPageAdapter);
-                    }
-                });
+                                Toast.makeText(MyPage.this, "후기가 삭제되었습니다.", Toast.LENGTH_LONG).show();
+
+                                // 리스트뷰의 리스트에서도 해당 아이템 삭제
+                                mData.remove(position);
+                                // 어댑터 새로고침
+                                myPageAdapter.notifyDataSetChanged();
+                                listView.setAdapter(myPageAdapter);
+                            }
+                        });
 
             }
         });

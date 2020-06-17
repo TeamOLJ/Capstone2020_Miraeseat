@@ -1,52 +1,29 @@
 package com.capstondesign.miraeseat.mypage;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
 
 import com.bumptech.glide.Glide;
-import com.capstondesign.miraeseat.EditReview;
 import com.capstondesign.miraeseat.R;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
 public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
+    private static final String TAG = "MyPageAdapter";
 
     Context mContext;
     ArrayList<mypageList_item> infoList;
     LayoutInflater inflater;
 
-    TextView info;
-    RatingBar ratingBar;
-    ImageView image;
-    TextView content;
-    TextView date;
-    ImageButton btnMenu;
-
     mypageList_item oneListItem;
-    int selectedPosition;
-
-    // Firebase Instance variables
-    private FirebaseFirestore db;
 
     // 버튼 클릭 이벤트를 위한 Listener 인터페이스 정의
     public interface ListBtnClickListener {
@@ -60,6 +37,16 @@ public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
         this.mContext = context;
         this.infoList = list_itemArrayList;
         this.listBtnClickListener = clickListener;
+    }
+
+    // ViewHolder
+    private class ViewHolder {
+        TextView reviewInfo;
+        RatingBar reviewRating;
+        ImageView reviewImage;
+        TextView reviewContent;
+        TextView reviewDate;
+        ImageButton btnMenu;
     }
 
     @Override
@@ -79,33 +66,41 @@ public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        if(convertView==null)
-        {
-            inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            convertView = inflater.inflate(R.layout.mypage_item, parent,false);
+        ViewHolder holder = null;
+        inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            oneListItem = infoList.get(position);
+        if(convertView==null) {
+            convertView = inflater.inflate(R.layout.mypage_item, parent, false);
+            holder = new ViewHolder();
 
-            info = (TextView)convertView.findViewById(R.id.listInfo);
-            ratingBar = (RatingBar)convertView.findViewById(R.id.listRatingbar);
-            image = (ImageView)convertView.findViewById(R.id.listImage);
-            content = (TextView)convertView.findViewById(R.id.listWriting);
-            date = (TextView)convertView.findViewById(R.id.listDate);
+            holder.reviewInfo = (TextView) convertView.findViewById(R.id.listInfo);
+            holder.reviewRating = (RatingBar) convertView.findViewById(R.id.listRatingbar);
+            holder.reviewImage = (ImageView) convertView.findViewById(R.id.listImage);
+            holder.reviewContent = (TextView) convertView.findViewById(R.id.listWriting);
+            holder.reviewDate = (TextView) convertView.findViewById(R.id.listDate);
+            holder.btnMenu = (ImageButton) convertView.findViewById(R.id.listMenu);
 
-            info.setText(oneListItem.getTheaterName()+" "+oneListItem.getSeatNum());
-            ratingBar.setRating(oneListItem.getSeatRating());
-            content.setText(oneListItem.getReviewContext());
-            date.setText(oneListItem.getReviewDate());
-
-            Glide.with(mContext).load(oneListItem.getImagePath()).into(image);
-
-            btnMenu = (ImageButton)convertView.findViewById(R.id.listMenu);
-            btnMenu.setTag(position);
-
-            // "this" - MyPageAdapter.java의 onClick 함수를 호출함
-            btnMenu.setOnClickListener(this);
+            convertView.setTag(holder);
         }
+        else {
+            holder = (ViewHolder)convertView.getTag();
+        }
+
+
+        oneListItem = infoList.get(position);
+
+        holder.reviewInfo.setText(oneListItem.getTheaterName()+" "+oneListItem.getSeatNum());
+        holder.reviewRating.setRating(oneListItem.getSeatRating());
+        holder.reviewContent.setText(oneListItem.getReviewContext());
+        holder.reviewDate.setText(oneListItem.getReviewDate());
+
+        Glide.with(mContext).load(oneListItem.getImagePath()).into(holder.reviewImage);
+
+        holder.btnMenu.setTag(position);
+
+        // "this" - MyPageAdapter.java의 onClick 함수를 호출함
+        holder.btnMenu.setOnClickListener(this);
 
         return convertView;
     }

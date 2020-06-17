@@ -98,12 +98,44 @@
         android:layout_marginLeft="5dp"
         />
 
-    <ListView
-        android:id="@+id/seat_list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        >
+        android:layout_height="match_parent" >
 
-    </ListView>
+        <ListView
+            android:id="@+id/seat_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:visibility="invisible" />
+
+        <RelativeLayout
+            android:id="@+id/no_review_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="아직 작성한 후기가 없습니다!" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/loading_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="로딩 중..." />
+
+        </RelativeLayout>
+
+    </FrameLayout>
 </LinearLayout>
