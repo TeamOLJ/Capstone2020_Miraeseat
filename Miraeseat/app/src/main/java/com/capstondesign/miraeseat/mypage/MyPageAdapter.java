@@ -17,18 +17,11 @@ import com.capstondesign.miraeseat.R;
 import java.util.ArrayList;
 
 public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
-    private static final String TAG = "Adapter";
+    private static final String TAG = "MyPageAdapter";
 
     Context mContext;
     ArrayList<mypageList_item> infoList;
     LayoutInflater inflater;
-
-    TextView info;
-    RatingBar ratingBar;
-    ImageView image;
-    TextView content;
-    TextView date;
-    ImageButton btnMenu;
 
     mypageList_item oneListItem;
 
@@ -55,6 +48,7 @@ public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
         TextView reviewDate;
         ImageButton btnMenu;
     }
+
     @Override
     public int getCount() {
         return this.infoList.size();

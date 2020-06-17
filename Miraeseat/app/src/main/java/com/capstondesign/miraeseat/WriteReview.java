@@ -256,7 +256,7 @@ public class WriteReview extends AppCompatActivity {
                                             public void onSuccess(DocumentReference documentReference) {
                                                 Log.d(TAG, "좌석 후기 업로드 성공");
                                                 Toast.makeText(getApplicationContext(), "후기가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
-                                                // setResult(SIGN_UP_SUCCESS) 라든지... 리뷰 목록 아이템 업데이트 관련 코드가 추가될 수도.
+                                                setResult(1);
                                                 finish();
                                             }
                                         })
