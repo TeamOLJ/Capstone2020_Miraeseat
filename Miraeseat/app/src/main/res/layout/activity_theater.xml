@@ -16,6 +16,17 @@
         app:fabSize="mini"
         app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingViewReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/floatingActionButton_margin"
+        android:layout_marginTop="@dimen/floatingActionButton_margin"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_dehaze_black_24dp" />
+
     <RelativeLayout
         android:id="@+id/seatplanLayout"
         android:layout_width="match_parent"

@@ -63,12 +63,18 @@
     <string name="unsubscribe_text3">가입 시 입력하신 모든 개인정보는 회원 탈퇴와 동시에 일괄 폐기됩니다.</string>
     <string name="unsubscribe_text4">본인확인을 위해 비밀번호를 한 번 더 입력해주세요.</string>
 
+    <string name="loading_text">로딩 중...</string>
+    <string name="no_review_yet">아직 작성한 후기가 없습니다!</string>
+
     <!--이명주-->
     <string name="my_page_text1">마이페이지</string>
 
     <string name="hall_info_text1">공연장</string>
 
+    <string name="edit_user_info">회원정보수정</string>
     <string name="edit_info_text1">정보 수정</string>
+
+    <string name="my_reviews">내가 쓴 후기</string>
 
     <string name="edit_review_text1">후기 수정</string>
     <string name="write_review_text1">후기 작성</string>
@@ -82,5 +88,10 @@
     <string name="hint_seat">좌석</string>
     <string name="hint_rating">평점</string>
     <string name="hint_review">후기</string>
+
+    <string name="defalut_seat_number">1층 1열 1번</string>
+    <string name="defalut_num_of_review">후기 수: 0</string>
+    <string name="average_rating">평균 평점 : </string>
+    <string name="max_rating"> / 5.0</string>
 
 </resources>

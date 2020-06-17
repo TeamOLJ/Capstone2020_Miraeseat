@@ -65,7 +65,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="회원정보수정"
+            android:text="@string/edit_user_info"
             />
 
         <Button
@@ -82,7 +82,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="내가 쓴 후기"
+        android:text="@string/my_reviews"
         android:textAppearance="?android:attr/textAppearanceSearchResultSubtitle"
         android:layout_margin="10dp"/>
 
@@ -107,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="아직 작성한 후기가 없습니다!" />
+                android:text="@string/no_review_yet" />
 
         </RelativeLayout>
 
@@ -121,7 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="로딩 중..." />
+                android:text="@string/loading_text" />
 
         </RelativeLayout>
 

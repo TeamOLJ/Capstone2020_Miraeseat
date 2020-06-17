@@ -2,18 +2,22 @@ package com.capstondesign.miraeseat;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.capstondesign.miraeseat.seatpage.seatPage;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -26,9 +30,10 @@ public class TheaterActivity extends AppCompatActivity {
     float dX, dY;
     private ImageView imageView;
 
-
     FirebaseFirestore db;
     TheaterItem TI;
+
+    FloatingActionButton btnViewReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +45,31 @@ public class TheaterActivity extends AppCompatActivity {
         seatplan_layout = (ViewGroup) findViewById(R.id.seatplanLayout);
         seatplan = (ImageView) findViewById(R.id.seatplan);
 
+        btnViewReview = (FloatingActionButton) findViewById(R.id.floatingViewReview);
+
         GetSeatplanImage(TheaterName);
 
         TI = new TheaterItem(this, seatplan_layout);
 
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+
+        btnViewReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String seatNum = TI.getSelectedSeat();
+
+                if(seatNum == null) {
+                    Toast.makeText(TheaterActivity.this, "좌석을 선택하세요.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intent = new Intent(TheaterActivity.this, seatPage.class);
+                    intent.putExtra("theaterName", TheaterName);
+                    intent.putExtra("seatNumber", TI.getSelectedSeat());
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.translate_up, R.anim.no_change);
+                }
+            }
+        });
 
     }
 
