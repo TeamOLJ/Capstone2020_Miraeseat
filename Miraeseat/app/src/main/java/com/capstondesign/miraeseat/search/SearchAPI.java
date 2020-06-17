@@ -1,38 +1,42 @@
 package com.capstondesign.miraeseat.search;
 
+import android.util.Log;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class SearchAPI {
     final static private String APIkey = "***REMOVED***";
-
+    //API에서 검색어가 포함된 객체를 찾아 일부 정보만 ArrayList로 반환
     //문제점 : 검색결과가 없을 때 에러코드가 안나옴. 어떻게 처리해줘야할지 찾아봐야함.
 
 
-
     //[검색어==공연시설명]으로 공연 시설 찾기. page와 row 사용법 모르겠음.
-    static public ArrayList<HallClass> GetResult_Hall(String searced_word) {
+    static public ArrayList<HallClass> GetResult_Hall(String search_word) {
 
         ArrayList<HallClass> datas = new ArrayList<HallClass>();
 
-        String shprfnmfct = "&shprfnmfct=" + searced_word;   //공연시설명
+        String shprfnmfct = "&shprfnmfct=" + search_word;   //공연시설명
 
-        String HallURL = "http://www.kopis.or.kr/openApi/restful/prfplc?service=" + APIkey + "&cpage=1&rows=5" + shprfnmfct;
+        String HallURL = "http://www.kopis.or.kr/openApi/restful/prfplc?service=" + APIkey + "&cpage=1&rows=5" + shprfnmfct + "&signgucode=11"; //너무 많아서 우선 서울 한정으로 찾게 해놓음.
+
 
         boolean inFcltynm = false, inMt10id = false;
         String hall_name = null, hall_id = null;
 
 
-        //문제점 : 검색결과가 없을 때 에러코드가 안나옴. 어떻게 처리해줘야할지 찾아봐야함.
         try {
 
             URL url = new URL(HallURL);
+
+            URLConnection conn = url.openConnection();
             InputStream IS = url.openStream();
 
 
@@ -40,9 +44,9 @@ public class SearchAPI {
             XmlPullParser xpp = factory.newPullParser();
             xpp.setInput(new InputStreamReader(IS, "UTF-8"));
 
-
             xpp.next();
             int eventType = xpp.getEventType(); //태그 구분용
+
 
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 switch (eventType) {
@@ -96,14 +100,14 @@ public class SearchAPI {
 
         ArrayList<PlayClass> datas = new ArrayList<PlayClass>();
 
-        String shprfnmfct = (search_hall != null) ? "&shprfnmfct=" + search_hall : "";   //공연시설명
         String shprfnm = (search_play != null) ? "&shprfnm" + search_play : "";  //공연명
+        String shprfnmfct = (search_hall != null) ? "&shprfnmfct=" + search_hall : "";   //공연시설명
 
         String[] date = getDate();
 
         //3개월 내에 공연 이력이 있는 경우 모두 출력
         //prfstate=01(공연예정) 02(공연중) 03(공연완료)
-        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + APIkey + "&stdate=" + date[0] + "&eddate=" + date[1] + "&rows=10&cpage=1" + shprfnmfct + shprfnm;
+        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + APIkey + "&stdate=" + date[0] + "&eddate=" + date[1] + "&rows=10&cpage=1" + shprfnmfct + shprfnm + "&signgucode=11"; //너무 많아서 우선 서울 한정으로 찾게 해놓음.
 
         String play_name = null, play_hall = null, poster = null;
         boolean inPlay_name = false, inPlay_hall = false, inPoster = false;

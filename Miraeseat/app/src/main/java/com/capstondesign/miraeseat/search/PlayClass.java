@@ -1,23 +1,25 @@
 package com.capstondesign.miraeseat.search;
 
-public class PlayClass {
-    private String Name;
+public class PlayClass implements InformationClass {
+    private String Play_name;
+    private String Poster;
+    private String Hall_name;
+
+    //공연 세부정보를 통해 얻는 정보
     private String ID;
     private String Start_date;
     private String End_date;
-    private String Poster;
-    private String Play_hall;
     private String Cast;
 
-    public PlayClass(String name, String play_hall, String poster) {
-        Name = name;
-        Play_hall = play_hall;
+    public PlayClass(String play_name, String hall_name, String poster) {
+        Play_name = play_name;
+        Hall_name = hall_name;
         Poster = poster;
     }
 
 
-    public String getName() {
-        return Name;
+    public String getPlay_name() {
+        return Play_name;
     }
 
     public String getID() {
@@ -30,14 +32,6 @@ public class PlayClass {
 
     public String getEnd_date() {
         return End_date;
-    }
-
-    public String getPoster() {
-        return Poster;
-    }
-
-    public String getPlay_hall() {
-        return Play_hall;
     }
 
     public String getCast() {
@@ -60,5 +54,20 @@ public class PlayClass {
 
     public void setCast(String cast) {
         Cast = cast;
+    }
+
+    @Override
+    public String getName() {
+        return Play_name;
+    }
+
+    @Override
+    public String getHall_name() {
+        return Hall_name;
+    }
+
+    @Override
+    public String getPoster() {
+        return Poster;
     }
 }
