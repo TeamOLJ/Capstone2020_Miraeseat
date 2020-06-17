@@ -17,16 +17,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar"
+        android:usesCleartextTraffic="true">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="***REMOVED***" />
 
         <activity android:name=".Image"></activity>
-        <activity android:name=".search.temp">
-
-        </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -83,10 +81,6 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"></activity>
 
         <activity android:name=".WriteReview"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-        </activity>
-
-        <activity android:name=".mypage.MyPage"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
         </activity>
 

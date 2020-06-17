@@ -70,6 +70,7 @@ public class SearchedItem {
         item_name.setText(minformationClass.getName());
 
 
+
         //아이템 이미지 설정
         ImageView item_image = item.findViewById(R.id.item_image);
 
@@ -95,7 +96,7 @@ public class SearchedItem {
     public View.OnClickListener ResultOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String data = ((TextView) v.findViewById(R.id.item_name)).getTag().toString(); //공연 또는 공연시설명
+            String data = v.getTag().toString(); //공연 또는 공연시설명
             Toast.makeText(context, data, Toast.LENGTH_LONG).show();
 //            Intent intent = new Intent(context, HallInfo.class);
 //            intent.putExtra("search item", data);

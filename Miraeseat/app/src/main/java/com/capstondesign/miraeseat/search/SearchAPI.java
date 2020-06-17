@@ -8,7 +8,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -25,7 +24,7 @@ public class SearchAPI {
 
         String shprfnmfct = "&shprfnmfct=" + search_word;   //공연시설명
 
-        String HallURL = "http://www.kopis.or.kr/openApi/restful/prfplc?service=" + APIkey + "&cpage=1&rows=5" + shprfnmfct + "&signgucode=11"; //너무 많아서 우선 서울 한정으로 찾게 해놓음.
+        String HallURL = "http://www.kopis.or.kr/openApi/restful/prfplc?service=" + APIkey + "&cpage=1&rows=9" + shprfnmfct + "&signgucode=11"; //너무 많아서 우선 서울 한정으로 찾게 해놓음.
 
 
         boolean inFcltynm = false, inMt10id = false;
@@ -35,8 +34,6 @@ public class SearchAPI {
         try {
 
             URL url = new URL(HallURL);
-
-            URLConnection conn = url.openConnection();
             InputStream IS = url.openStream();
 
 
@@ -88,7 +85,7 @@ public class SearchAPI {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("Error(GetResult_Hall):", e.toString());
         }
 
         return datas;
@@ -100,17 +97,19 @@ public class SearchAPI {
 
         ArrayList<PlayClass> datas = new ArrayList<PlayClass>();
 
-        String shprfnm = (search_play != null) ? "&shprfnm" + search_play : "";  //공연명
+        String shprfnm = (search_play != null) ? "&shprfnm=" + search_play : "";  //공연명
         String shprfnmfct = (search_hall != null) ? "&shprfnmfct=" + search_hall : "";   //공연시설명
 
         String[] date = getDate();
 
         //3개월 내에 공연 이력이 있는 경우 모두 출력
         //prfstate=01(공연예정) 02(공연중) 03(공연완료)
-        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + APIkey + "&stdate=" + date[0] + "&eddate=" + date[1] + "&rows=10&cpage=1" + shprfnmfct + shprfnm + "&signgucode=11"; //너무 많아서 우선 서울 한정으로 찾게 해놓음.
+        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + APIkey + "&stdate=" + date[0] + "&eddate=" + date[1] + "&rows=9&cpage=1" + shprfnmfct + shprfnm + "&signgucode=11"; //너무 많아서 우선 서울 한정으로 찾게 해놓음.
 
         String play_name = null, play_hall = null, poster = null;
         boolean inPlay_name = false, inPlay_hall = false, inPoster = false;
+
+        Log.d("this", PlayURL);
 
         try {
             URL url = new URL(PlayURL);
@@ -161,6 +160,8 @@ public class SearchAPI {
                     case XmlPullParser.END_TAG:
 
                         if (xpp.getName().equals("db")) {
+
+                            Log.d("this", play_name+" "+play_hall+" "+poster);
                             datas.add(new PlayClass(play_name, play_hall, poster));
                         }
                         break;
@@ -170,7 +171,7 @@ public class SearchAPI {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("Error(GetResult_Play):", e.toString());
         }
 
         return datas;
