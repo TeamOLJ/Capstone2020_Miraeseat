@@ -16,7 +16,7 @@
         app:fabSize="mini"
         app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:id="@+id/seatplanLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -25,75 +25,12 @@
             android:id="@+id/seatplan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:adjustViewBounds="true"
-            android:src="@drawable/logo_temp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:src="@drawable/logo_temp" />
 
-        <!--
-        <TableLayout
-            android:layout_width="366dp"
-            android:layout_height="503dp"
-            android:layout_marginLeft="22dp"
-            android:layout_marginTop="152dp"
-            app:layout_constraintStart_toStartOf="@id/seatplan"
-            app:layout_constraintTop_toTopOf="@id/seatplan">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    </RelativeLayout>
 
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/seatbutton" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/seatbutton" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/seatbutton" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/seatbutton" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/seatbutton" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/seatbutton" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/seatbutton" />
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/seatbutton" />
-            </TableRow>
-        </TableLayout>
-        -->
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

@@ -25,7 +25,10 @@
     <dimen name="floatingActionButton_margin">8dp</dimen>
     <dimen name="design_fab_size_mini" tools:override="true">40dp</dimen>
 
-    <!--toolbar-->
+    <!--charlotte.jpg-->
+    <dimen name="A1_table_height">170dp</dimen>
+    <dimen name="A1_table_width">107dp</dimen>
+
     <dimen name="btn_width">70dp</dimen>
     <dimen name="btnSave_right_margin">15dp</dimen>
 </resources>

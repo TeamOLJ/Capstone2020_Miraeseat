@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 
 import com.capstondesign.miraeseat.DrawerHandler;
+import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.TheaterActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -82,13 +83,10 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        if (drawer.drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
-            drawer.drawerLayout.closeDrawer(Gravity.RIGHT);
-        } else {
-            finish();
-        }
+    public void onLogoButtonClicked(View v) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override
@@ -102,6 +100,15 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            drawer.drawerLayout.closeDrawer(Gravity.RIGHT);
+        } else {
+            finish();
+        }
     }
 
     public void onMapReady(final GoogleMap googleMap) {

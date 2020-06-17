@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.capstondesign.miraeseat.DrawerHandler;
+import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.search.SearchFragment;
 
@@ -90,7 +91,9 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
     }
 
     public void onLogoButtonClicked(View v) {
-        finish();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        this.startActivity(intent);
     }
 
     public void onBackPressed() {

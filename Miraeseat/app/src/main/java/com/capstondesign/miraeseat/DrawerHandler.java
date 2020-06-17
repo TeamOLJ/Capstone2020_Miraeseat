@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -11,7 +12,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.capstondesign.miraeseat.notice.NoticeListPage;
+import com.capstondesign.miraeseat.seatpage.seatPage;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class DrawerHandler implements NavigationView.OnNavigationItemSelectedListener {
     private Activity activity;
@@ -22,11 +26,18 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
 
     LoginCheckHandler LCH;
 
+    // Firebase
+    private FirebaseAuth mainAuth;
+    private FirebaseUser currentUser;
+
     public DrawerHandler(Activity activity) {
         this.activity = activity;
         toolbar = activity.findViewById(R.id.toolbar);
         drawerLayout = activity.findViewById(R.id.drawer_layout);
         navigationView = activity.findViewById(R.id.nav_view);
+
+        mainAuth = FirebaseAuth.getInstance();
+        currentUser = mainAuth.getCurrentUser();
     }
 
     public void init() {
@@ -48,14 +59,27 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
             Intent intent = new Intent(activity, NoticeListPage.class);
             activity.startActivity(intent);
         } else if (id == R.id.menu_use) {
-            Intent intent = new Intent(activity, SignUpPage.class);
-            activity.startActivity(intent);
-        } else if (id == R.id.menu_settings) {
 
+            if(currentUser == null) {
+                Toast.makeText(activity,"로그인을 먼저 해주세요.",Toast.LENGTH_LONG).show();
+            }
+            else {
+                Intent intent = new Intent(activity, WriteReview.class);
+                activity.startActivity(intent);
+            }
+        } else if (id == R.id.menu_settings) {
+            if(currentUser == null) {
+                Toast.makeText(activity,"로그인을 먼저 해주세요.",Toast.LENGTH_LONG).show();
+            }
+            else {
+                Intent intent = new Intent(activity, seatPage.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.translate_up,R.anim.no_change);
+
+            }
         }
 
         drawerLayout.closeDrawer(Gravity.RIGHT);
         return true;
     }
-
 }

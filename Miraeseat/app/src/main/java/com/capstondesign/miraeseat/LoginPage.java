@@ -3,6 +3,7 @@ package com.capstondesign.miraeseat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -73,7 +74,7 @@ public class LoginPage extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String givenEmail = inputEmail.getText().toString();
+                final String givenEmail = inputEmail.getText().toString().trim();
                 String givenPwd = inputPwd.getText().toString();
 
                 isAutoLoginChecked = checkAutoLogin.isChecked();
@@ -150,7 +151,7 @@ public class LoginPage extends AppCompatActivity {
                                             // 로그인 성공
                                             Log.d(TAG, "LogInWithEmail:success");
                                             // DB에서 닉네임 읽어오기
-                                            db.collection("UserInfo").document(givenEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            db.collection("UserInfo").document(FirebaseAuth.getInstance().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                     UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
@@ -196,5 +197,11 @@ public class LoginPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void onLogoButtonClicked(View v) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }
