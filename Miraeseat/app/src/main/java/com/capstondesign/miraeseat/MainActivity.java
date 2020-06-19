@@ -2,10 +2,12 @@ package com.capstondesign.miraeseat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -26,8 +28,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
-    final int theater_id = 10000;
-    final int show_id = 20000;
     final String SEARCH_WORD = "search_word";
 
     // Firebase 인증 변수
@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         searchText = findViewById(R.id.searchText);
         searchText.setOnEditorActionListener(this);
 
-        CreateButton(theater_id, R.id.view_theater);
-        CreateButton(show_id, R.id.view_show);
+        CreateButton(R.id.view_theater);
+        CreateButton(R.id.view_show);
 
         // Initialize Firebase Auth
         mainAuth = FirebaseAuth.getInstance();
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     //동적 버튼 만들기
-    private void CreateButton(int type, int layout) {
+    private void CreateButton(int layout) {
         LinearLayout view_theater = findViewById(layout);    //type에 따라 다른 레이아웃을 선택하도록 바꾸기
         int width = (int) getResources().getDimension(R.dimen.poster_width);
         int height = (int) getResources().getDimension(R.dimen.poster_height);
@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
         for (int i = 0; i < 5; ++i) {
             ImageButton imageButton = new ImageButton(this);
-            imageButton.setId(type + i);
             imageButton.setImageResource(R.drawable.logo_temp);  //type에 따라 다른 그림이 나오도록 바꾸기
             imageButton.setLayoutParams(params);
             imageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -107,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         }
     }
 
-    //이게 맞나?
     public View.OnClickListener PosterOnClickListner = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

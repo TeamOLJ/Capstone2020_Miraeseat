@@ -6,6 +6,7 @@
     <dimen name="nav_header_height">175dp</dimen>
 
     <dimen name="nav_profile">70dp</dimen>
+    <dimen name="nav_logo_width">60dp</dimen>
 
     <dimen name="font_size">20sp</dimen>
 
@@ -17,9 +18,10 @@
     <dimen name="poster_margin">5dp</dimen>
 
     <!--result-->
-    <dimen name="result_width">125dp</dimen>
     <dimen name="result_height">150dp</dimen>
     <dimen name="result_padding">5dp</dimen>
+    <dimen name="result_text_size">15dp</dimen>
+
 
     <!--activity_theater.xml-->
     <dimen name="floatingActionButton_margin">8dp</dimen>

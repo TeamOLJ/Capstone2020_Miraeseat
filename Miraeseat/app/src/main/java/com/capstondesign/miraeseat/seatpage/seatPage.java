@@ -150,6 +150,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                 }
                 else {
                     Intent intent = new Intent(getApplicationContext(), WriteReview.class);
+                    intent.putExtra("theaterName", theaterName);
                     intent.putExtra("selectedSeat", seatNumber);
                     startActivityForResult(intent, 1234);
                 }

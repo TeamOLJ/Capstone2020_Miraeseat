@@ -26,20 +26,13 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/main_color"
                 app:elevation="1dp"
-                app:popupTheme="@style/AppTheme.PopupOverlay">
-
-                <TextView
-                    android:id="@+id/titleText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/hall_info_text1"
-                    android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title" />
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                >
 
                 <ImageButton
                     android:id="@+id/logo"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/nav_logo_width"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_gravity="left"
@@ -48,6 +41,22 @@
                     android:scaleType="fitCenter"
                     app:srcCompat="@drawable/logo_temp" />
 
+                <TextView
+                    android:id="@+id/titleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/hall_info_text1"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:textAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    />
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.AppBarLayout>

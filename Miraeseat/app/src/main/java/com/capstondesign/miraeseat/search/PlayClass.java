@@ -1,41 +1,53 @@
 package com.capstondesign.miraeseat.search;
 
+import java.util.Calendar;
+
 public class PlayClass implements InformationClass {
     private String Play_name;
     private String Poster;
-    private String Hall_name;
-
-    //공연 세부정보를 통해 얻는 정보
     private String ID;
-    private String Start_date;
-    private String End_date;
-    private String Cast;
 
-    public PlayClass(String play_name, String hall_name, String poster) {
+    //공연 목록조회를 통해 얻는 정보
+    private String Date;
+    private String State;
+
+
+    public PlayClass(String id, String play_name, String poster) {
+        ID = id;
         Play_name = play_name;
-        Hall_name = hall_name;
         Poster = poster;
     }
 
 
-    public String getPlay_name() {
+    public PlayClass(String play_name, String date, String poster, String state) {
+        Play_name = play_name;
+        Date = date;
+        Poster = poster;
+        State = state;
+    }
+
+
+    @Override
+    public String getName() {
         return Play_name;
     }
 
-    public String getID() {
+    @Override
+    public String getId() {
         return ID;
     }
 
-    public String getStart_date() {
-        return Start_date;
+    @Override
+    public String getPoster() {
+        return Poster;
     }
 
-    public String getEnd_date() {
-        return End_date;
+    public String getDate() {
+        return Date;
     }
 
-    public String getCast() {
-        return Cast;
+    public String getState() {
+        return State;
     }
 
 
@@ -44,30 +56,31 @@ public class PlayClass implements InformationClass {
         ID = id;
     }
 
-    public void setStart_date(String start_date) {
-        Start_date = start_date;
+    public void setDate(String date) {
+        Date = getDate();
     }
 
-    public void setEnd_date(String end_date) {
-        End_date = end_date;
+    public void setState(String state) {
+        State = state;
     }
 
-    public void setCast(String cast) {
-        Cast = cast;
-    }
+    //오늘 날짜와 3달 뒤 날짜를 구함
+    static public String[] getThreeMonthDate() {
+        Calendar calendar = Calendar.getInstance();
 
-    @Override
-    public String getName() {
-        return Play_name;
-    }
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-    @Override
-    public String getHall_name() {
-        return Hall_name;
-    }
+        String Today = Integer.toString(year) + String.format("%02d", month) + String.format("%02d", day);
 
-    @Override
-    public String getPoster() {
-        return Poster;
+        if (month > 9) {
+            month -= 9;
+            year += 1;
+        } else month += 3;
+
+        String AfterThreeMonth = Integer.toString(year) + String.format("%02d", month) + String.format("%02d", day);
+
+        return new String[]{Today, AfterThreeMonth};
     }
 }

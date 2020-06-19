@@ -3,26 +3,36 @@ package com.capstondesign.miraeseat.search;
 public class HallClass implements InformationClass {
     private String Hall_name;
     private String ID;
-
-    //공연장 세부정보를 통해 얻는 정보
-    private double Latitude;    //위도
-    private double Longitude;  //경도
-
-    //메인이나 검색 시 띄울 포스터
     private String Poster;
 
-    //이건 어떡하지?
-    private String Seatplan_link;
+    private double Latitude;    //위도
+    private double Longitude;  //경도
+    private String Seatplan_link;   //좌석배치도
 
 
     public HallClass(String hall_name, String id) {
-        this.Hall_name = hall_name;
+        Hall_name = hall_name;
         ID = id;
     }
 
 
-    public String getID() {
+    public HallClass() {
+    }
+
+
+    @Override
+    public String getName() {
+        return Hall_name;
+    }
+
+    @Override
+    public String getId() {
         return ID;
+    }
+
+    @Override
+    public String getPoster() {
+        return Poster;
     }
 
     public double getLatitude() {
@@ -38,6 +48,9 @@ public class HallClass implements InformationClass {
     }
 
 
+    public void setHall_name(String hall_name) {
+        Hall_name = hall_name;
+    }
 
     public void setLatitude(double latitude) {
         Latitude = latitude;
@@ -51,18 +64,4 @@ public class HallClass implements InformationClass {
         Seatplan_link = seatplan_link;
     }
 
-    @Override
-    public String getName() {
-        return Hall_name;
-    }
-
-    @Override
-    public String getHall_name() {
-        return Hall_name;
-    }
-
-    @Override
-    public String getPoster() {
-        return Poster;
-    }
 }

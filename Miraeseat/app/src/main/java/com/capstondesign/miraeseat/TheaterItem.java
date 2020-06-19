@@ -122,7 +122,6 @@ public class TheaterItem {
         btnRow.setPadding(PADDING, PADDING, PADDING, PADDING);
 
 
-
         int n = 1;
         while (n <= tmp_maxCol) {
             if (n >= start_index && n <= end_index) {
@@ -165,7 +164,7 @@ public class TheaterItem {
                     X = event.getX();
                     Y = event.getY();
 
-                    if((X<v.getWidth() && 0<X)&& (Y<v.getHeight() && 0<Y)) {
+                    if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
                         Test(v);
                     }
                     break;
@@ -232,6 +231,8 @@ public class TheaterItem {
     public void Test(View v) {
         if (previous_btn == v) {
             previous_btn.setBackgroundResource(R.drawable.seatbutton_unclicked);
+            previous_btn = null;
+            selectedSeat = null;
         } else {
             if (previous_btn != null) {
                 previous_btn.setBackgroundResource(R.drawable.seatbutton_unclicked);

@@ -44,8 +44,8 @@ public class SearchFragment extends Fragment {
         }
 
 
-        SearchedItem searchedItem = new SearchedItem(getContext(), inflater, container, tpr.getResult());
-        //searchedItem = new SearchedItem(getContext(), inflater, container, thr.getResult());
+        //SearchedItem searchedItem = new SearchedItem(getContext(), inflater, container, tpr.getResult());
+        SearchedItem searchedItem = new SearchedItem(getContext(), inflater, container, thr.getResult());
 
 //        new Thread(new Runnable() {
 //            @Override
@@ -80,6 +80,7 @@ public class SearchFragment extends Fragment {
             return arrayList;
         }
     }
+
 
     class Thread_play_result extends Thread {
         ArrayList<PlayClass> arrayList;

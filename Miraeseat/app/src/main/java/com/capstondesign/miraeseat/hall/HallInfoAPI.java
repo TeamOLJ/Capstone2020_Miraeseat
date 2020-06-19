@@ -1,9 +1,9 @@
-package com.capstondesign.miraeseat.search;
+package com.capstondesign.miraeseat.hall;
 
-import android.content.res.Resources;
 import android.util.Log;
 
-import com.capstondesign.miraeseat.R;
+import com.capstondesign.miraeseat.search.HallClass;
+import com.capstondesign.miraeseat.search.PlayClass;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -12,35 +12,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 
-public class SearchAPI {
-    final static private String KOPIS_key= "***REMOVED***";
-    //API에서 검색어가 포함된 객체를 찾아 일부 정보만 ArrayList로 반환
-    //문제점 : 검색결과가 없을 때 에러코드가 안나옴. 어떻게 처리해줘야할지 찾아봐야함.
-
-
+public class HallInfoAPI {
+    final static private String KOPIS_key = "***REMOVED***";
     /*
-    [검색어==공연시설명]으로 공연 시설 찾기.
-    현재 KOPIS_API 기준으로 검색 중
-    추후 DB에 공연시설명으로 접근해서 포스터를 가져와야함
+    공연시설 : tag(공연시설 ID)로 GetDetails_Hall 구하기 / GetDetails_Hall의 공연시설명으로 Get_Play
+    공연 : tag(공연 ID)로 공연시설 ID 얻기 / 얻은 공연 시설 ID로 GetDetails_Hall 구하기 / GetDetails_Hall의 공연시설명으로 Get_Play
      */
-    static public ArrayList<HallClass> GetResult_Hall(String search_word) {
-        ArrayList<HallClass> datas = new ArrayList<HallClass>();
 
-        String shprfnmfct = "&shprfnmfct=" + search_word;
+    //[공연시설 ID]로 공연시설명, 위도, 경도 얻기
+    static public HallClass GetDetails_Hall(String id) {
+        HallClass data = new HallClass();
 
-        String HallURL = "http://www.kopis.or.kr/openApi/restful/prfplc?service=" + KOPIS_key + "&cpage=1&rows=9" + shprfnmfct + "&signgucode=11"; //너무 많아서 우선 서울 한정으로 찾게 해놓음.
+        String Play_DetailURL = "http://www.kopis.or.kr/openApi/restful/prfplc/" + id + "?service=" + KOPIS_key;
 
 
-        //공연시설명, ID
-        boolean inFcltynm = false, inMt10id = false;
-        String hall_name = null, hall_id = null;
+        //시설명, 위도, 경도
+        boolean inFcltynm = false, inLa = false, inLo = false;
 
 
         try {
-
-            URL url = new URL(HallURL);
+            URL url = new URL(Play_DetailURL);
             InputStream IS = url.openStream();
 
 
@@ -49,7 +41,7 @@ public class SearchAPI {
             xpp.setInput(new InputStreamReader(IS, "UTF-8"));
 
             xpp.next();
-            int eventType = xpp.getEventType(); //태그 구분용
+            int eventType = xpp.getEventType();
 
             String tag;
 
@@ -61,25 +53,25 @@ public class SearchAPI {
 
                         if (tag.equals("fcltynm")) {
                             inFcltynm = true;
-
-                        } else if (tag.equals("mt10id")) {
-                            inMt10id = true;
-
+                        } else if (tag.equals("la")) {
+                            inLa = true;
+                        } else if (tag.equals("lo")) {
+                            inLo = true;
                         }
                         break;
-
 
                     case XmlPullParser.TEXT:
                         tag = xpp.getText();
 
                         if (inFcltynm) {
-                            hall_name = tag;
+                            data.setHall_name(tag);
                             inFcltynm = false;
-
-                        } else if (inMt10id) {
-                            hall_id = tag;
-                            inMt10id = false;
-
+                        } else if (inLa) {
+                            data.setLatitude(Double.parseDouble(tag));
+                            inLa = false;
+                        } else if (inLo) {
+                            data.setLongitude(Double.parseDouble(tag));
+                            inLo = false;
                         }
                         break;
 
@@ -88,7 +80,7 @@ public class SearchAPI {
                         tag = xpp.getName();
 
                         if (tag.equals("db")) {
-                            datas.add(new HallClass(hall_name, hall_id));
+                            return data;
                         }
                         break;
                 }
@@ -96,35 +88,31 @@ public class SearchAPI {
             }
 
         } catch (Exception e) {
-            Log.d("Error(GetResult_Hall):", e.toString());
+            Log.d("Error(GetDetails_Hall):", e.toString());
         }
 
-        return datas;
+        return null;
     }
 
 
-    //[검색어==공연명]으로 공연 찾기
-    static public ArrayList<PlayClass> GetResult_Play(String search_play, String search_hall) {
-
+    //[공연시설명]으로 공연 중인 공연 정보들 얻기
+    static public ArrayList<PlayClass> Get_Play(String hall_name) {
         ArrayList<PlayClass> datas = new ArrayList<PlayClass>();
-
-        String shprfnm = (search_play != null) ? "&shprfnm=" + search_play : "";  //공연명
-
         String[] date = PlayClass.getThreeMonthDate();
 
-        //3개월 내에 공연 이력이 있는 경우 모두 출력
-        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + KOPIS_key + "&stdate=" + date[0] + "&eddate=" + date[1] + "&rows=9&cpage=1" + shprfnm + "&signgucode=11"; //서울 한정
+        String shprfnmfct = "&shprfnmfct=" + hall_name;
 
 
-        //공연ID, 공연명, 포스터
-        String[] index = {"mt20id", "prfnm", "poster"};
+        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + KOPIS_key + "&stdate=" + date[0] + "&eddate=" + date[1] + "&cpage=1&rows=10" + shprfnmfct;
+
+        //공연명, 시작 날짜, 종료 날짜, 포스터, 공연 상태
+        String[] index = {"prfnm", "prfpdfrom", "prfpdto", "poster", "prfstate"};
         boolean[] index_check = new boolean[index.length];
         String[] index_data = new String[index.length];
 
-        String mt20id = null, prfnm = null, poster = null;
-        boolean inMt20id = false, inPrfnm = false, inPoster = false;
 
         try {
+
             URL url = new URL(PlayURL);
             InputStream IS = url.openStream();
 
@@ -132,14 +120,13 @@ public class SearchAPI {
             XmlPullParser xpp = factory.newPullParser();
             xpp.setInput(new InputStreamReader(IS, "UTF-8"));
 
-
             xpp.next();
+            int eventType = xpp.getEventType();
 
             String tag;
 
-            int eventType = xpp.getEventType(); //태그 구분용
-
             while (eventType != XmlPullParser.END_DOCUMENT) {
+
                 switch (eventType) {
 
                     case XmlPullParser.START_TAG:
@@ -151,6 +138,8 @@ public class SearchAPI {
                                 break;
                             }
                         }
+
+                        break;
 
 
                     case XmlPullParser.TEXT:
@@ -166,24 +155,20 @@ public class SearchAPI {
 
                         break;
 
-
                     case XmlPullParser.END_TAG:
+                        tag = xpp.getName();
 
-                        if (xpp.getName().equals("db")) {
-
-                            datas.add(new PlayClass(index_data[0], index_data[1], index_data[2]));
+                        if (tag.equals("db")) {
+                            datas.add(new PlayClass(index_data[0], (index_data[1] + "-" + index_data[2]), index_data[3], index_data[4]));
                         }
                         break;
-
                 }
                 eventType = xpp.next();
             }
 
         } catch (Exception e) {
-            Log.d("Error(GetResult_Play):", e.toString());
+            Log.d("Error(Get_Play):", e.toString());
         }
-
         return datas;
     }
-
 }

@@ -82,6 +82,7 @@ public class WriteReview extends AppCompatActivity {
 
     String reviewDate;
     String seatNumber;
+    String theaterName;
 
     TextView textAddPhoto;
     RatingBar ratingBar;
@@ -118,6 +119,7 @@ public class WriteReview extends AppCompatActivity {
 
         Intent intent = getIntent();
         String selectedSeat = intent.getStringExtra("selectedSeat");
+        theaterName = intent.getStringExtra("theaterName");
 
         textAddPhoto = (TextView)findViewById(R.id.textAddPhoto);
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
@@ -263,7 +265,7 @@ public class WriteReview extends AppCompatActivity {
 
                                 reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
 
-                                Review userReview = new Review(userUID, null, reviewDate, "극장이름", seatNumber, savedImageUri, ratingPoint, newReview);
+                                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, savedImageUri, ratingPoint, newReview);
 
                                 // DB 업로드
                                 db.collection("SeatReview").add(userReview)
@@ -298,7 +300,7 @@ public class WriteReview extends AppCompatActivity {
                     // 사진 저장은 성공했는데 후기 저장은 실패한 경우
                     reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
 
-                    Review userReview = new Review(userUID, null, reviewDate, "극장이름", seatNumber, savedImageUri,
+                    Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, savedImageUri,
                             ratingPoint, newReview);
 
                     // DB 업로드

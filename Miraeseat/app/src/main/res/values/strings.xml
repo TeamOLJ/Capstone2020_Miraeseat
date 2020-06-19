@@ -16,6 +16,8 @@
     <string name="editText_desc">검색창</string>
     <string name="editText_hint">공연장/공연 검색</string>
 
+    <string name="KOPIS_key">***REMOVED***</string>
+
     <!--오나현-->
     <string name="hint_id">아이디</string>
     <string name="hint_nick">닉네임</string>
@@ -70,6 +72,10 @@
     <string name="my_page_text1">마이페이지</string>
 
     <string name="hall_info_text1">공연장</string>
+
+    <string name="hall_item_text1">공연명</string>
+    <string name="hall_item_text2">공연날짜</string>
+    <string name="hall_item_text3">공연상태</string>
 
     <string name="edit_user_info">회원정보수정</string>
     <string name="edit_info_text1">정보 수정</string>

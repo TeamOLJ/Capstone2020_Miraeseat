@@ -2,6 +2,8 @@ package com.capstondesign.miraeseat.hall;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +19,8 @@ import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.TheaterActivity;
+import com.capstondesign.miraeseat.search.HallClass;
+import com.capstondesign.miraeseat.search.PlayClass;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,9 +39,13 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
     ListView listView;
     HallAdapter hallAdapter;
 
-    ArrayList<HallList_item> mData;
+    //ArrayList<HallList_item> mData;
+    ArrayList<PlayClass> mData;
+
 
     DrawerHandler drawer;
+
+    HallClass hall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,28 +64,47 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        Intent intent = getIntent();
+        String id = intent.getStringExtra("hall id");
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try {
+            Thread_hall_details thd = new Thread_hall_details(id);
+            thd.run();
+            thd.join();
+
+            hall = thd.getHall();
+
+            Thread_plays tp = new Thread_plays(hall.getName());
+            tp.run();
+            tp.join();
+
+            mData = tp.getPalys();
+
+        } catch (InterruptedException e) {
+            Log.d("Error(HallInfo):", e.toString());
+        }
+
+
+        TextView titleText = (TextView) findViewById(R.id.titleText);
+        titleText.setText(hall.getName());
+        titleText.setSelected(true);
+
         btnSeat = (Button) findViewById(R.id.btnSeat);
 
-        listView = (ListView)findViewById(R.id.hall_playlist);
+        listView = (ListView) findViewById(R.id.hall_playlist);
 
-        mData = new ArrayList<HallList_item>();
-
-        //임시데이터
-        mData.add(new HallList_item(R.mipmap.ic_launcher, "오페라의 유령","2020/04/04-2020/05/05","타비소 마세메네, 힐러리 라이터..."));
-        mData.add(new HallList_item(R.mipmap.ic_launcher, "드라큘라","2020/04/22-2020/06/12","김준수, 류정한, 전동석..."));
-        mData.add(new HallList_item(R.mipmap.ic_launcher, "드라큘라","2020/04/22-2020/06/12","김준수, 류정한, 전동석..."));
-
-        hallAdapter = new HallAdapter(HallInfo.this,mData);
+        hallAdapter = new HallAdapter(HallInfo.this, mData);
         listView.setAdapter(hallAdapter);
 
-        //hall_name에 공연장 이름 불러오기
-        //해당 공연장의 공연 정보 리스트뷰에 불러오기
 
         btnSeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TheaterActivity.class);
-                intent.putExtra("hall_name", "극장이름"); //무슨 오류가 난다... 뭔지 모르겠다
+                intent.putExtra("hall name", hall.getName());
                 startActivity(intent);
             }
         });
@@ -117,15 +144,51 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
 
         //공연장 API에서 위도,경도,공연장이름 불러와서 맵에 띄우기
 
-        LatLng SEOUL = new LatLng(37.56, 126.97);
+        LatLng Point = new LatLng(hall.getLatitude(), hall.getLongitude());
 
         MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(SEOUL);
-        markerOptions.title("서울");
-        markerOptions.snippet("한국의 수도");
+        markerOptions.position(Point);
+        markerOptions.title(hall.getName());
+        //markerOptions.snippet("한국의 수도");
         map.addMarker(markerOptions);
 
-        map.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
+        map.moveCamera(CameraUpdateFactory.newLatLng(Point));
         map.animateCamera(CameraUpdateFactory.zoomTo(12));
+    }
+
+    class Thread_hall_details extends Thread {
+        String ID;
+        HallClass Hall;
+
+        public Thread_hall_details(String id) {
+            ID = id;
+        }
+
+        @Override
+        public void run() {
+            Hall = HallInfoAPI.GetDetails_Hall(ID);
+        }
+
+        public HallClass getHall() {
+            return Hall;
+        }
+    }
+
+    class Thread_plays extends Thread {
+        String Name;
+        ArrayList<PlayClass> Plays;
+
+        public Thread_plays(String name) {
+            Name = name;
+        }
+
+        @Override
+        public void run() {
+            Plays = HallInfoAPI.Get_Play(Name);
+        }
+
+        public ArrayList<PlayClass> getPalys() {
+            return Plays;
+        }
     }
 }
