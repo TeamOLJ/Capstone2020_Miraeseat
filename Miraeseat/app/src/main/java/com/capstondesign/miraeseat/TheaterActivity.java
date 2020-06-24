@@ -1,9 +1,10 @@
 package com.capstondesign.miraeseat;
 
 
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -11,17 +12,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.capstondesign.miraeseat.seatpage.seatPage;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class TheaterActivity extends AppCompatActivity {
+    private static final String TAG = "TheaterActivity";
+
     private int half_width, half_height;
     private ScaleGestureDetector mScaleGestureDetector;
     private float mScaleFactor = 1.0f;
@@ -33,6 +39,10 @@ public class TheaterActivity extends AppCompatActivity {
     FirebaseFirestore db;
     TheaterItem TI;
 
+    String TheaterName;
+    String seatPlanImage;
+    double widthPerHeight;
+
     FloatingActionButton btnViewReview;
 
     @Override
@@ -40,14 +50,16 @@ public class TheaterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theater);
 
-        final String TheaterName = getIntent().getStringExtra("hall name");
+        Intent intent = getIntent();
+        TheaterName = intent.getStringExtra("hall_name");
+        seatPlanImage = intent.getStringExtra("seatImage");
 
         seatplan_layout = (ViewGroup) findViewById(R.id.seatplanLayout);
         seatplan = (ImageView) findViewById(R.id.seatplan);
 
         btnViewReview = (FloatingActionButton) findViewById(R.id.floatingViewReview);
 
-        GetSeatplanImage(TheaterName);
+        GetSeatplanImage();
 
         TI = new TheaterItem(this, seatplan_layout);
 
@@ -80,20 +92,41 @@ public class TheaterActivity extends AppCompatActivity {
         if (hasFocus == true) {
             half_width = seatplan_layout.getWidth() / 2;
             half_height = seatplan_layout.getHeight() / 2;
-
-
-            //onCreate 때는 seatplan의 크기 측정 불가. 화면에 이미지가 생성된 후 측정 가능.
-            TI.getSize(seatplan.getWidth(), seatplan.getHeight());
-            TI.init();
-            TI.execute();
         }
-
     }
 
-    private void GetSeatplanImage(String TheaterName) {
-        //DB에서 공연장 이름으로 이미지 받아오기
+    private void GetSeatplanImage() {
+        // 좌석배치도 세팅
 
-        Glide.with(getApplicationContext()).load("https://firebasestorage.googleapis.com/v0/b/capstone2020-e540d.appspot.com/o/theater_seat_plan%2Fcharlotte.jpg?alt=media&token=80453ebf-d7c5-4274-83c8-beba34bc5caa").into(seatplan);
+        Glide.with(getApplicationContext()).load(seatPlanImage)
+                .override(seatplan_layout.getWidth(), seatplan_layout.getHeight()).fitCenter()
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        // 의도적으로 딜레이를 주어 이미지가 seatplan에 설정된 뒤에 그 이미지뷰의 크기를 읽을 수 있게 한 방식:
+                        new Handler().postDelayed(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                TI.getSize(seatplan.getWidth(), seatplan.getHeight());
+                                TI.init();
+                                TI.execute();
+                            }
+                        }, 1000);
+                        return false;
+                    }
+                })
+                .into(seatplan);
+
+        // 가장 이상적인 방식은 .into까지 완료된 뒤에 seatplan의 크기를 읽어오는 건데... 아무리 찾아도 완료 뒤 callback 함수를 찾을 수가 없었다. 시간이 되면 더 알아보는 걸로.
+        // 가로세로 비율을 DB에 저장해놓고 사용하는 방식도 고려해보았으나, 어째서인지 사이즈가 이상하게 변해서 그 방식으로 구현은 실패했다.
+
     }
 
 

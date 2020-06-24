@@ -1,5 +1,6 @@
 package com.capstondesign.miraeseat.hall;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,12 +29,20 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
 public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
+    static final String TAG = "HallInfo";
 
     private GoogleMap map;
+
+    FirebaseFirestore db;
 
     Button btnSeat;
 
@@ -42,10 +52,11 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
     //ArrayList<HallList_item> mData;
     ArrayList<PlayClass> mData;
 
-
     DrawerHandler drawer;
 
     HallClass hall;
+
+    String seatplanImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +74,8 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         getSupportActionBar().setHomeAsUpIndicator(drawer.toolbar_image);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        db = FirebaseFirestore.getInstance();
 
         Intent intent = getIntent();
         String id = intent.getStringExtra("hall id");
@@ -103,9 +116,36 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         btnSeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), TheaterActivity.class);
-                intent.putExtra("hall name", hall.getName());
-                startActivity(intent);
+
+                db.collection("TheaterInfo").whereEqualTo("theatername", hall.getName()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+
+                            if (querySnapshot.isEmpty()) {
+                                // 쿼리 리턴값이 없음 = 아직 객석배치도가 없는 공연장
+                                showNotSupported();
+                            }
+                            else {
+                                // 리턴값이 있음 = 객석배치도가 제공되는 공연장
+                                for (QueryDocumentSnapshot document : querySnapshot) {
+                                    seatplanImage = document.getString("seatplan");
+                                }
+
+                                Intent intent = new Intent(getApplicationContext(), TheaterActivity.class);
+                                intent.putExtra("hall_name", hall.getName());
+                                intent.putExtra("seatImage", seatplanImage);
+                                startActivity(intent);
+                            }
+                        }
+                        else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
             }
         });
     }
@@ -136,6 +176,19 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         } else {
             finish();
         }
+    }
+
+    public void showNotSupported() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("SORRY! :(");
+        builder.setMessage("아직 지원되지 않는 공연장입니다. 업데이트를 기다려주세요.");
+
+        builder.setPositiveButton("확인", null);
+
+        builder.setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void onMapReady(final GoogleMap googleMap) {
