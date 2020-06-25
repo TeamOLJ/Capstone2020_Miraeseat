@@ -63,8 +63,8 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         mData = new ArrayList<HallList_item>();
 
         //임시데이터
-        mData.add(new HallList_item(R.mipmap.ic_launcher, "오페라의 유령","2020/04/04-2020/05/05","타비소 마세메네, 힐러리 라이터..."));
-        mData.add(new HallList_item(R.mipmap.ic_launcher, "드라큘라","2020/04/22-2020/06/12","김준수, 류정한, 전동석..."));
+        mData.add(new HallList_item(R.mipmap.phantom, "오페라의 유령","2020/04/04-2020/05/05","타비소 마세메네, 힐러리 라이터..."));
+        mData.add(new HallList_item(R.mipmap.dracula, "드라큘라","2020/04/22-2020/06/12","김준수, 류정한, 전동석..."));
         mData.add(new HallList_item(R.mipmap.ic_launcher, "드라큘라","2020/04/22-2020/06/12","김준수, 류정한, 전동석..."));
 
         hallAdapter = new HallAdapter(HallInfo.this,mData);
@@ -117,15 +117,15 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
 
         //공연장 API에서 위도,경도,공연장이름 불러와서 맵에 띄우기
 
-        LatLng SEOUL = new LatLng(37.56, 126.97);
+        LatLng SEOUL = new LatLng(37.511372, 127.099935);
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(SEOUL);
-        markerOptions.title("서울");
-        markerOptions.snippet("한국의 수도");
+        markerOptions.title("샤롯데씨어터");
+        markerOptions.snippet("호텔롯데월드 6층");
         map.addMarker(markerOptions);
 
         map.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
-        map.animateCamera(CameraUpdateFactory.zoomTo(12));
+        map.animateCamera(CameraUpdateFactory.zoomTo(14));
     }
 }

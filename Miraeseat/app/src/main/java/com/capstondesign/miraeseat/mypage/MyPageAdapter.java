@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -96,6 +95,7 @@ public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
         holder.reviewDate.setText(oneListItem.getReviewDate());
 
         Glide.with(mContext).load(oneListItem.getImagePath()).into(holder.reviewImage);
+
 
         holder.btnMenu.setTag(position);
 
