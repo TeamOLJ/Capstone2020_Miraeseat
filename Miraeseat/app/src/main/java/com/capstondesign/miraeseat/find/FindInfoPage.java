@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,8 +22,11 @@ import androidx.fragment.app.Fragment;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.SignUpPage;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class FindInfoPage extends AppCompatActivity {
     private static final String TAG = "FindInfoPage";
@@ -40,6 +46,8 @@ public class FindInfoPage extends AppCompatActivity {
     Button btnGoLogin;
 
     DrawerHandler drawer;
+
+    FirebaseAuth auth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,13 +95,23 @@ public class FindInfoPage extends AppCompatActivity {
                 {
                     inputLayoutEmail.setError(null);
                     inputLayoutEmail.setErrorEnabled(false);
-                    // 서버로 전송해 DB 확인
-                    // if(!Pattern.matches("[+a-zA-Z0-9[-[_]]]{5,20}", givenID) || (매칭되는 아이디와 이메일이 없으면))
-                    // inputLayoutEmail.setError("가입 정보가 없습니다. 입력 정보를 다시 확인하시거나 회원가입 후 이용해주세요.");
-                    // else 매칭되는 정보가 있으면
-                    // layoutFindPwd.setVisibility(View.INVISIBLE);
-                    // layoutFoundPwd.setVisibility(View.VISIBLE);
+
                     // 그에 따른 정보처리 진행
+                    auth.sendPasswordResetEmail(givenEmail)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Email sent.");
+
+                                        layoutFindPwd.setVisibility(View.INVISIBLE);
+                                        layoutFoundPwd.setVisibility(View.VISIBLE);
+                                    }
+                                    else {
+                                        Toast.makeText(FindInfoPage.this, "이메일 발송에 실패했습니다. 인터넷 연결 확인 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                 }
 
                 // 뭔가를 작성하면 하단의 오류문구를 지워주기 위한 코드
