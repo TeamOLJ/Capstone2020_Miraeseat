@@ -7,8 +7,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -67,8 +69,7 @@ public class SignUpPage extends AppCompatActivity {
     CheckBox checkTermCondition;
     CheckBox checkPersonalInfo;
 
-    ScrollView scrollTermCondition;
-    ScrollView scrollPersonalInfo;
+    ScrollView outerScrollView;
 
     Button btnCheckEmail;
     Button btnCheckNick;
@@ -111,6 +112,12 @@ public class SignUpPage extends AppCompatActivity {
         titleText = (TextView) findViewById(R.id.titleText);
         titleText.setText("회원가입");
 
+        // Initialize Firebase Auth
+        signupAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        outerScrollView = findViewById(R.id.outerScrollView);
+
         inputLayoutEmail = (TextInputLayout)findViewById(R.id.textlayoutEmail);
         inputLayoutNick = (TextInputLayout)findViewById(R.id.textlayoutNick);
         inputLayoutPwd = (TextInputLayout)findViewById(R.id.textlayoutPwd);
@@ -124,9 +131,6 @@ public class SignUpPage extends AppCompatActivity {
         checkTermCondition = (CheckBox)findViewById(R.id.checkTermCondition);
         checkPersonalInfo = (CheckBox)findViewById(R.id.checkPersonalInfoCollection);
 
-        scrollTermCondition = (ScrollView)findViewById(R.id.scrollTermCondition);
-        scrollPersonalInfo = (ScrollView)findViewById(R.id.scrollPersonalInfo);
-
         btnCheckEmail = (Button)findViewById(R.id.btnCheckID);
         btnCheckNick = (Button)findViewById(R.id.btnCheckNick);
         btnReadTC = (Button)findViewById(R.id.btnReadTermCondition);
@@ -136,17 +140,57 @@ public class SignUpPage extends AppCompatActivity {
         textFullTC = (TextView)findViewById(R.id.textFullTC);
         textFullPI = (TextView)findViewById(R.id.textFullPI);
 
+        textFullTC.setMovementMethod(new ScrollingMovementMethod());
+        textFullPI.setMovementMethod(new ScrollingMovementMethod());
+
         // 약관 사항은 전체보기 하기 전에는 보이지 않게 설정
-        scrollTermCondition.setVisibility(View.GONE);
-        scrollPersonalInfo.setVisibility(View.GONE);
+        textFullTC.setVisibility(View.GONE);
+        textFullPI.setVisibility(View.GONE);
 
         // 데이터베이스에서 약관을 읽어와 텍스트에 설정
-        // textFullTC.setText(읽어온 이용약관);
-        // textFullPI.setText(읽어온 개인 정보 동의);
+        db.collection("TermsDB").document("TermsDocument").get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        // 파이어베이스는 \n 등의 특수표기문자를 지원하지 않으므로, "\\n"로 표기해둔 부분을 모두 newline 기호로 치환하는 식으로 새 줄 구성
+                        String TC = documentSnapshot.getString("TermCondition").replace("\\\\n", "\n");
+                        String PI = documentSnapshot.getString("PersonalInfo").replace("\\\\n", "\n");
+                        textFullTC.setText(TC);
+                        textFullPI.setText(PI);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "약관 정보를 읽어오는 데에 실패했습니다. 인터넷 연결을 확인해주세요.", Toast.LENGTH_LONG).show();
+                    }
+                });
 
-        // Initialize Firebase Auth
-        signupAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        // 스크롤뷰 내부 위젯의 개별 스크롤 기능을 활성화하기 위한 코드들:
+        outerScrollView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                textFullPI.getParent().requestDisallowInterceptTouchEvent(false);
+                textFullTC.getParent().requestDisallowInterceptTouchEvent(false);
+                return false;
+            }
+        });
+
+        textFullTC.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                textFullTC.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+
+        textFullPI.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                textFullPI.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
 
         // 이메일 입력칸 입력 정보에 따라 오류메시지 생성하는 코드
         edtEmail.addTextChangedListener(new TextWatcher() {
@@ -375,14 +419,14 @@ public class SignUpPage extends AppCompatActivity {
         btnReadTC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scrollTermCondition.setVisibility((scrollTermCondition.getVisibility() == View.VISIBLE)? View.GONE : View.VISIBLE);
+                textFullTC.setVisibility((textFullTC.getVisibility() == View.VISIBLE)? View.GONE : View.VISIBLE);
             }
         });
 
         btnReadPI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scrollPersonalInfo.setVisibility((scrollPersonalInfo.getVisibility() == View.VISIBLE)? View.GONE : View.VISIBLE);
+                textFullPI.setVisibility((textFullPI.getVisibility() == View.VISIBLE)? View.GONE : View.VISIBLE);
             }
         });
 
