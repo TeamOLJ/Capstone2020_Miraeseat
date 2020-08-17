@@ -30,7 +30,7 @@ public class SearchedItem {
     private TableLayout item_table;
     private TableRow tableRow;
 
-    private ArrayList<InformationClass> datas = new ArrayList<InformationClass>();
+    private ArrayList<HallDetailedClass> datas = new ArrayList<HallDetailedClass>();
 
     public SearchedItem(Context context, LayoutInflater inflater, ViewGroup container, ArrayList arrayList) {
         this.context = context;
@@ -52,8 +52,7 @@ public class SearchedItem {
             tableRow.setLayoutParams(layout_params);
             tableRow.setWeightSum(3);
 
-
-            for (int i = 0; i < count; ++i) {   //DB 연동이 필요함.
+            for (int i = 0; i < count; ++i) {
                 AddTableItem(datas.get(i));
             }
             if (count % 3 != 0) item_table.addView(tableRow);
@@ -61,21 +60,21 @@ public class SearchedItem {
         return rootView;
     }
 
-    public void AddTableItem(InformationClass minformationClass) { //DB에서 이름과 이미지 가져오기
+    public void AddTableItem(HallDetailedClass mhallDetailedClass) {
         View item = inflater.inflate(R.layout.layout_search_item, null);
         item.setOnClickListener(ResultOnClickListener);
         item.setLayoutParams(row_params);
-        item.setTag(minformationClass.getId());  //아이템 클릭 시 공연/공연시설의 id를 클릭리스너로 전달해줌.
+        item.setTag(1111, mhallDetailedClass.getId());   //아이템 클릭 시 시설 id와 시설명, 객석배치도 유무를 클릭리스너로 전달
+        item.setTag(2222, mhallDetailedClass.getName());
+        item.setTag(3333, mhallDetailedClass.getIsSeatplan());
 
-        //아이템 이름을 공연명/공연시설명 설정
+        //아이템 이름 설정: 공연시설+공연장명
         TextView item_name = item.findViewById(R.id.item_name);
-        item_name.setText(minformationClass.getName());
-
+        item_name.setText(mhallDetailedClass.getName());
 
         //아이템 이미지 설정
         ImageView item_image = item.findViewById(R.id.item_image);
-
-        String poster_link = minformationClass.getPoster();
+        String poster_link = mhallDetailedClass.getPoster();
 
         if (poster_link == null) { //임시. 포스터가 없는 경우 기본 이미지
             item_image.setImageResource(R.drawable.theater1);
@@ -97,10 +96,14 @@ public class SearchedItem {
     public View.OnClickListener ResultOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String data = v.getTag().toString(); //공연 또는 공연시설의 id
+            String combinedID = v.getTag(1111).toString();   //공연시설+공연장 id
+            String combinedName = v.getTag(2222).toString();
+            boolean isSeatplan = (boolean) v.getTag(3333);   //객석배치도 존재여부
 
             Intent intent = new Intent(context, HallInfo.class);
-            intent.putExtra("hall id", data); //우선은 공연시설명만 제공
+            intent.putExtra("Combined_ID", combinedID);
+            intent.putExtra("Combined_Name", combinedName);
+            intent.putExtra("is_Seatplan", isSeatplan);
             context.startActivity(intent);
         }
     };

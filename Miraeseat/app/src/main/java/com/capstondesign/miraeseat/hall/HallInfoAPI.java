@@ -2,7 +2,7 @@ package com.capstondesign.miraeseat.hall;
 
 import android.util.Log;
 
-import com.capstondesign.miraeseat.search.HallClass;
+import com.capstondesign.miraeseat.search.HallLocation;
 import com.capstondesign.miraeseat.search.PlayClass;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -21,15 +21,13 @@ public class HallInfoAPI {
      */
 
     //[공연시설 ID]로 공연시설명, 위도, 경도 얻기
-    static public HallClass GetDetails_Hall(String id) {
-        HallClass data = new HallClass();
+    static public HallLocation GetDetails_Hall(String id) {
+        HallLocation data = new HallLocation();
 
         String Play_DetailURL = "http://www.kopis.or.kr/openApi/restful/prfplc/" + id + "?service=" + KOPIS_key;
 
-
         //시설명, 위도, 경도
         boolean inFcltynm = false, inLa = false, inLo = false;
-
 
         try {
             URL url = new URL(Play_DetailURL);
@@ -64,7 +62,7 @@ public class HallInfoAPI {
                         tag = xpp.getText();
 
                         if (inFcltynm) {
-                            data.setHall_name(tag);
+                            data.setTheater_name(tag);
                             inFcltynm = false;
                         } else if (inLa) {
                             data.setLatitude(Double.parseDouble(tag));
@@ -95,15 +93,14 @@ public class HallInfoAPI {
     }
 
 
-    //[공연시설명]으로 공연 중인 공연 정보들 얻기
-    static public ArrayList<PlayClass> Get_Play(String hall_name) {
+    //[공연시설+공연장ID]로 공연 중인 공연 정보들 얻기
+    static public ArrayList<PlayClass> Get_Play(String combined_id) {
         ArrayList<PlayClass> datas = new ArrayList<PlayClass>();
         String[] date = PlayClass.getThreeMonthDate();
 
-        String shprfnmfct = "&shprfnmfct=" + hall_name;
+        String prfplccd = "&prfplccd=" + combined_id;
 
-
-        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + KOPIS_key + "&stdate=" + date[0] + "&eddate=" + date[1] + "&cpage=1&rows=10" + shprfnmfct;
+        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + KOPIS_key + "&stdate=" + date[0] + "&eddate=" + date[1] + "&cpage=1&rows=10" + prfplccd;
 
         //공연명, 시작 날짜, 종료 날짜, 포스터, 공연 상태
         String[] index = {"prfnm", "prfpdfrom", "prfpdto", "poster", "prfstate"};

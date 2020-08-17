@@ -21,7 +21,8 @@ import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.TheaterActivity;
-import com.capstondesign.miraeseat.search.HallClass;
+import com.capstondesign.miraeseat.search.HallDetailedClass;
+import com.capstondesign.miraeseat.search.HallLocation;
 import com.capstondesign.miraeseat.search.PlayClass;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,7 +31,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -54,7 +58,7 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
 
     DrawerHandler drawer;
 
-    HallClass hall;
+    HallLocation hall_locate;
 
     String seatplanImage;
 
@@ -78,19 +82,23 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         db = FirebaseFirestore.getInstance();
 
         Intent intent = getIntent();
-        String id = intent.getStringExtra("hall id");
+        final String combinedID = intent.getStringExtra("Combined_ID");
+        final String combinedName = intent.getStringExtra("Combined_Name");
+        final boolean isSeatplan = intent.getBooleanExtra("is_Seatplan", false);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         try {
-            Thread_hall_details thd = new Thread_hall_details(id);
+            // API 검색 - 공연시설ID를 이용하여 위도, 경도 반환 받기
+            Thread_hall_details thd = new Thread_hall_details(combinedID.split("-")[0]);
             thd.run();
             thd.join();
 
-            hall = thd.getHall();
+            hall_locate = thd.getHallLocate();
 
-            Thread_plays tp = new Thread_plays(hall.getName());
+            // API 검색 - 공연시설+공연장ID를 이용하여 공연장의 공연 목록 반환 받기
+            Thread_plays tp = new Thread_plays(combinedID);
             tp.run();
             tp.join();
 
@@ -100,9 +108,8 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
             Log.d("Error(HallInfo):", e.toString());
         }
 
-
         TextView titleText = (TextView) findViewById(R.id.titleText);
-        titleText.setText(hall.getName());
+        titleText.setText(combinedName);
         titleText.setSelected(true);
 
         btnSeat = (Button) findViewById(R.id.btnSeat);
@@ -117,35 +124,31 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
 
-                db.collection("TheaterInfo").whereEqualTo("theatername", hall.getName()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            QuerySnapshot querySnapshot = task.getResult();
+                if(isSeatplan) {
+                    // 객석배치도가 있는 경우
+                    db.collection("SeatPlanInfo").document(combinedID).get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    seatplanImage = documentSnapshot.getString("seatplan");
 
-                            if (querySnapshot.isEmpty()) {
-                                // 쿼리 리턴값이 없음 = 아직 객석배치도가 없는 공연장
-                                showNotSupported();
-                            }
-                            else {
-                                // 리턴값이 있음 = 객석배치도가 제공되는 공연장
-                                for (QueryDocumentSnapshot document : querySnapshot) {
-                                    seatplanImage = document.getString("seatplan");
+                                    Intent intent = new Intent(getApplicationContext(), TheaterActivity.class);
+                                    intent.putExtra("combined_name", combinedName);
+                                    intent.putExtra("seatImage", seatplanImage);
+                                    startActivity(intent);
                                 }
-
-                                Intent intent = new Intent(getApplicationContext(), TheaterActivity.class);
-                                intent.putExtra("hall_name", hall.getName());
-                                intent.putExtra("seatImage", seatplanImage);
-                                startActivity(intent);
-                            }
-                        }
-                        else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "Error getting documents: ", e);
+                                }
+                            });
+                }
+                else {
+                    // 객석배치도가 없는 경우
+                    showNotSupported();
+                }
             }
         });
     }
@@ -197,11 +200,11 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
 
         //공연장 API에서 위도,경도,공연장이름 불러와서 맵에 띄우기
 
-        LatLng Point = new LatLng(hall.getLatitude(), hall.getLongitude());
+        LatLng Point = new LatLng(hall_locate.getLatitude(), hall_locate.getLongitude());
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(Point);
-        markerOptions.title(hall.getName());
+        markerOptions.title(hall_locate.getTheater_name());
         //markerOptions.snippet("한국의 수도");
         map.addMarker(markerOptions);
 
@@ -210,34 +213,34 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     class Thread_hall_details extends Thread {
-        String ID;
-        HallClass Hall;
+        String theater_ID;
+        HallLocation hall_location;
 
-        public Thread_hall_details(String id) {
-            ID = id;
+        public Thread_hall_details(String theater_id) {
+            theater_ID = theater_id;
         }
 
         @Override
         public void run() {
-            Hall = HallInfoAPI.GetDetails_Hall(ID);
+            hall_location = HallInfoAPI.GetDetails_Hall(theater_ID);
         }
 
-        public HallClass getHall() {
-            return Hall;
+        public HallLocation getHallLocate() {
+            return hall_location;
         }
     }
 
     class Thread_plays extends Thread {
-        String Name;
+        String combined_ID;
         ArrayList<PlayClass> Plays;
 
-        public Thread_plays(String name) {
-            Name = name;
+        public Thread_plays(String combined_id) {
+            combined_ID = combined_id;
         }
 
         @Override
         public void run() {
-            Plays = HallInfoAPI.Get_Play(Name);
+            Plays = HallInfoAPI.Get_Play(combined_ID);
         }
 
         public ArrayList<PlayClass> getPalys() {

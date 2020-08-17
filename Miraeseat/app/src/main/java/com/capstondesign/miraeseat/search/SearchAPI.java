@@ -22,11 +22,11 @@ public class SearchAPI {
 
     /*
     [검색어==공연시설명]으로 공연 시설 찾기.
-    현재 KOPIS_API 기준으로 검색 중
-    추후 DB에 공연시설명으로 접근해서 포스터를 가져와야함
+    일차로 KOPIS_API 기준으로 검색 한 후,
+    DB에 공연시설 ID로 접근하여 추가 정보 획득할 예정 (SearchFragment에서)
      */
-    static public ArrayList<HallClass> GetResult_Hall(String search_word) {
-        ArrayList<HallClass> datas = new ArrayList<HallClass>();
+    static public ArrayList<TheaterClass> GetResult_Theater(String search_word) {
+        ArrayList<TheaterClass> datas = new ArrayList<TheaterClass>();
 
         String shprfnmfct = "&shprfnmfct=" + search_word;
 
@@ -35,7 +35,7 @@ public class SearchAPI {
 
         //공연시설명, ID
         boolean inFcltynm = false, inMt10id = false;
-        String hall_name = null, hall_id = null;
+        String theater_name = null, theater_id = null;
 
 
         try {
@@ -73,11 +73,11 @@ public class SearchAPI {
                         tag = xpp.getText();
 
                         if (inFcltynm) {
-                            hall_name = tag;
+                            theater_name = tag;
                             inFcltynm = false;
 
                         } else if (inMt10id) {
-                            hall_id = tag;
+                            theater_id = tag;
                             inMt10id = false;
 
                         }
@@ -88,7 +88,7 @@ public class SearchAPI {
                         tag = xpp.getName();
 
                         if (tag.equals("db")) {
-                            datas.add(new HallClass(hall_name, hall_id));
+                            datas.add(new TheaterClass(theater_name, theater_id));
                         }
                         break;
                 }
@@ -96,91 +96,7 @@ public class SearchAPI {
             }
 
         } catch (Exception e) {
-            Log.d("Error(GetResult_Hall):", e.toString());
-        }
-
-        return datas;
-    }
-
-
-    //[검색어==공연명]으로 공연 찾기
-    static public ArrayList<PlayClass> GetResult_Play(String search_play, String search_hall) {
-
-        ArrayList<PlayClass> datas = new ArrayList<PlayClass>();
-
-        String shprfnm = (search_play != null) ? "&shprfnm=" + search_play : "";  //공연명
-
-        String[] date = PlayClass.getThreeMonthDate();
-
-        //3개월 내에 공연 이력이 있는 경우 모두 출력
-        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + KOPIS_key + "&stdate=" + date[0] + "&eddate=" + date[1] + "&rows=9&cpage=1" + shprfnm + "&signgucode=11"; //서울 한정
-
-
-        //공연ID, 공연명, 포스터
-        String[] index = {"mt20id", "prfnm", "poster"};
-        boolean[] index_check = new boolean[index.length];
-        String[] index_data = new String[index.length];
-
-        String mt20id = null, prfnm = null, poster = null;
-        boolean inMt20id = false, inPrfnm = false, inPoster = false;
-
-        try {
-            URL url = new URL(PlayURL);
-            InputStream IS = url.openStream();
-
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            XmlPullParser xpp = factory.newPullParser();
-            xpp.setInput(new InputStreamReader(IS, "UTF-8"));
-
-
-            xpp.next();
-
-            String tag;
-
-            int eventType = xpp.getEventType(); //태그 구분용
-
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                switch (eventType) {
-
-                    case XmlPullParser.START_TAG:
-                        tag = xpp.getName();
-
-                        for (int i = 0; i < index.length; ++i) {
-                            if (tag.equals(index[i])) {
-                                index_check[i] = true;
-                                break;
-                            }
-                        }
-
-
-                    case XmlPullParser.TEXT:
-                        tag = xpp.getText();
-
-                        for (int i = 0; i < index.length; ++i) {
-                            if (index_check[i]) {
-                                index_data[i] = tag;
-                                index_check[i] = false;
-                                break;
-                            }
-                        }
-
-                        break;
-
-
-                    case XmlPullParser.END_TAG:
-
-                        if (xpp.getName().equals("db")) {
-
-                            datas.add(new PlayClass(index_data[0], index_data[1], index_data[2]));
-                        }
-                        break;
-
-                }
-                eventType = xpp.next();
-            }
-
-        } catch (Exception e) {
-            Log.d("Error(GetResult_Play):", e.toString());
+            Log.d("Err(GetResult_Theater):", e.toString());
         }
 
         return datas;
