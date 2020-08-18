@@ -61,11 +61,53 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
-            android:id="@+id/searchFragment"
+            android:id="@+id/searchResultFrame"
             android:name="org.example.drawer.search_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".search.SearchActivity"></FrameLayout>
+            tools:context=".search.SearchActivity">
+
+            <ProgressBar
+                android:id="@+id/searchHallProgr"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+            <GridView
+                android:id="@+id/searched_grid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:numColumns="3"
+                android:gravity="center"
+                android:visibility="invisible" />
+
+            <RelativeLayout
+                android:id="@+id/no_search_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible" >
+
+                <ImageView
+                    android:id="@+id/imageSad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    app:srcCompat="@drawable/no_result" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="검색 결과가 없어요."
+                    android:textSize="@dimen/font_size"
+                    android:layout_below="@+id/imageSad"
+                    android:layout_centerHorizontal="true"/>
+
+            </RelativeLayout>
+
+        </FrameLayout>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView

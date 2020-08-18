@@ -51,7 +51,7 @@ public class TheaterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_theater);
 
         Intent intent = getIntent();
-        TheaterName = intent.getStringExtra("hall_name");
+        TheaterName = intent.getStringExtra("combined_name");
         seatPlanImage = intent.getStringExtra("seatImage");
 
         seatplan_layout = (ViewGroup) findViewById(R.id.seatplanLayout);
