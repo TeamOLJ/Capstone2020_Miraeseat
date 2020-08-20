@@ -2,6 +2,7 @@ package com.capstondesign.miraeseat.mypage;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.EditInfo;
 
+import com.capstondesign.miraeseat.Image;
 import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.EditReview;
 
@@ -118,6 +120,8 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                 startActivity(intent);
             }
         });
+
+
     }
 
     public void initUI() {
@@ -137,8 +141,13 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                 }
 
                 loadReviewData();
+
             }
         });
+
+
+
+
     }
 
     // 로그인한 계정이 작성한 후기를 DB에서 읽어와 화면에 표시
@@ -290,6 +299,8 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }
 
 

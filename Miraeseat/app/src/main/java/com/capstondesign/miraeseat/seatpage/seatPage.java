@@ -3,12 +3,15 @@ package com.capstondesign.miraeseat.seatpage;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -184,6 +187,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                         noReviewLayout.setVisibility(View.INVISIBLE);
 
                         countReview = 0;
+                        countRating = 0;
 
                         // 리턴 된 각 문서(=리뷰)에 대해 아래 코드 실행
                         for (final QueryDocumentSnapshot document : reviewQuerySnapshot) {
@@ -380,4 +384,6 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
         finish();
         overridePendingTransition(R.anim.no_change,R.anim.translate_down);
     }
+
+
 }

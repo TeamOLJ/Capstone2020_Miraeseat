@@ -199,7 +199,6 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         map = googleMap;
 
         //공연장 API에서 위도,경도,공연장이름 불러와서 맵에 띄우기
-
         LatLng Point = new LatLng(hall_locate.getLatitude(), hall_locate.getLongitude());
 
         MarkerOptions markerOptions = new MarkerOptions();
