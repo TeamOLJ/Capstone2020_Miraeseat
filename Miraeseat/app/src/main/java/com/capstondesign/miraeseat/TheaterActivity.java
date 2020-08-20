@@ -31,13 +31,14 @@ public class TheaterActivity extends AppCompatActivity {
     private int half_width, half_height;
     private ScaleGestureDetector mScaleGestureDetector;
     private float mScaleFactor = 1.0f;
+    float dX, dY;
+
     private ViewGroup seatplan_layout;
     private ImageView seatplan;
-    float dX, dY;
     private ImageView imageView;
 
     FirebaseFirestore db;
-    TheaterItem TI;
+    TheaterItem_try TI; //TheaterItem -> TheaterItem_try
 
     String TheaterName;
     String seatPlanImage;
@@ -61,9 +62,9 @@ public class TheaterActivity extends AppCompatActivity {
 
         GetSeatplanImage();
 
-        TI = new TheaterItem(this, seatplan_layout);
+        TI = new TheaterItem_try(this, seatplan_layout, half_width, half_height);   //TheaterItem -> TheaterItem_try
 
-        mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+        //mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
         btnViewReview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,43 +135,43 @@ public class TheaterActivity extends AppCompatActivity {
         finish();
     }
 
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        mScaleGestureDetector.onTouchEvent(event);
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                dX = seatplan_layout.getX() - event.getRawX();
-                dY = seatplan_layout.getY() - event.getRawY();
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                float tmpX = event.getRawX() + dX;
-                float tmpY = event.getRawY() + dY;
-                //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
-
-                if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
-                    seatplan_layout.animate().x(tmpX).y(tmpY).setDuration(0).start();
-                }
-                break;
-
-            default:
-                return false;
-        }
-        return true;
-    }
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(1f,
-                    Math.min(mScaleFactor, 5.0f));
-            seatplan_layout.setScaleX(mScaleFactor);
-            seatplan_layout.setScaleY(mScaleFactor);
-
-            return true;
-        }
-    }
+//
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        mScaleGestureDetector.onTouchEvent(event);
+//
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                dX = seatplan_layout.getX() - event.getRawX();
+//                dY = seatplan_layout.getY() - event.getRawY();
+//                break;
+//
+//            case MotionEvent.ACTION_MOVE:
+//                float tmpX = event.getRawX() + dX;
+//                float tmpY = event.getRawY() + dY;
+//                //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
+//
+//                if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
+//                    seatplan_layout.animate().x(tmpX).y(tmpY).setDuration(0).start();
+//                }
+//                break;
+//
+//            default:
+//                return false;
+//        }
+//        return true;
+//    }
+//
+//    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+//        @Override
+//        public boolean onScale(ScaleGestureDetector detector) {
+//            mScaleFactor *= detector.getScaleFactor();
+//            mScaleFactor = Math.max(1f,
+//                    Math.min(mScaleFactor, 5.0f));
+//            seatplan_layout.setScaleX(mScaleFactor);
+//            seatplan_layout.setScaleY(mScaleFactor);
+//
+//            return true;
+//        }
+//    }
 }

@@ -17,13 +17,10 @@ import java.util.Calendar;
 public class SearchAPI {
     final static private String KOPIS_key= "***REMOVED***";
     //API에서 검색어가 포함된 객체를 찾아 일부 정보만 ArrayList로 반환
-    //문제점 : 검색결과가 없을 때 에러코드가 안나옴. 어떻게 처리해줘야할지 찾아봐야함.
-
 
     /*
-    [검색어==공연시설명]으로 공연 시설 찾기.
-    현재 KOPIS_API 기준으로 검색 중
-    추후 DB에 공연시설명으로 접근해서 포스터를 가져와야함
+    [검색어]로 공연시설명, 공연시설 ID 찾기.
+    포스터 필요
      */
     static public ArrayList<HallClass> GetResult_Hall(String search_word) {
         ArrayList<HallClass> datas = new ArrayList<HallClass>();
@@ -34,8 +31,9 @@ public class SearchAPI {
 
 
         //공연시설명, ID
-        boolean inFcltynm = false, inMt10id = false;
-        String hall_name = null, hall_id = null;
+        String[] index = {"fcltynm", "mt10id"};
+        boolean[] index_check = new boolean[index.length];
+        String[] index_data = new String[index.length];
 
 
         try {
@@ -59,28 +57,27 @@ public class SearchAPI {
                     case XmlPullParser.START_TAG:
                         tag = xpp.getName();
 
-                        if (tag.equals("fcltynm")) {
-                            inFcltynm = true;
-
-                        } else if (tag.equals("mt10id")) {
-                            inMt10id = true;
-
+                        for (int i = 0; i < index.length; ++i) {
+                            if (tag.equals(index[i])) {
+                                index_check[i] = true;
+                                break;
+                            }
                         }
+
                         break;
 
 
                     case XmlPullParser.TEXT:
                         tag = xpp.getText();
 
-                        if (inFcltynm) {
-                            hall_name = tag;
-                            inFcltynm = false;
-
-                        } else if (inMt10id) {
-                            hall_id = tag;
-                            inMt10id = false;
-
+                        for (int i = 0; i < index.length; ++i) {
+                            if (index_check[i]) {
+                                index_data[i] = tag;
+                                index_check[i] = false;
+                                break;
+                            }
                         }
+
                         break;
 
 
@@ -88,7 +85,7 @@ public class SearchAPI {
                         tag = xpp.getName();
 
                         if (tag.equals("db")) {
-                            datas.add(new HallClass(hall_name, hall_id));
+                            datas.add(new HallClass(index_data[0], index_data[1]));
                         }
                         break;
                 }
@@ -103,12 +100,12 @@ public class SearchAPI {
     }
 
 
-    //[검색어==공연명]으로 공연 찾기
-    static public ArrayList<PlayClass> GetResult_Play(String search_play, String search_hall) {
+    //[검색어]로 공연명, 공연 ID, 공연 포스터 찾기
+    static public ArrayList<PlayClass> GetResult_Play(String search_word) {
 
         ArrayList<PlayClass> datas = new ArrayList<PlayClass>();
 
-        String shprfnm = (search_play != null) ? "&shprfnm=" + search_play : "";  //공연명
+        String shprfnm = "&shprfnm=" + search_word;  //공연명
 
         String[] date = PlayClass.getThreeMonthDate();
 
@@ -120,9 +117,6 @@ public class SearchAPI {
         String[] index = {"mt20id", "prfnm", "poster"};
         boolean[] index_check = new boolean[index.length];
         String[] index_data = new String[index.length];
-
-        String mt20id = null, prfnm = null, poster = null;
-        boolean inMt20id = false, inPrfnm = false, inPoster = false;
 
         try {
             URL url = new URL(PlayURL);

@@ -47,8 +47,6 @@
                     android:gravity="center_horizontal|center_vertical"
                     android:orientation="horizontal">
 
-                    d
-
                     <EditText
                         android:id="@+id/searchText"
                         android:layout_width="@dimen/editText_width"
@@ -68,13 +66,13 @@
                         android:onClick="onSearchButtonClicked"
                         app:srcCompat="@drawable/ic_search_black_24dp"
                         tools:ignore="VectorDrawableCompat" />
+
                 </LinearLayout>
 
                 <HorizontalScrollView
                     android:id="@+id/scroll_theater"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <LinearLayout
                         android:id="@+id/view_theater"
                         android:layout_width="wrap_content"
@@ -86,14 +84,28 @@
                     android:id="@+id/scroll_show"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
                     <LinearLayout
                         android:id="@+id/view_show"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal" />
+                        android:orientation="horizontal"/>
                 </HorizontalScrollView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="MiraeSeat is offered by LMJ, ONH, JHJ."/>
+                </LinearLayout>
+
             </LinearLayout>
+
         </ScrollView>
     </LinearLayout>
 

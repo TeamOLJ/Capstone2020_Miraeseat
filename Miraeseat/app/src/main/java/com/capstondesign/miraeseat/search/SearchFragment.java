@@ -93,7 +93,7 @@ public class SearchFragment extends Fragment {
 
         @Override
         public void run() {
-            arrayList = SearchAPI.GetResult_Play(word, null);
+            arrayList = SearchAPI.GetResult_Play(null);
         }
 
         public ArrayList<PlayClass> getResult() {
