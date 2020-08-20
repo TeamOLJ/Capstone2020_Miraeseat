@@ -7,6 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -22,10 +24,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 
+import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.hall.HallInfo;
+import com.capstondesign.miraeseat.search.PlayClass;
 import com.capstondesign.miraeseat.search.SearchActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     final String SEARCH_WORD = "search_word";
@@ -37,8 +43,10 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     EditText searchText;
     DrawerHandler drawer;
 
+    ArrayList<PlayClass> datas;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -55,8 +63,26 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         searchText = findViewById(R.id.searchText);
         searchText.setOnEditorActionListener(this);
 
-        CreateButton(R.id.view_theater);
-        CreateButton(R.id.view_show);
+
+
+        new Thread() {
+            @Override
+            public void run() {
+                datas = PopularPlay.popularPlay();
+
+                Handler mHandler = new Handler(Looper.getMainLooper());
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        CreateButton(R.id.view_theater, datas);
+                        CreateButton(R.id.view_show, datas);
+                    }
+                });
+            }
+        }.start();
+
+
+
 
         // Initialize Firebase Auth
         mainAuth = FirebaseAuth.getInstance();
@@ -84,18 +110,21 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     //동적 버튼 만들기
-    private void CreateButton(int layout) {
-        LinearLayout view_theater = findViewById(layout);    //type에 따라 다른 레이아웃을 선택하도록 바꾸기
+    private void CreateButton(int layout, ArrayList<PlayClass> datas) {
+        LinearLayout view_theater = findViewById(layout);
         int width = (int) getResources().getDimension(R.dimen.poster_width);
         int height = (int) getResources().getDimension(R.dimen.poster_height);
         int margin = (int) getResources().getDimension(R.dimen.poster_margin);
+
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
         params.setMargins(margin, margin, margin, margin);
 
         for (int i = 0; i < 5; ++i) {
             ImageButton imageButton = new ImageButton(this);
-            imageButton.setImageResource(R.drawable.logo_temp);  //type에 따라 다른 그림이 나오도록 바꾸기
+
+            Glide.with(imageButton.getContext()).load(datas.get(i).getPoster()).into(imageButton);
+            //imageButton.setImageResource();
             imageButton.setLayoutParams(params);
             imageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -118,10 +147,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     @Override
     public void onStart() {
         super.onStart();
-        // 사용자가 로그인 되어 있는지 (null이 아닌지) 확인
         FirebaseUser currentUser = mainAuth.getCurrentUser();
-        // 로그인 여부에 따라 처리하는 코드
-        // updateUI(currentUser);
     }
 
     @Override

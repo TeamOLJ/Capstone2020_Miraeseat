@@ -11,6 +11,9 @@ public class PlayClass implements InformationClass {
     private String Date;
     private String State;
 
+    //예매 상황판을 통해 얻는 정보
+    private String Hall_name;
+
 
     public PlayClass(String id, String play_name, String poster) {
         ID = id;
@@ -18,7 +21,14 @@ public class PlayClass implements InformationClass {
         Poster = poster;
     }
 
+    //Main_PopularPlay 에 사용
+    public PlayClass(String hall_name, String poster) {
+        Hall_name = hall_name;
+        Poster = poster;
+    }
 
+
+    //hall.HallInfoAPI.Get_Play 에 사용
     public PlayClass(String play_name, String date, String poster, String state) {
         Play_name = play_name;
         Date = date;
@@ -62,6 +72,14 @@ public class PlayClass implements InformationClass {
 
     public void setState(String state) {
         State = state;
+    }
+
+    static public String getToday() {
+        Calendar calendar = Calendar.getInstance();
+
+        String Today = Integer.toString(calendar.get(Calendar.YEAR)) + String.format("%02d", calendar.get(Calendar.MONTH) + 1) + String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH));
+
+        return Today;
     }
 
     //오늘 날짜와 3달 뒤 날짜를 구함
