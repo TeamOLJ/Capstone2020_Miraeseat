@@ -101,6 +101,10 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         }
 
 
+
+        mData.add(new HallList_item(R.mipmap.ic_launcher, "드라큘라","2020/04/22-2020/06/12","김준수, 류정한, 전동석..."));
+
+
         TextView titleText = (TextView) findViewById(R.id.titleText);
         titleText.setText(hall.getName());
         titleText.setSelected(true);
@@ -197,6 +201,7 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
 
         //공연장 API에서 위도,경도,공연장이름 불러와서 맵에 띄우기
 
+<<<<<<< HEAD
         LatLng Point = new LatLng(hall.getLatitude(), hall.getLongitude());
 
         MarkerOptions markerOptions = new MarkerOptions();
@@ -207,6 +212,18 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
 
         map.moveCamera(CameraUpdateFactory.newLatLng(Point));
         map.animateCamera(CameraUpdateFactory.zoomTo(12));
+=======
+        LatLng SEOUL = new LatLng(37.511372, 127.099935);
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(SEOUL);
+        markerOptions.title("샤롯데씨어터");
+        markerOptions.snippet("호텔롯데월드 6층");
+        map.addMarker(markerOptions);
+
+        map.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
+        map.animateCamera(CameraUpdateFactory.zoomTo(14));
+>>>>>>> mj
     }
 
     class Thread_hall_details extends Thread {

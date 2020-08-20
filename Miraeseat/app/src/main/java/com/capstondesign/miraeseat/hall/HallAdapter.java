@@ -16,18 +16,25 @@ import com.capstondesign.miraeseat.search.PlayClass;
 import java.util.ArrayList;
 
 public class HallAdapter extends BaseAdapter {
+    private static final String TAG = "HallAdapter";
+
     Context context;
     ArrayList<PlayClass> hallList_itemArrayList;
     LayoutInflater inflater;
 
-    ImageView poster;
-    TextView name;
-    TextView date;
-    TextView info;
+    HallList_item oneListItem;
+
 
     public HallAdapter(Context context, ArrayList<PlayClass> hallList_itemArrayList) {
         this.context = context;
         this.hallList_itemArrayList = hallList_itemArrayList;
+    }
+
+    private class HallHolder {
+        ImageView poster;
+        TextView name;
+        TextView date;
+        TextView info;
     }
 
     @Override
@@ -47,25 +54,28 @@ public class HallAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        HallHolder holder = null;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         if(convertView==null){
-
-            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
             convertView = inflater.inflate(R.layout.hall_item,parent,false);
+            holder = new HallHolder();
 
-            poster = (ImageView)convertView.findViewById(R.id.playImage);
-            name = (TextView)convertView.findViewById(R.id.playName);
-            date = (TextView)convertView.findViewById(R.id.playDate);
-            info = (TextView)convertView.findViewById(R.id.playInfo);
+            holder.poster = (ImageView)convertView.findViewById(R.id.playImage);
+            holder.name = (TextView)convertView.findViewById(R.id.playName);
+            holder.date = (TextView)convertView.findViewById(R.id.playDate);
+            holder.info = (TextView)convertView.findViewById(R.id.playInfo);
 
 
-            name.setText(hallList_itemArrayList.get(position).getName());
-            date.setText(hallList_itemArrayList.get(position).getDate());
-            Glide.with(context).load(hallList_itemArrayList.get(position).getPoster()).into(poster);
-            info.setText(hallList_itemArrayList.get(position).getState());
+            convertView.setTag(holder);
+
         }
-        return convertView;
+        else {
+            holder = (HallHolder)convertView.getTag();
+        }
 
+
+        return convertView;
     }
 }
 
