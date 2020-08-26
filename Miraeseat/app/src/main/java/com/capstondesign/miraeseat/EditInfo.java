@@ -496,6 +496,7 @@ public class EditInfo extends AppCompatActivity {
                         // Log.d(TAG, "Modified Info successfully written to DB.");
 
                         SaveSharedPreference.setUserNickName(getApplicationContext(), user.getNick());
+                        SaveSharedPreference.setProfileImage(getApplicationContext(), user.getImagepath());
                         Toast.makeText(getApplicationContext(), "회원정보가 수정되었습니다.", Toast.LENGTH_LONG).show();
                         setResult(1);
                         finish();

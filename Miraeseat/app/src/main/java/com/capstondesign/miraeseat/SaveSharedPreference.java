@@ -8,6 +8,7 @@ public class SaveSharedPreference {
     //static final String PREF_USER_NAME = "username";
     static final String USER_NICK_NAME = "nickname";
     static final String IS_AUTO_LOGIN = "AutoLogin";
+    static final String PROFILE_IMAGE = null;
 
     static SharedPreferences getSharedPreferences(Context ctx) {
         return PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -33,7 +34,17 @@ public class SaveSharedPreference {
         return getSharedPreferences(ctx).getBoolean(IS_AUTO_LOGIN, false);
     }
 
-//    public static void setUserName(Context ctx, String userName) {
+    public static void setProfileImage(Context ctx, String profileImage) {
+        SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
+        editor.putString(PROFILE_IMAGE, profileImage);
+        editor.apply();
+    }
+
+    public static String getProfileImage(Context ctx) {
+        return getSharedPreferences(ctx).getString(PROFILE_IMAGE, null);
+    }
+
+    //    public static void setUserName(Context ctx, String userName) {
 //        SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
 //        editor.putString(PREF_USER_NAME, userName);
 //        editor.apply();

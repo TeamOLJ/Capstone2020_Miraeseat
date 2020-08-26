@@ -30,6 +30,7 @@ import com.capstondesign.miraeseat.EditReview;
 
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.Review;
+import com.capstondesign.miraeseat.SaveSharedPreference;
 import com.capstondesign.miraeseat.UnsubscribePage;
 import com.capstondesign.miraeseat.UserClass;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -130,24 +131,27 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
         user = FirebaseAuth.getInstance().getCurrentUser();
         userUID = user.getUid();
 
-        // 프로필사진 & 닉네임 데이터베이스에서 읽어오기
-        db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
-                nickname.setText(loginedUser.getNick());
-                if(loginedUser.getImagepath() != null) {
-                    Glide.with(getApplicationContext()).load(loginedUser.getImagepath()).into(profile);
-                }
+//        // 프로필사진 & 닉네임 데이터베이스에서 읽어오기
+//        db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
+//                nickname.setText(loginedUser.getNick());
+//                if(loginedUser.getImagepath() != null) {
+//                    Glide.with(getApplicationContext()).load(loginedUser.getImagepath()).into(profile);
+//                }
+//
+//                loadReviewData();
+//
+//            }
+//        });
 
-                loadReviewData();
+        nickname.setText(SaveSharedPreference.getUserNickName(getApplicationContext()));
+        if(SaveSharedPreference.getProfileImage(getApplicationContext()) != null) {
+            Glide.with(getApplicationContext()).load(SaveSharedPreference.getProfileImage(getApplicationContext())).into(profile);
+        }
 
-            }
-        });
-
-
-
-
+        loadReviewData();
     }
 
     // 로그인한 계정이 작성한 후기를 DB에서 읽어와 화면에 표시

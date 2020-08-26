@@ -180,9 +180,9 @@ public class LoginPage extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                                 UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
+                                                // 사용자의 닉네임과 프로필사진을 저장
                                                 SaveSharedPreference.setUserNickName(getApplicationContext(), loginedUser.getNick());
-//                                                    Log.d(TAG, "nickname: "+loginedUser.getNick());
-//                                                    Log.d(TAG, "sharedPreference: "+SaveSharedPreference.getUserNickName(getApplicationContext()));
+                                                SaveSharedPreference.setProfileImage(getApplicationContext(), loginedUser.getImagepath());
                                                 // 메인화면으로 복귀
                                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                                 // 열려있던 모든 액티비티를 닫고 지정된 액티비티(메인)만 열도록
