@@ -13,11 +13,10 @@
         <ImageView
             android:id="@+id/LogoImage"
             android:layout_width="match_parent"
-            android:layout_height="152dp"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="100dp"
-            android:layout_marginRight="100dp"
-            app:srcCompat="@drawable/logo_temp"
+            android:layout_height="170dp"
+            android:layout_marginHorizontal="80dp"
+            android:layout_marginTop="80dp"
+            app:srcCompat="@mipmap/logo_miraeseat"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="27dp"
             android:contentDescription="@string/logo_desc" />
@@ -28,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             app:hintEnabled="false"
             android:layout_below="@id/LogoImage">
 

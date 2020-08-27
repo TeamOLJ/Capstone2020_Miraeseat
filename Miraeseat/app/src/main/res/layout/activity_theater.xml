@@ -39,8 +39,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:adjustViewBounds="true"
-            android:src="@drawable/logo_temp" />
-
+            android:src="@drawable/logo_black" />
 
     </RelativeLayout>
 
