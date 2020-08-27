@@ -70,12 +70,12 @@ public class SearchAdapter extends BaseAdapter {
 
         oneListItem = hallList.get(position);
 
-        holder.hallName.setText(oneListItem.getName());
+        holder.hallName.setText(oneListItem.getCombined_name());
 
-        if (oneListItem.getPoster() == null) { // 지정된 공연장 이미지가 없을 경우 기본이미지로
+        if (oneListItem.getHall_Image() == null) { // 지정된 공연장 이미지가 없을 경우 기본이미지로
             holder.hallImage.setImageResource(R.drawable.theater1);
         } else {
-            Glide.with(mContext).load(oneListItem.getPoster()).into(holder.hallImage);
+            Glide.with(mContext).load(oneListItem.getHall_Image()).into(holder.hallImage);
         }
 
         return convertView;

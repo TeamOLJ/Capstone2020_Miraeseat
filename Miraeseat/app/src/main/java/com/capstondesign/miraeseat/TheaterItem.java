@@ -20,19 +20,22 @@ import java.util.Arrays;
 public class TheaterItem {
     final static String TAG = "TheaterItem";
 
-    int[] tmp_row = {0, 20, 32}; //n초과 m 이하로 충/구역을 나누어야 하기 때문에 0부터 시작
-    ArrayList<Integer> tmp_col = new ArrayList<Integer>(Arrays.asList(14, 30));
-    int tmp_maxRow, tmp_maxCol;
-    final int PADDING = 3;
-
     private int WIDTH;
     private int HEIGHT;
 
+    int[] tmp_row = {0, 20, 32}; //n초과 m 이하로 충/구역을 나누어야 하기 때문에 0부터 시작
+    ArrayList<Integer> tmp_col = new ArrayList<Integer>(Arrays.asList(14, 30));
+    int tmp_maxRow, tmp_maxCol;
+
+    int[][] start_end_indexes = {{15, 30}, {11, 34}, {10, 35}, {9, 36}, {8, 37}, {7, 38}, {7, 38}, {6, 39}, {5, 40}, {5, 40}, {4, 41}, {3, 42}, {3, 42}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44},
+            {2, 43}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}};
+
+    final int PADDING = 3;
+    
     private String selectedSeat = null;
 
     private Context ctx;
     private ViewGroup seatplan_layout;
-
 
     private TableLayout.LayoutParams btnRow_params;
     private TableRow.LayoutParams btn_params, vertical_space_params, horizontal_space_params;
@@ -45,10 +48,6 @@ public class TheaterItem {
     private TextView empty_view;
 
     private String[] table_info;
-
-    int[][] start_end_indexes = {{15, 30}, {11, 34}, {10, 35}, {9, 36}, {8, 37}, {7, 38}, {7, 38}, {6, 39}, {5, 40}, {5, 40}, {4, 41}, {3, 42}, {3, 42}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44},
-            {2, 43}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}};
-
 
     TheaterItem(Context ctx, ViewGroup viewGroup) {
         this.ctx = ctx;

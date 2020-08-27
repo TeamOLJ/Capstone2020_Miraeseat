@@ -1,6 +1,6 @@
 package com.capstondesign.miraeseat.search;
 
-public class HallDetailedClass implements InformationClass {
+public class HallDetailedClass {
     private String Combined_name;
     private String Combined_ID;
     private String Hall_Image;
@@ -17,19 +17,12 @@ public class HallDetailedClass implements InformationClass {
     public HallDetailedClass() { }
 
 
-    @Override
-    public String getName() {
-        return Combined_name;
-    }
-
-    @Override
-    public String getPoster() {
-        return Hall_Image;
-    }
-
-    @Override
-    public String getId() {
+    public String getCombined_ID() {
         return Combined_ID;
+    }
+
+    public String getCombined_name() {
+        return Combined_name;
     }
 
     public String getHall_Image() {

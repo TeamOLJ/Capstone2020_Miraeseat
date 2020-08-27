@@ -13,9 +13,8 @@
     <!--activity_main.xml-->
     <dimen name="view_search_height">250dp</dimen>
     <dimen name="editText_width">200dp</dimen>
-    <dimen name="poster_width">150dp</dimen>
-    <dimen name="poster_height">200dp</dimen>
-    <dimen name="poster_margin">5dp</dimen>
+    <dimen name="poster_height">150dp</dimen>
+    <dimen name="poster_margin">3dp</dimen>
 
     <!--result-->
     <dimen name="result_height">150dp</dimen>

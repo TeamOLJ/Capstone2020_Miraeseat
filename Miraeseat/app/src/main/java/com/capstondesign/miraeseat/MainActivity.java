@@ -14,19 +14,20 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 
 import com.bumptech.glide.Glide;
-import com.capstondesign.miraeseat.hall.HallInfo;
-import com.capstondesign.miraeseat.search.PlayClass;
+import com.capstondesign.miraeseat.search.HallDetailedClass;
 import com.capstondesign.miraeseat.search.SearchActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     EditText searchText;
     DrawerHandler drawer;
 
-    ArrayList<PlayClass> datas;
+    ArrayList<HallDetailedClass> hdc = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -63,26 +64,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         searchText = findViewById(R.id.searchText);
         searchText.setOnEditorActionListener(this);
 
-
-
-        new Thread() {
-            @Override
-            public void run() {
-                datas = PopularPlay.popularPlay();
-
-                Handler mHandler = new Handler(Looper.getMainLooper());
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        CreateButton(R.id.view_theater, datas);
-                        CreateButton(R.id.view_show, datas);
-                    }
-                });
-            }
-        }.start();
-
-
-
+        CreateButton(R.id.view_theater, hdc);
 
         // Initialize Firebase Auth
         mainAuth = FirebaseAuth.getInstance();
@@ -110,21 +92,21 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     //동적 버튼 만들기
-    private void CreateButton(int layout, ArrayList<PlayClass> datas) {
+    private void CreateButton(int layout, ArrayList<HallDetailedClass> datas) {
         LinearLayout view_theater = findViewById(layout);
-        int width = (int) getResources().getDimension(R.dimen.poster_width);
         int height = (int) getResources().getDimension(R.dimen.poster_height);
         int margin = (int) getResources().getDimension(R.dimen.poster_margin);
 
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
-        params.setMargins(margin, margin, margin, margin);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+        params.setMargins(margin, 0, margin, margin);
 
         for (int i = 0; i < 5; ++i) {
             ImageButton imageButton = new ImageButton(this);
-
-            Glide.with(imageButton.getContext()).load(datas.get(i).getPoster()).into(imageButton);
-            //imageButton.setImageResource();
+            if(datas==null) {
+                imageButton.setImageResource(R.drawable.logo_temp);
+            }
+            else{ Glide.with(imageButton.getContext()).load(datas.get(i).getHall_Image()).into(imageButton); }
             imageButton.setLayoutParams(params);
             imageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -139,8 +121,9 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         @Override
         public void onClick(View v) {
             int selected_item = (int) v.getId();
-            Intent act_information = new Intent(getApplicationContext(), HallInfo.class);
-            startActivity(act_information);
+            Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+//            Intent act_information = new Intent(getApplicationContext(), HallInfo.class);
+//            startActivity(act_information);
         }
     };
 

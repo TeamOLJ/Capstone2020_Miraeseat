@@ -70,7 +70,7 @@ public class HallAdapter extends BaseAdapter {
             holder = (HallHolder)convertView.getTag();
         }
 
-        holder.name.setText(hallList_itemArrayList.get(position).getName());
+        holder.name.setText(hallList_itemArrayList.get(position).getPlay_name());
         holder.date.setText(hallList_itemArrayList.get(position).getDate());
         holder.info.setText(hallList_itemArrayList.get(position).getState());
 

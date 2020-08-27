@@ -91,8 +91,8 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HallDetailedClass item = searchAdapter.getItem(position);
 
-                String combinedID = item.getId();
-                String combinedName = item.getName();
+                String combinedID = item.getCombined_ID();
+                String combinedName = item.getCombined_name();
                 boolean isSeatplan = item.getIsSeatplan();
 
                 Intent intent = new Intent(SearchActivity.this, HallInfo.class);

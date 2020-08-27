@@ -2,7 +2,7 @@ package com.capstondesign.miraeseat.search;
 
 import java.util.Calendar;
 
-public class PlayClass implements InformationClass {
+public class PlayClass {
     private String Play_name;
     private String Poster;
     private String ID;
@@ -11,19 +11,9 @@ public class PlayClass implements InformationClass {
     private String Date;
     private String State;
 
-    //예매 상황판을 통해 얻는 정보
-    private String Hall_name;
-
-
     public PlayClass(String id, String play_name, String poster) {
         ID = id;
         Play_name = play_name;
-        Poster = poster;
-    }
-
-    //Main_PopularPlay 에 사용
-    public PlayClass(String hall_name, String poster) {
-        Hall_name = hall_name;
         Poster = poster;
     }
 
@@ -36,20 +26,16 @@ public class PlayClass implements InformationClass {
         State = state;
     }
 
-
-    @Override
-    public String getName() {
+    public String getPlay_name() {
         return Play_name;
     }
 
-    @Override
-    public String getId() {
-        return ID;
-    }
-
-    @Override
     public String getPoster() {
         return Poster;
+    }
+
+    public String getID() {
+        return ID;
     }
 
     public String getDate() {

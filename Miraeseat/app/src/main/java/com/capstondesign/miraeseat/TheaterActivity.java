@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -35,6 +36,7 @@ public class TheaterActivity extends AppCompatActivity {
 
     private ViewGroup seatplan_layout;
     private ImageView seatplan;
+
     private ImageView imageView;
 
     FirebaseFirestore db;
@@ -62,9 +64,9 @@ public class TheaterActivity extends AppCompatActivity {
 
         GetSeatplanImage();
 
-        TI = new TheaterItem_try(this, seatplan_layout, half_width, half_height);   //TheaterItem -> TheaterItem_try
+        TI = new TheaterItem_try(this, seatplan_layout);   //TheaterItem -> TheaterItem_try
 
-        //mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+        mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
         btnViewReview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +137,37 @@ public class TheaterActivity extends AppCompatActivity {
         finish();
     }
 
-//
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        mScaleGestureDetector.onTouchEvent(ev);
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                dX = seatplan_layout.getX() - ev.getRawX();
+                dY = seatplan_layout.getY() - ev.getRawY();
+                Log.d("this", "DOWN");
+                break;
+
+
+            case MotionEvent.ACTION_MOVE:
+                float tmpX = ev.getRawX() + dX;
+                float tmpY = ev.getRawY() + dY;
+                Log.d("this", "MOVE");
+                //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
+
+                if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
+                    seatplan_layout.animate().x(tmpX).y(tmpY).setDuration(0).start();
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+                Log.d("this", "UP");
+                return super.dispatchTouchEvent(ev);
+        }
+        return true;
+    }
+
 //    @Override
 //    public boolean onTouchEvent(MotionEvent event) {
 //        mScaleGestureDetector.onTouchEvent(event);
@@ -161,17 +193,17 @@ public class TheaterActivity extends AppCompatActivity {
 //        }
 //        return true;
 //    }
-//
-//    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-//        @Override
-//        public boolean onScale(ScaleGestureDetector detector) {
-//            mScaleFactor *= detector.getScaleFactor();
-//            mScaleFactor = Math.max(1f,
-//                    Math.min(mScaleFactor, 5.0f));
-//            seatplan_layout.setScaleX(mScaleFactor);
-//            seatplan_layout.setScaleY(mScaleFactor);
-//
-//            return true;
-//        }
-//    }
+
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+            mScaleFactor = Math.max(1f,
+                    Math.min(mScaleFactor, 5.0f));
+            seatplan_layout.setScaleX(mScaleFactor);
+            seatplan_layout.setScaleY(mScaleFactor);
+
+            return true;
+        }
+    }
 }
