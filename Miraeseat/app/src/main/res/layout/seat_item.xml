@@ -69,13 +69,10 @@
             <TextView
                 android:id="@+id/re_writing"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="5dp"
                 android:text="자리가 참 좋긴한데 너무 좁아요" />
-
-
-
 
         </LinearLayout>
 

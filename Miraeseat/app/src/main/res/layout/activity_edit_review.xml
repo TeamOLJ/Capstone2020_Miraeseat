@@ -66,6 +66,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp" />
 
+            <TextView
+                android:id="@+id/textNoPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/edit_photo"
+                android:layout_alignTop="@id/edit_photo"
+                android:layout_alignRight="@id/edit_photo"
+                android:layout_alignBottom="@id/edit_photo"
+                android:layout_margin="1dp"
+                android:gravity="center"
+                android:text="이미지 없음" />
+
             <LinearLayout
                 android:id="@+id/seatNumLayout"
                 android:layout_width="match_parent"

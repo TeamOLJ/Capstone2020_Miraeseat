@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -99,7 +100,23 @@ public class SeatAdapter extends BaseAdapter {
         holder.writing.setText(oneListItem.getReview_writing());
 
         Glide.with(context).load(oneListItem.getProfile_image()).into(holder.profile);
-        Glide.with(context).load(oneListItem.getReview_image()).into(holder.image);
+
+        // 사진의 유무에 따라 텍스트뷰의 마진 변경
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)holder.writing.getLayoutParams();
+
+        if(oneListItem.getReview_image() != null) {
+            Glide.with(context).load(oneListItem.getReview_image()).into(holder.image);
+            holder.image.setVisibility(View.VISIBLE);
+            params.bottomMargin = context.getResources().getDimensionPixelSize(R.dimen.review_withimage_bottom);
+            holder.writing.setLayoutParams(params);
+        }
+        else {
+            // 사진이 없을 경우 이미지뷰의 Visibility를 GONE으로 설정 - 불필요한 빈공간 보이지 않게
+            holder.image.setVisibility(View.GONE);
+            params.bottomMargin = context.getResources().getDimensionPixelSize(R.dimen.review_noimage_bottom);
+            holder.writing.setLayoutParams(params);
+        }
+
 
         //이미지 클릭시 원본 이미지
         holder.image.setOnClickListener(new View.OnClickListener() {

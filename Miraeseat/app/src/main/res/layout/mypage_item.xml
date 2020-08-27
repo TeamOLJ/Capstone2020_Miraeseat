@@ -82,7 +82,8 @@
             android:id="@+id/listImage"
             android:layout_width="170dp"
             android:layout_height="120dp"
-            android:layout_margin="10dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginLeft="10dp"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher" />
 
@@ -90,8 +91,7 @@
             android:id="@+id/listWriting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_margin="10dp"
             android:text="자리 너무 좋아요\n시야도 잘 보이네요 하하하" />
 
 

@@ -3,15 +3,12 @@ package com.capstondesign.miraeseat.seatpage;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,9 +29,6 @@ import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.Review;
 import com.capstondesign.miraeseat.UserClass;
 import com.capstondesign.miraeseat.WriteReview;
-import com.capstondesign.miraeseat.mypage.MyPage;
-import com.capstondesign.miraeseat.mypage.MyPageAdapter;
-import com.capstondesign.miraeseat.mypage.mypageList_item;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -45,7 +39,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -291,9 +284,12 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                         .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Storage에서 사진 삭제
-                        StorageReference reviewPhotoRef = FirebaseStorage.getInstance().getReferenceFromUrl(reviewImagePath);
-                        reviewPhotoRef.delete();
+
+                        // 사진파일이 있던 후기이면 Storage에서 사진 삭제
+                        if(reviewImagePath != null) {
+                            StorageReference reviewPhotoRef = FirebaseStorage.getInstance().getReferenceFromUrl(reviewImagePath);
+                            reviewPhotoRef.delete();
+                        }
 
                         Toast.makeText(seatPage.this, "후기가 삭제되었습니다.", Toast.LENGTH_LONG).show();
 
