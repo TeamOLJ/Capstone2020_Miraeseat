@@ -13,10 +13,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.mypage.MyPage;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 // dawerLayout의 로그인 정보를 변경하기 위함.
@@ -26,7 +29,7 @@ public class LoginCheckHandler {
     private NavigationView root;
     private View nav_header;
     private TextView login_id;
-    private ImageView profile_image;
+    private CircleImageView profile_image;
     private Button nav_left, nav_right;
     public DrawerLayout drawer;
 
@@ -55,7 +58,8 @@ public class LoginCheckHandler {
         // currentUser가 null이 아닌 경우 (로그인 중인 경우)
         if (currentUser != null) {
             login_id.setText(SaveSharedPreference.getUserNickName(ctx));
-            profile_image.setImageResource(R.drawable.logo_temp);
+//            profile_image.setImageResource(R.drawable.logo_temp);
+            Glide.with(ctx).load(SaveSharedPreference.getProfileImage(ctx)).into(profile_image);
 
             nav_left.setText("마이페이지");
             nav_left.setOnClickListener(MyPage);

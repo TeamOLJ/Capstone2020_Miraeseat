@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,7 +23,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,9 +55,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class EditReview extends AppCompatActivity {
     private static final String TAG = "EditReview";
@@ -85,6 +83,7 @@ public class EditReview extends AppCompatActivity {
     String documentID;
     String serverImagePath;
 
+    TextView textNoPhoto;
     ImageView image;
     RatingBar ratingBar;
 
@@ -107,6 +106,7 @@ public class EditReview extends AppCompatActivity {
     Bitmap rotatedBitmap = null;
 
     boolean isContextChanged = false;
+    boolean isPhotoChanged = false;
 
     DrawerHandler drawer;
 
@@ -121,6 +121,9 @@ public class EditReview extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false);
+
+        textNoPhoto = (TextView) findViewById(R.id.textNoPhoto);
+        textNoPhoto.setVisibility(View.GONE);
 
         image = (ImageView) findViewById(R.id.edit_photo);
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
@@ -154,7 +157,10 @@ public class EditReview extends AppCompatActivity {
 
         serverImagePath = intent.getStringExtra("imagepath");
         imageBefore = serverImagePath;
-        Glide.with(EditReview.this).load(imageBefore).into(image);
+        if(imageBefore != null)
+            Glide.with(EditReview.this).load(imageBefore).into(image);
+        else
+            textNoPhoto.setVisibility(View.VISIBLE);
 
         String seatNumber = intent.getStringExtra("seatNum");
         String[] getfloor = seatNumber.split("층 ");
@@ -216,11 +222,16 @@ public class EditReview extends AppCompatActivity {
             newRating = ratingBar.getRating();
             newReview = edtReview.getText().toString();
 
-
             if(newRating != ratedBefore)
                 isContextChanged = true;
 
-            if(!isContextChanged) {
+            // 인터넷 연결 확인 먼저
+            ConnectivityManager conManager = (ConnectivityManager) EditReview.this.getSystemService(CONNECTIVITY_SERVICE);
+            if(conManager.getActiveNetworkInfo() == null) {
+                reset();
+                clickImageListener.reset();
+                Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+            } else if(!isContextChanged) {
                 reset();
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(),"수정 사항이 없습니다.",Toast.LENGTH_LONG).show();
@@ -231,50 +242,91 @@ public class EditReview extends AppCompatActivity {
             } else {
                 // 수정된 정보 DB에 업데이트
                 if(user != null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EditReview.this);
+                    //builder.setTitle(null);
 
-                    if(finalURI != null) {
-                        // 사진을 변경한 경우
-                        final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
+                    if (image.getDrawable()==null)
+                        builder.setMessage("사진 파일이 선택되지 않았습니다. 사진 없이 후기를 작성하시겠습니까?");
+                    else
+                        builder.setMessage("후기가 수정됩니다. 계속하시겠습니까?");
 
-                        photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                            @Override
-                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                if (!task.isSuccessful()) {
-                                    throw task.getException();
-                                }
+                    builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            uploadImageStorage();
+                        }
+                    });
+                    builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            clickSaveListener.reset();
+                            clickImageListener.reset();
+                        }
+                    });
 
-                                // Continue with the task to get the download URL
-                                return photoRef.getDownloadUrl();
-                            }
-                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Uri> task) {
-                                if (task.isSuccessful()) {
-                                    // Storage에서 이전 사진 삭제
-                                    StorageReference oldPhotoRef = storage.getReferenceFromUrl(serverImagePath);
-                                    oldPhotoRef.delete();
+                    builder.setCancelable(true);
 
-                                    Uri downloadUri = task.getResult();
-                                    finalURI = null;
-                                    imageBefore = downloadUri.toString();
-                                    updateDB(imageBefore);
-                                } else {
-                                    // Handle failures
-                                    reset();
-                                    clickImageListener.reset();
-                                    Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
-                    }
-                    else {
-                        // 사진을 변경하지 않은 경우
-                        updateDB(imageBefore);
-                    }
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             }
         }
     };
+
+    private void uploadImageStorage() {
+        // 사진이 다른 사진으로 바뀐 경우
+        if(isPhotoChanged && finalURI != null) {
+            final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
+
+            photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    // Continue with the task to get the download URL
+                    return photoRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        // 사진파일이 있던 후기이면 Storage에서 사진 삭제
+                        if(serverImagePath != null) {
+                            StorageReference oldPhotoRef = storage.getReferenceFromUrl(serverImagePath);
+                            oldPhotoRef.delete();
+                        }
+
+                        Uri downloadUri = task.getResult();
+                        // 아래 두 줄은 이미지 업로드만 성공하고 DB 업로드에는 실패했을 때, 재실행 시 DB 업로드만 수행하도록 유도하기 위함
+                        finalURI = null;
+                        isPhotoChanged = false;
+                        imageBefore = downloadUri.toString();
+                        updateDB(imageBefore);
+                    } else {
+                        // Handle failures
+                        clickSaveListener.reset();
+                        clickImageListener.reset();
+                        Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
+        // 사진이 삭제된 경우
+        else if(isPhotoChanged && finalURI == null) {
+            // 기존에 사진이 있던 경우 Storage에서 사진 삭제
+            if(serverImagePath != null) {
+                StorageReference oldPhotoRef = storage.getReferenceFromUrl(serverImagePath);
+                oldPhotoRef.delete();
+            }
+            updateDB(imageBefore);
+        }
+        else {
+            // 사진을 변경하지 않은 경우
+            updateDB(imageBefore);
+        }
+    }
 
     private void updateDB(String imagepath) {
         db.collection("SeatReview").document(documentID)
@@ -307,28 +359,56 @@ public class EditReview extends AppCompatActivity {
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(EditReview.this);
         alt_bld.setTitle("사진 변경하기").setCancelable(false);
 
-
-        alt_bld.setSingleChoiceItems(R.array.array_photo, 0, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                selectedPhotoMenu = whichButton;
-            }
-        });
-
-        alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                clickImageListener.reset();
-
-                if(selectedPhotoMenu == 0 ) {
-                    // 사진촬영
-                    Log.v("알림", "다이얼로그 > 사진촬영 선택");
-                    getCamera();
-                } else if(selectedPhotoMenu == 1) {
-                    // 앨범에서 선택
-                    Log.v("알림", "다이얼로그 > 앨범선택 선택");
-                    getAlbum();
+        // 사진이 없으면 ... 있으면 ...
+        if(image.getDrawable()==null) {
+            alt_bld.setSingleChoiceItems(R.array.array_photo, 0, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    selectedPhotoMenu = whichButton;
                 }
-            }
-        });
+            });
+
+            alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    clickImageListener.reset();
+
+                    if (selectedPhotoMenu == 0) {
+                        // 사진촬영
+                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
+                        getCamera();
+                    } else if (selectedPhotoMenu == 1) {
+                        // 앨범에서 선택
+                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                        getAlbum();
+                    }
+                }
+            });
+        }
+        else {
+            alt_bld.setSingleChoiceItems(R.array.array_photo_ex, 0, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    selectedPhotoMenu = whichButton;
+                }
+            });
+
+            alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    clickImageListener.reset();
+
+                    if (selectedPhotoMenu == 0) {
+                        // 사진촬영
+                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
+                        getCamera();
+                    } else if (selectedPhotoMenu == 1) {
+                        // 앨범에서 선택
+                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                        getAlbum();
+                    } else if (selectedPhotoMenu == 2) {
+                        image.setImageDrawable(null);
+                        textNoPhoto.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        }
 
         alt_bld.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
@@ -465,6 +545,7 @@ public class EditReview extends AppCompatActivity {
 //
 //                        image.setImageBitmap(rotatedBitmap);
 //                        isContextChanged = true;
+                        textNoPhoto.setVisibility(View.GONE);
 
                     }catch(Exception e){
                         Log.e("REQUEST_TAKE_PHOTO",e.toString());
@@ -495,7 +576,9 @@ public class EditReview extends AppCompatActivity {
                     //사진 변환 error
                     image.setImageURI(albumURI);
                     finalURI = albumURI;
+                    textNoPhoto.setVisibility(View.GONE);
                     isContextChanged = true;
+                    isPhotoChanged = true;
                 }
                 break;
         }

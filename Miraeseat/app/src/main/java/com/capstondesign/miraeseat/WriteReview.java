@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,7 +47,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -83,7 +83,7 @@ public class WriteReview extends AppCompatActivity {
     String userUID;
     String userNick;
 
-    String reviewDate;
+    String reviewDate = null;
     String seatNumber;
     String theaterName;
 
@@ -222,8 +222,6 @@ public class WriteReview extends AppCompatActivity {
         @Override
         public void onOneClick(View v) {
 
-            // Do stuff
-
             clickImageListener.disable();
 
             seatNumber = floorSpinner.getSelectedItem().toString()+"층 "+rowSpinner.getSelectedItem().toString()+"열 "
@@ -231,11 +229,14 @@ public class WriteReview extends AppCompatActivity {
             final float ratingPoint = ratingBar.getRating();
             final String newReview = edtReview.getText().toString();
 
-            if (image.getDrawable()==null) {
+            // 인터넷 연결 확인 먼저
+            ConnectivityManager conManager = (ConnectivityManager) WriteReview.this.getSystemService(CONNECTIVITY_SERVICE);
+            if(conManager.getActiveNetworkInfo() == null) {
                 reset();
                 clickImageListener.reset();
-                Toast.makeText(getApplicationContext(),"이미지를 업로드 해 주세요.",Toast.LENGTH_LONG).show();
-            } else if (ratingBar.getRating() == 0) {
+                Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+            }
+            else if (ratingBar.getRating() == 0) {
                 reset();
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(),"평점을 매겨 주세요.",Toast.LENGTH_LONG).show();
@@ -243,94 +244,89 @@ public class WriteReview extends AppCompatActivity {
                 reset();
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(),"후기는 10글자 이상 작성하셔야 합니다.",Toast.LENGTH_LONG).show();
-            } else {
-                if(savedImageUri == null) {
-                    // 사진 저장부터 시도하는 경우
-
-                    final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
-
-                    photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                        @Override
-                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                throw task.getException();
-                            }
-
-                            // Continue with the task to get the download URL
-                            return photoRef.getDownloadUrl();
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                // Uri downloadUri = task.getResult();
-                                savedImageUri = task.getResult().toString();
-
-                                reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
-
-                                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, savedImageUri, ratingPoint, newReview);
-
-                                // DB 업로드
-                                db.collection("SeatReview").add(userReview)
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                            @Override
-                                            public void onSuccess(DocumentReference documentReference) {
-                                                Log.d(TAG, "좌석 후기 업로드 성공");
-                                                Toast.makeText(getApplicationContext(), "후기가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
-                                                setResult(1);
-                                                finish();
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                // Log.w(TAG, "Error writing document(DB)", e);
-                                                Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
-                                                reset();
-                                                clickImageListener.reset();
-                                            }
-                                        });
-
-                            } else {
-                                Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
-                                reset();
-                                clickImageListener.reset();
-                            }
-                        }
-                    });
-                }
-                else {
-                    // 사진 저장은 성공했는데 후기 저장은 실패한 경우
-                    reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
-
-                    Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, savedImageUri,
-                            ratingPoint, newReview);
-
-                    // DB 업로드
-                    db.collection("SeatReview").add(userReview)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Log.d(TAG, "좌석 후기 업로드 성공");
-                                    Toast.makeText(getApplicationContext(), "후기가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
-                                    // setResult(SIGN_UP_SUCCESS) 라든지... 리뷰 목록 아이템 업데이트 관련 코드가 추가될 수도.
-                                    finish();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Log.w(TAG, "Error writing document(DB)", e);
-                                    Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
-                                    reset();
-                                    clickImageListener.reset();
-                                }
-                            });
-                }
             }
-            // this.reset(); // or you can reset somewhere else with clickListener.reset();
+            // 사진을 선택하지 않은 경우
+            else if (image.getDrawable()==null) {
+                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, null, ratingPoint, newReview);
+                showSaveMsg(false, userReview);
+            }
+            // 사진을 선택한 경우
+            else {
+                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, null, ratingPoint, newReview);
+                showSaveMsg(true, userReview);
+            }
         }
     };
+
+    private void uploadImageStorage(final Review userReview) {
+        // savedImageUri == null: 아직 Storage에 업로드 되지 않은 상태
+        // Storage에 사진파일 업로드
+        if(savedImageUri == null) {
+            final StorageReference photoRef = storageRef.child(finalURI.getLastPathSegment());
+
+            photoRef.putFile(finalURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    // Continue with the task to get the download URL
+                    return photoRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        // Storage 내 이미지파일 접근 링크를 savedImageUri에 저장
+                        savedImageUri = task.getResult().toString();
+
+                        userReview.setImagepath(savedImageUri);
+
+                        uploadReviewDB(userReview);
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                        clickSaveListener.reset();
+                        clickImageListener.reset();
+                    }
+                }
+            });
+        }
+        else {
+            // Storage에 사진은 이미 업로드했는데 후기 저장은 실패한 경우
+            userReview.setImagepath(savedImageUri);
+
+            uploadReviewDB(userReview);
+        }
+    }
+
+    private void uploadReviewDB(Review userReview) {
+        reviewDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date());
+
+        userReview.setReviewDate(reviewDate);
+
+        db.collection("SeatReview").add(userReview)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "좌석 후기 업로드 성공");
+                        Toast.makeText(getApplicationContext(), "후기가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
+                        setResult(1);
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Log.w(TAG, "Error writing document(DB)", e);
+                        Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                        //reset();
+                        clickSaveListener.reset();
+                        clickImageListener.reset();
+                    }
+                });
+    }
 
     private void makeDialog(){
 
@@ -340,28 +336,56 @@ public class WriteReview extends AppCompatActivity {
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(WriteReview.this);
         alt_bld.setTitle("사진 추가하기").setCancelable(false);
 
-        alt_bld.setSingleChoiceItems(R.array.array_photo, 0, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                selectedPhotoMenu = whichButton;
-            }
-        });
-
-        alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                clickImageListener.reset();
-
-                if(selectedPhotoMenu == 0 ) {
-                    // 사진촬영
-                    Log.v("알림", "다이얼로그 > 사진촬영 선택");
-                    getCamera();
-                } else if(selectedPhotoMenu == 1) {
-                    // 앨범에서 선택
-                    Log.v("알림", "다이얼로그 > 앨범선택 선택");
-                    getAlbum();
+        // 사진이 없으면 ... 있으면 ...
+        if(image.getDrawable()==null) {
+            alt_bld.setSingleChoiceItems(R.array.array_photo, 0, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    selectedPhotoMenu = whichButton;
                 }
-            }
-        });
+            });
 
+            alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    clickImageListener.reset();
+
+                    if (selectedPhotoMenu == 0) {
+                        // 사진촬영
+                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
+                        getCamera();
+                    } else if (selectedPhotoMenu == 1) {
+                        // 앨범에서 선택
+                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                        getAlbum();
+                    }
+                }
+            });
+        }
+        else {
+            alt_bld.setSingleChoiceItems(R.array.array_photo_ex, 0, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    selectedPhotoMenu = whichButton;
+                }
+            });
+
+            alt_bld.setPositiveButton("선택", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    clickImageListener.reset();
+
+                    if (selectedPhotoMenu == 0) {
+                        // 사진촬영
+                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
+                        getCamera();
+                    } else if (selectedPhotoMenu == 1) {
+                        // 앨범에서 선택
+                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
+                        getAlbum();
+                    } else if (selectedPhotoMenu == 2) {
+                        image.setImageDrawable(null);
+                        textAddPhoto.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        }
         alt_bld.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -625,6 +649,38 @@ public class WriteReview extends AppCompatActivity {
             }
         }
     }
+
+    private void showSaveMsg(final Boolean imageExist, final Review userReview)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //builder.setTitle(null);
+        if (!imageExist)
+            builder.setMessage("사진 파일이 선택되지 않았습니다. 사진 없이 후기를 작성하시겠습니까?");
+        else
+            builder.setMessage("후기가 저장됩니다. 계속하시겠습니까?");
+
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (!imageExist)
+                    uploadReviewDB(userReview);
+                else
+                    uploadImageStorage(userReview);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                clickSaveListener.reset();
+                clickImageListener.reset();
+            }
+        });
+
+        builder.setCancelable(true);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
     private void showEndMsg()
     {
