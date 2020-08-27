@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -94,7 +95,21 @@ public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
         holder.reviewContent.setText(oneListItem.getReviewContext());
         holder.reviewDate.setText(oneListItem.getReviewDate());
 
-        Glide.with(mContext).load(oneListItem.getImagePath()).into(holder.reviewImage);
+        // 사진의 유무에 따라 텍스트뷰의 마진 변경
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)holder.reviewContent.getLayoutParams();
+
+        if(oneListItem.getImagePath() != null) {
+            Glide.with(mContext).load(oneListItem.getImagePath()).into(holder.reviewImage);
+            holder.reviewImage.setVisibility(View.VISIBLE);
+            params.bottomMargin = mContext.getResources().getDimensionPixelSize(R.dimen.review_withimage_bottom);
+            holder.reviewContent.setLayoutParams(params);
+        }
+        else {
+            // 사진이 없을 경우 이미지뷰의 Visibility를 GONE으로 설정 - 불필요한 빈공간 보이지 않게
+            holder.reviewImage.setVisibility(View.GONE);
+            params.bottomMargin = mContext.getResources().getDimensionPixelSize(R.dimen.review_noimage_bottom);
+            holder.reviewContent.setLayoutParams(params);
+        }
 
 
         holder.btnMenu.setTag(position);

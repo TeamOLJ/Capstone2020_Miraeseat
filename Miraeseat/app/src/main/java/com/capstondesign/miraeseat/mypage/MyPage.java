@@ -2,7 +2,6 @@ package com.capstondesign.miraeseat.mypage;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -24,20 +23,18 @@ import com.bumptech.glide.Glide;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.EditInfo;
 
-import com.capstondesign.miraeseat.Image;
 import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.EditReview;
 
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.Review;
+import com.capstondesign.miraeseat.SaveSharedPreference;
 import com.capstondesign.miraeseat.UnsubscribePage;
-import com.capstondesign.miraeseat.UserClass;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -120,8 +117,6 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                 startActivity(intent);
             }
         });
-
-
     }
 
     public void initUI() {
@@ -130,24 +125,12 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
         user = FirebaseAuth.getInstance().getCurrentUser();
         userUID = user.getUid();
 
-        // 프로필사진 & 닉네임 데이터베이스에서 읽어오기
-        db.collection("UserInfo").document(userUID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
-                nickname.setText(loginedUser.getNick());
-                if(loginedUser.getImagepath() != null) {
-                    Glide.with(getApplicationContext()).load(loginedUser.getImagepath()).into(profile);
-                }
+        nickname.setText(SaveSharedPreference.getUserNickName(getApplicationContext()));
+        if(SaveSharedPreference.getProfileImage(getApplicationContext()) != null) {
+            Glide.with(getApplicationContext()).load(SaveSharedPreference.getProfileImage(getApplicationContext())).into(profile);
+        }
 
-                loadReviewData();
-
-            }
-        });
-
-
-
-
+        loadReviewData();
     }
 
     // 로그인한 계정이 작성한 후기를 DB에서 읽어와 화면에 표시
@@ -182,13 +165,11 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                                     userReview.getRating(), userReview.getImagepath(), userReview.getReviewText(), userReview.getReviewDate()));
                         }
 
-                        // mData까지도 문제가 없다...
-
                         myPageAdapter = new MyPageAdapter(MyPage.this, mData, MyPage.this);
                         listView.setAdapter(myPageAdapter);
                     }
-
-                } else {
+                }
+                else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
@@ -256,9 +237,11 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                         .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                // Storage에서 사진 삭제
-                                StorageReference oldPhotoRef = FirebaseStorage.getInstance().getReferenceFromUrl(reviewImagePath);
-                                oldPhotoRef.delete();
+                                // 사진파일이 있던 후기이면 Storage에서 사진 삭제
+                                if(reviewImagePath != null) {
+                                    StorageReference oldPhotoRef = FirebaseStorage.getInstance().getReferenceFromUrl(reviewImagePath);
+                                    oldPhotoRef.delete();
+                                }
 
                                 Toast.makeText(MyPage.this, "후기가 삭제되었습니다.", Toast.LENGTH_LONG).show();
 
@@ -285,7 +268,6 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
         finish();
     }
 
-
     // 뒤로가기 버튼(홈버튼)을 누르면 창이 꺼지는 메소드
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -299,7 +281,6 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 }
 

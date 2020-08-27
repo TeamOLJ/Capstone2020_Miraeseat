@@ -32,4 +32,8 @@
 
     <dimen name="btn_width">70dp</dimen>
     <dimen name="btnSave_right_margin">15dp</dimen>
+
+    <!--reviews-->
+    <dimen name="review_noimage_bottom">30dp</dimen>
+    <dimen name="review_withimage_bottom">10dp</dimen>
 </resources>

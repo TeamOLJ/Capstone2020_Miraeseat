@@ -39,7 +39,7 @@
                     android:background="@android:color/transparent"
                     android:onClick="onLogoButtonClicked"
                     android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/logo_temp" />
+                    app:srcCompat="@drawable/logo_black" />
 
                 <TextView
                     android:id="@+id/titleText"

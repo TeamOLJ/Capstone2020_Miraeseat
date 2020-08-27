@@ -44,4 +44,11 @@ public class Review {
 
     public String getReviewText() { return reviewText; }
 
+    public void setReviewDate(String reviewDate) {
+        this.reviewDate = reviewDate;
+    }
+
+    public void setImagepath(String imagepath) {
+        this.imagepath = imagepath;
+    }
 }
