@@ -138,49 +138,21 @@ public class TheaterActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        mScaleGestureDetector.onTouchEvent(ev);
-
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                dX = seatplan_layout.getX() - ev.getRawX();
-                dY = seatplan_layout.getY() - ev.getRawY();
-                Log.d("this", "DOWN");
-                break;
-
-
-            case MotionEvent.ACTION_MOVE:
-                float tmpX = ev.getRawX() + dX;
-                float tmpY = ev.getRawY() + dY;
-                //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
-
-                if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
-                    seatplan_layout.animate().x(tmpX).y(tmpY).setDuration(0).start();
-                }
-                break;
-
-            case MotionEvent.ACTION_UP:
-                Log.d("this", "UP");
-                super.dispatchTouchEvent(ev);
-        }
-        return true;
-    }
-
 //    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        mScaleGestureDetector.onTouchEvent(event);
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        mScaleGestureDetector.onTouchEvent(ev);
 //
-//        switch (event.getAction()) {
+//        switch (ev.getAction()) {
 //            case MotionEvent.ACTION_DOWN:
+//                dX = seatplan_layout.getX() - ev.getRawX();
+//                dY = seatplan_layout.getY() - ev.getRawY();
 //                Log.d("this", "DOWN");
-//                dX = seatplan_layout.getX() - event.getRawX();
-//                dY = seatplan_layout.getY() - event.getRawY();
 //                break;
 //
+//
 //            case MotionEvent.ACTION_MOVE:
-//                float tmpX = event.getRawX() + dX;
-//                float tmpY = event.getRawY() + dY;
+//                float tmpX = ev.getRawX() + dX;
+//                float tmpY = ev.getRawY() + dY;
 //                //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
 //
 //                if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
@@ -190,10 +162,38 @@ public class TheaterActivity extends AppCompatActivity {
 //
 //            case MotionEvent.ACTION_UP:
 //                Log.d("this", "UP");
-//                return false;
+//                super.dispatchTouchEvent(ev);
 //        }
 //        return true;
 //    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mScaleGestureDetector.onTouchEvent(event);
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Log.d("this", "DOWN");
+                dX = seatplan_layout.getX() - event.getRawX();
+                dY = seatplan_layout.getY() - event.getRawY();
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                float tmpX = event.getRawX() + dX;
+                float tmpY = event.getRawY() + dY;
+                //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
+
+                if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
+                    seatplan_layout.animate().x(tmpX).y(tmpY).setDuration(0).start();
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+                Log.d("this", "UP");
+                return false;
+        }
+        return true;
+    }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override

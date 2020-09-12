@@ -217,53 +217,53 @@ public class TheaterItem_try extends TheaterActivity {
 //            return false;
 //        }
 //    }
-//
-//
-//    public View.OnTouchListener SeatButtonOnTouchListener = new View.OnTouchListener() {
-//        @Override
-//        public boolean onTouch(View v, MotionEvent event) {
-//            float X = 0;
-//            float Y = 0;
-//
-//            switch (event.getAction()) {
-//                case MotionEvent.ACTION_UP:
-//                    X = event.getX();
-//                    Y = event.getY();
-//
-//                    if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
-//                        Test(v);
-//                    }
-//                    return true;
-//            }
-//
-//            return false;
-//        }
-//    };
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        boolean check=false;
-        View.OnTouchListener SeatButton = new View.OnTouchListener() {
 
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float X = 0;
-                float Y = 0;
+    public View.OnTouchListener SeatButtonOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            float X = 0;
+            float Y = 0;
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_UP:
-                        X = event.getX();
-                        Y = event.getY();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_UP:
+                    X = event.getX();
+                    Y = event.getY();
 
-                        if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
-                            Test(v);
-                        }
-                        break;
-
-                }
-                return true;
+                    if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
+                        Test(v);
+                    }
+                    return true;
             }
-        };
-        return check;
-    }
+
+            return false;
+        }
+    };
+
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        boolean check=false;
+//        View.OnTouchListener SeatButton = new View.OnTouchListener() {
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                float X = 0;
+//                float Y = 0;
+//
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_UP:
+//                        X = event.getX();
+//                        Y = event.getY();
+//
+//                        if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
+//                            Test(v);
+//                        }
+//                        break;
+//
+//                }
+//                return true;
+//            }
+//        };
+//        return check;
+//    }
 }
