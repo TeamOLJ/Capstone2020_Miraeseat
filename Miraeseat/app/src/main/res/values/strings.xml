@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Miraeseat</string>
 
-    <item type="id" name="COMBINED_ID"/>
-    <item type="id" name="COMBINED_NAME"/>
-    <item type="id" name="IS_SEATPLAN"/>
+    <item name="COMBINED_ID" type="id" />
+    <item name="COMBINED_NAME" type="id" />
+    <item name="IS_SEATPLAN" type="id" />
 
     <!--장혜진-->
     <string name="main_copyright">Copyright (c) MIRAESEAT All Rights Reserved</string>

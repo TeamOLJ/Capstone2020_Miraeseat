@@ -61,7 +61,8 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
         } else if (id == R.id.menu_use) {
             // 이용방법
         } else if (id == R.id.menu_settings) {
-            // 설정
+            Intent intent = new Intent(activity, SettingPage.class);
+            activity.startActivity(intent);
         }
 
         drawerLayout.closeDrawer(Gravity.RIGHT);

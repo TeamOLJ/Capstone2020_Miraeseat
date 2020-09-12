@@ -59,12 +59,13 @@
 
                     <ImageButton
                         android:id="@+id/searchButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="centerInside"
+                        android:layout_marginLeft="5dp"
                         android:background="@android:color/transparent"
                         android:onClick="onSearchButtonClicked"
-                        app:srcCompat="@drawable/ic_search_black_24dp"
+                        app:srcCompat="@drawable/search_icon"
                         tools:ignore="VectorDrawableCompat" />
 
                 </LinearLayout>
