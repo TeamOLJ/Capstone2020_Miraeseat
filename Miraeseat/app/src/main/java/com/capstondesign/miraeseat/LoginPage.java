@@ -6,10 +6,13 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,7 @@ import com.capstondesign.miraeseat.find.FindInfoPage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,9 +31,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.security.Key;
 import java.util.regex.Pattern;
 
-public class LoginPage extends AppCompatActivity {
+public class LoginPage extends AppCompatActivity implements EditText.OnEditorActionListener {
     private static final String TAG = "LoginPage";
 
     // Firebase 인증 변수
@@ -75,6 +80,7 @@ public class LoginPage extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         btnLogin.setOnClickListener(clickLoginListener);
+        inputPwd.setOnEditorActionListener(this);
 
         btnFindPwd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,5 +218,13 @@ public class LoginPage extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if(actionId==EditorInfo.IME_ACTION_DONE) {
+            btnLogin.performClick();
+        }
+        return false;
     }
 }

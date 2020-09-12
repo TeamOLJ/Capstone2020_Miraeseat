@@ -1,5 +1,10 @@
 package com.capstondesign.miraeseat.search;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class PlayClass {
@@ -53,7 +58,7 @@ public class PlayClass {
     }
 
     public void setDate(String date) {
-        Date = getDate();
+        Date = date;
     }
 
     public void setState(String state) {
@@ -61,30 +66,15 @@ public class PlayClass {
     }
 
     static public String getToday() {
-        Calendar calendar = Calendar.getInstance();
-
-        String Today = Integer.toString(calendar.get(Calendar.YEAR)) + String.format("%02d", calendar.get(Calendar.MONTH) + 1) + String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH));
-
-        return Today;
+        Calendar today = Calendar.getInstance();
+        return new SimpleDateFormat("yyyyMMdd").format(today.getTime());
     }
 
-    //오늘 날짜와 3달 뒤 날짜를 구함
-    static public String[] getThreeMonthDate() {
-        Calendar calendar = Calendar.getInstance();
+    static public String getAfter3Month() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 3);
 
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        String Today = Integer.toString(year) + String.format("%02d", month) + String.format("%02d", day);
-
-        if (month > 9) {
-            month -= 9;
-            year += 1;
-        } else month += 3;
-
-        String AfterThreeMonth = Integer.toString(year) + String.format("%02d", month) + String.format("%02d", day);
-
-        return new String[]{Today, AfterThreeMonth};
+        String After3Mon = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
+        return After3Mon;
     }
 }

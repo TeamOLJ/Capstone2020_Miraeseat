@@ -15,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TheaterItem_try extends TableLayout {
+public class TheaterItem_try extends TheaterActivity {
     final static String TAG = "TheaterItem";
 
     private int WIDTH;
@@ -49,7 +49,6 @@ public class TheaterItem_try extends TableLayout {
 
 
     TheaterItem_try(Context ctx, ViewGroup viewGroup) {
-        super(ctx);
         this.ctx = ctx;
         seatplan_layout = viewGroup;
     }
@@ -130,7 +129,7 @@ public class TheaterItem_try extends TableLayout {
                 btn = new Button(ctx);
                 btn.setLayoutParams(btn_params);
                 btn.setBackgroundResource(R.drawable.seatbutton_unclicked);
-                btn.setOnTouchListener(SeatButtonOnTouchListener);
+                //btn.setOnTouchListener(SeatButtonOnTouchListener);
 
                 btn.setTag(row_index + "_" + n);
                 btnRow.addView(btn);
@@ -204,67 +203,67 @@ public class TheaterItem_try extends TableLayout {
     }
 
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        final int action = ev.getAction();
-
-        if(action==MotionEvent.ACTION_UP){
-            Log.d("this", "Intercept?");
-
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-
-    public View.OnTouchListener SeatButtonOnTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            float X = 0;
-            float Y = 0;
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_UP:
-                    X = event.getX();
-                    Y = event.getY();
-
-                    if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
-                        Test(v);
-                    }
-                    break;
-            }
-
-            return false;
-        }
-    };
-
-
-
 //    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        boolean check=false;
-//        View.OnTouchListener SeatButton = new View.OnTouchListener() {
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        final int action = ev.getAction();
+//        Log.d("this", "dispatch");
 //
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                float X = 0;
-//                float Y = 0;
+//        if(action==MotionEvent.ACTION_UP) {
+//            Log.d("this", "INTERCEPT!!!!!!");
 //
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_UP:
-//                        X = event.getX();
-//                        Y = event.getY();
-//
-//                        if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
-//                            Test(v);
-//                        }
-//                        break;
-//                }
-//                return false;
-//            }
-//        };
-//        return check;
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
 //    }
+//
+//
+//    public View.OnTouchListener SeatButtonOnTouchListener = new View.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View v, MotionEvent event) {
+//            float X = 0;
+//            float Y = 0;
+//
+//            switch (event.getAction()) {
+//                case MotionEvent.ACTION_UP:
+//                    X = event.getX();
+//                    Y = event.getY();
+//
+//                    if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
+//                        Test(v);
+//                    }
+//                    return true;
+//            }
+//
+//            return false;
+//        }
+//    };
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean check=false;
+        View.OnTouchListener SeatButton = new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float X = 0;
+                float Y = 0;
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                        X = event.getX();
+                        Y = event.getY();
+
+                        if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
+                            Test(v);
+                        }
+                        break;
+
+                }
+                return true;
+            }
+        };
+        return check;
+    }
 }

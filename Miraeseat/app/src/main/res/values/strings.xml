@@ -6,6 +6,8 @@
     <item type="id" name="IS_SEATPLAN"/>
 
     <!--장혜진-->
+    <string name="main_copyright">Copyright (c) MIRAESEAT All Rights Reserved</string>
+
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
 

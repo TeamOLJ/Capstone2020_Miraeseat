@@ -1,6 +1,9 @@
 package com.capstondesign.miraeseat.hall;
 
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.capstondesign.miraeseat.search.HallLocation;
 import com.capstondesign.miraeseat.search.PlayClass;
@@ -94,13 +97,13 @@ public class HallInfoAPI {
 
 
     //[공연시설+공연장ID]로 공연 중인 공연 정보들 얻기
+    @RequiresApi(api = Build.VERSION_CODES.O)
     static public ArrayList<PlayClass> Get_Play(String combined_id) {
         ArrayList<PlayClass> datas = new ArrayList<PlayClass>();
-        String[] date = PlayClass.getThreeMonthDate();
 
         String prfplccd = "&prfplccd=" + combined_id;
 
-        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + KOPIS_key + "&stdate=" + date[0] + "&eddate=" + date[1] + "&cpage=1&rows=10" + prfplccd;
+        String PlayURL = "http://www.kopis.or.kr/openApi/restful/pblprfr?service=" + KOPIS_key + "&stdate=" + PlayClass.getToday() + "&eddate=" + PlayClass.getAfter3Month() + "&cpage=1&rows=10" + prfplccd;
 
         //공연명, 시작 날짜, 종료 날짜, 포스터, 공연 상태
         String[] index = {"prfnm", "prfpdfrom", "prfpdto", "poster", "prfstate"};

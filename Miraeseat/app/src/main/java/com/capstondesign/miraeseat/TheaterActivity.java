@@ -153,7 +153,6 @@ public class TheaterActivity extends AppCompatActivity {
             case MotionEvent.ACTION_MOVE:
                 float tmpX = ev.getRawX() + dX;
                 float tmpY = ev.getRawY() + dY;
-                Log.d("this", "MOVE");
                 //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
 
                 if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
@@ -163,7 +162,7 @@ public class TheaterActivity extends AppCompatActivity {
 
             case MotionEvent.ACTION_UP:
                 Log.d("this", "UP");
-                return super.dispatchTouchEvent(ev);
+                super.dispatchTouchEvent(ev);
         }
         return true;
     }
@@ -174,6 +173,7 @@ public class TheaterActivity extends AppCompatActivity {
 //
 //        switch (event.getAction()) {
 //            case MotionEvent.ACTION_DOWN:
+//                Log.d("this", "DOWN");
 //                dX = seatplan_layout.getX() - event.getRawX();
 //                dY = seatplan_layout.getY() - event.getRawY();
 //                break;
@@ -188,7 +188,8 @@ public class TheaterActivity extends AppCompatActivity {
 //                }
 //                break;
 //
-//            default:
+//            case MotionEvent.ACTION_UP:
+//                Log.d("this", "UP");
 //                return false;
 //        }
 //        return true;
