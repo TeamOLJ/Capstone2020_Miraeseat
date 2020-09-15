@@ -145,7 +145,7 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
 
                                     for (QueryDocumentSnapshot document : querySnapshot) {
                                         // arrayList의 내용과 각 문서의 내용을 finalList에 추가
-                                        finalList.add(new HallDetailedClass(currentItem.getTheater_name() + " " + document.getString("hallName"),
+                                        finalList.add(new HallDetailedClass(currentItem.getTheater_name().split("\\(구")[0] + " " + document.getString("hallName"),
                                                 currentItem.getTheater_ID() + "-" + document.getString("hallCode"),
                                                 document.getString("hallImage"), document.getBoolean("isSeatplan")));
                                     }

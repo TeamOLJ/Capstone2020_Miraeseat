@@ -74,12 +74,19 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     public void onSearchButtonClicked(View v) {
         String data = searchText.getText().toString();
 
-        Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
-        searchIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        searchIntent.putExtra(SEARCH_WORD, data);
-        startActivity(searchIntent);
+        //검색어가 없으면
+        if(data.length() == 0) {
+            Toast.makeText(MainActivity.this, "검색어를 입력하세요", Toast.LENGTH_SHORT).show();
+        }
+        //있으면
+        else {
+            Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+            searchIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            searchIntent.putExtra(SEARCH_WORD, data);
+            startActivity(searchIntent);
 
-        searchText.setText(null);
+            searchText.setText(null);
+        }
     }
 
     //엔터키 눌렀을 때 = 검색 버튼 눌렀을 때
@@ -106,9 +113,13 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
             if(datas==null) {
                 imageButton.setImageResource(R.drawable.logo_temp);
             }
-            else{ Glide.with(imageButton.getContext()).load(datas.get(i).getHall_Image()).into(imageButton); }
+            else{
+                Glide.with(imageButton.getContext()).load(datas.get(i).getHall_Image()).into(imageButton);
+            }
+
             imageButton.setLayoutParams(params);
             imageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 imageButton.setElevation(1);
             }
