@@ -70,24 +70,132 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/view_theater"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"></LinearLayout>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:orientation="vertical">
+                    <ImageButton
+                        android:id="@+id/btnTheater1"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_margin="3dp"
+                        app:tint="#6F000000"
+                        android:clickable="false" />
 
                     <TextView
+                        android:id="@+id/textTheater1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/btnTheater1"
+                        android:layout_alignBottom="@+id/btnTheater1"
                         android:gravity="center"
-                        android:text="@string/main_copyright"/>
-                </LinearLayout>
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:text=""
+                        android:textColor="#FFFFFF"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/btnTheater2"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_below="@+id/btnTheater1"
+                        android:layout_margin="3dp"
+                        app:tint="#6F000000"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/textTheater2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/btnTheater2"
+                        android:layout_alignBottom="@+id/btnTheater2"
+                        android:gravity="center"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:text=""
+                        android:textColor="#FFFFFF"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/btnTheater3"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_below="@+id/btnTheater2"
+                        android:layout_margin="3dp"
+                        app:tint="#6F000000"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/textTheater3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/btnTheater3"
+                        android:layout_alignBottom="@+id/btnTheater3"
+                        android:gravity="center"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:text=""
+                        android:textColor="#FFFFFF"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/btnTheater4"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_below="@+id/btnTheater3"
+                        android:layout_margin="3dp"
+                        app:tint="#6F000000"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/textTheater4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/btnTheater4"
+                        android:layout_alignBottom="@+id/btnTheater4"
+                        android:gravity="center"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:text=""
+                        android:textColor="#FFFFFF"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/btnTheater5"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_below="@+id/btnTheater4"
+                        android:layout_margin="3dp"
+                        app:tint="#6F000000"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/textTheater5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/btnTheater5"
+                        android:layout_alignBottom="@+id/btnTheater5"
+                        android:gravity="center"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:text=""
+                        android:textColor="#FFFFFF"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:gravity="center"
+                    android:text="@string/main_copyright" />
 
             </LinearLayout>
 

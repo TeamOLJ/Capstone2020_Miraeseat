@@ -3,6 +3,7 @@ package com.capstondesign.miraeseat;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,29 +29,45 @@ import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 
 import com.bumptech.glide.Glide;
+import com.capstondesign.miraeseat.hall.HallInfo;
 import com.capstondesign.miraeseat.search.HallDetailedClass;
 import com.capstondesign.miraeseat.search.SearchActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
+    final static String TAG = "MainActivity";
+
     final String SEARCH_WORD = "search_word";
 
     // Firebase 인증 변수
     private FirebaseAuth mainAuth;
+    FirebaseFirestore db;
 
     BackPressCloseHandler backpress;
     EditText searchText;
     DrawerHandler drawer;
 
-    ArrayList<HallDetailedClass> hdc = null;
+    ImageButton[] btnList = new ImageButton[5];
+    TextView[] textList = new TextView[5];
+
+    ArrayList<HallDetailedClass> hdc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize Firebase Auth
+        mainAuth = FirebaseAuth.getInstance();
 
         backpress = new BackPressCloseHandler(this);
         drawer = new DrawerHandler(this);
@@ -64,10 +82,19 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         searchText = findViewById(R.id.searchText);
         searchText.setOnEditorActionListener(this);
 
-        CreateButton(R.id.view_theater, hdc);
+        btnList[0] = (ImageButton) findViewById(R.id.btnTheater1);
+        btnList[1] = (ImageButton) findViewById(R.id.btnTheater2);
+        btnList[2] = (ImageButton) findViewById(R.id.btnTheater3);
+        btnList[3] = (ImageButton) findViewById(R.id.btnTheater4);
+        btnList[4] = (ImageButton) findViewById(R.id.btnTheater5);
 
-        // Initialize Firebase Auth
-        mainAuth = FirebaseAuth.getInstance();
+        textList[0] = (TextView) findViewById(R.id.textTheater1);
+        textList[1] = (TextView) findViewById(R.id.textTheater2);
+        textList[2] = (TextView) findViewById(R.id.textTheater3);
+        textList[3] = (TextView) findViewById(R.id.textTheater4);
+        textList[4] = (TextView) findViewById(R.id.textTheater5);
+
+        CreateButton();
     }
 
     //검색 버튼 눌렀을 때
@@ -98,45 +125,76 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         return false;
     }
 
-    //동적 버튼 만들기
-    private void CreateButton(int layout, ArrayList<HallDetailedClass> datas) {
-        LinearLayout view_theater = findViewById(layout);
-        int height = (int) getResources().getDimension(R.dimen.poster_height);
-        int margin = (int) getResources().getDimension(R.dimen.poster_margin);
+    //버튼에 공연시설 페이지로 가는 링크 만들기
+    private void CreateButton() {
+        db = FirebaseFirestore.getInstance();
 
+        hdc = new ArrayList<HallDetailedClass>();
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
-        params.setMargins(margin, 0, margin, margin);
+        db.collection("TheaterInfo").orderBy("searchedNum", Query.Direction.DESCENDING).limit(5)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                    QuerySnapshot querySnapshot = task.getResult();
 
-        for (int i = 0; i < 5; ++i) {
-            ImageButton imageButton = new ImageButton(this);
-            if(datas==null) {
-                imageButton.setImageResource(R.drawable.logo_temp);
+                    int cntIndex = 0;
+
+                    //각각의 document 응답값을 HallDetailedClass로 받아 버튼에 할당
+                    // 버튼 순서와 동일한 순서로 hdc에 넣고, 클릭한 버튼 순서(번호)에 따라 hdc에서 읽어오는 걸로.
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        hdc.add(new HallDetailedClass(document.getId(),
+                                document.getString("theaterName") + " " + document.getString("hallName"),
+                                document.getString("theaterCode") + "-" + document.getString("hallCode"),
+                                document.getString("hallImage"), document.getBoolean("isSeatplan")));
+
+                        // 공연장 이미지 glide, 공연장 이름 textview에 설정
+                        if(document.getString("hallImage") == null) {
+                            btnList[cntIndex].setBackgroundResource(R.drawable.theater1);
+                        }
+                        else {
+                            Glide.with(getApplicationContext()).load(document.getString("hallImage")).into(btnList[cntIndex]);
+                        }
+
+                        //버튼의 이미지 색상을 죽임
+                        btnList[cntIndex].setColorFilter(Color.argb(100, 0, 0, 0), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        btnList[cntIndex].setClickable(true);
+                        textList[cntIndex].setText(document.getString("theaterName") + " " + document.getString("hallName"));
+
+                        cntIndex++;
+                    }
+
+                    //각 버튼에 onClickListener 추가
+                    for (int i = 0; i < 5; i++) {
+                        final int finalI = i;
+                        btnList[i].setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                HallDetailedClass item = hdc.get(finalI);
+
+                                String documentID = item.getDocumentID();
+                                String combinedID = item.getCombined_ID();
+                                String combinedName = item.getCombined_name();
+                                boolean isSeatplan = item.getIsSeatplan();
+
+                                Intent intent = new Intent(MainActivity.this, HallInfo.class);
+                                intent.putExtra("document_ID", documentID);
+                                intent.putExtra("Combined_ID", combinedID);
+                                intent.putExtra("Combined_Name", combinedName);
+                                intent.putExtra("is_Seatplan", isSeatplan);
+                                startActivity(intent);
+                            }
+                        });
+                    }
+
+                }
+                else {
+                    Toast.makeText(MainActivity.this, "정보를 불러오는 데에 실패했습니다. 인터넷 연결을 확인하고 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
             }
-            else{
-                Glide.with(imageButton.getContext()).load(datas.get(i).getHall_Image()).into(imageButton);
-            }
-
-            imageButton.setLayoutParams(params);
-            imageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                imageButton.setElevation(1);
-            }
-            imageButton.setOnClickListener(PosterOnClickListner);  //다른 버튼 클릭 리스너
-            view_theater.addView(imageButton);
-        }
+        });
     }
-
-    public View.OnClickListener PosterOnClickListner = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int selected_item = (int) v.getId();
-            Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-//            Intent act_information = new Intent(getApplicationContext(), HallInfo.class);
-//            startActivity(act_information);
-        }
-    };
 
     @Override
     public void onStart() {

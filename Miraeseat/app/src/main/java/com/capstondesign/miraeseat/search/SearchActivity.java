@@ -91,11 +91,13 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HallDetailedClass item = searchAdapter.getItem(position);
 
+                String documentID = item.getDocumentID();
                 String combinedID = item.getCombined_ID();
                 String combinedName = item.getCombined_name();
                 boolean isSeatplan = item.getIsSeatplan();
 
                 Intent intent = new Intent(SearchActivity.this, HallInfo.class);
+                intent.putExtra("document_ID", documentID);
                 intent.putExtra("Combined_ID", combinedID);
                 intent.putExtra("Combined_Name", combinedName);
                 intent.putExtra("is_Seatplan", isSeatplan);
@@ -145,7 +147,8 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
 
                                     for (QueryDocumentSnapshot document : querySnapshot) {
                                         // arrayList의 내용과 각 문서의 내용을 finalList에 추가
-                                        finalList.add(new HallDetailedClass(currentItem.getTheater_name().split("\\(구")[0] + " " + document.getString("hallName"),
+                                        finalList.add(new HallDetailedClass(document.getId(),
+                                                currentItem.getTheater_name().split("\\(구")[0] + " " + document.getString("hallName"),
                                                 currentItem.getTheater_ID() + "-" + document.getString("hallCode"),
                                                 document.getString("hallImage"), document.getBoolean("isSeatplan")));
                                     }
