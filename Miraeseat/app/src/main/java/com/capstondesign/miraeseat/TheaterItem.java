@@ -3,21 +3,18 @@ package com.capstondesign.miraeseat;
 import android.content.Context;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TheaterItem {
+public class TheaterItem extends TheaterActivity {
     final static String TAG = "TheaterItem";
 
     private int WIDTH;
@@ -31,23 +28,26 @@ public class TheaterItem {
             {2, 43}, {2, 43}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}, {1, 44}};
 
     final int PADDING = 3;
-    
+
     private String selectedSeat = null;
 
     private Context ctx;
     private ViewGroup seatplan_layout;
 
-    private TableLayout.LayoutParams btnRow_params;
-    private TableRow.LayoutParams btn_params, vertical_space_params, horizontal_space_params;
+    private TableLayout.LayoutParams seatRow_params;
+    private TableRow.LayoutParams seat_params, vertical_space_params, horizontal_space_params;
 
-    private TableLayout btnTableLayout;
-    private TableRow btnRow;
-    private Button btn;
-    private Button previous_btn = null;
+    private TableLayout seatTableLayout;
+    private TableRow seatRow;
+    private View seatBtn;
+    private View previous_seat = null;
 
     private TextView empty_view;
 
     private String[] table_info;
+
+    int check = 0;
+
 
     TheaterItem(Context ctx, ViewGroup viewGroup) {
         this.ctx = ctx;
@@ -69,8 +69,8 @@ public class TheaterItem {
         tmp_maxRow = Integer.parseInt(table_info[6]);
         tmp_maxCol = Integer.parseInt(table_info[7]);
 
-        btnRow_params = new TableLayout.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
-        btn_params = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f);
+        seatRow_params = new TableLayout.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
+        seat_params = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f);
 
         vertical_space_params = new TableRow.LayoutParams(vertical_space, 0);
         horizontal_space_params = new TableRow.LayoutParams(0, horizontal_space);
@@ -78,20 +78,20 @@ public class TheaterItem {
 
 
     public void execute() {
-        btnTableLayout = CreateTable();
-        seatplan_layout.addView(btnTableLayout);
+        seatTableLayout = CreateTable();
+        seatplan_layout.addView(seatTableLayout);
 
         for (int i = 0; i < start_end_indexes.length; ++i) {
             int start = start_end_indexes[i][0];
             int end = start_end_indexes[i][1];
-            btnTableLayout.addView(CreateRow(i + 1, start, end));
+            seatTableLayout.addView(CreateRow(i + 1, start, end));
 
             if (i + 1 == tmp_row[1]) {
                 empty_view = new TextView(ctx);
                 empty_view.setLayoutParams(horizontal_space_params);
                 TableRow empty_row = new TableRow(ctx);
                 empty_row.addView(empty_view);
-                btnTableLayout.addView(empty_row);
+                seatTableLayout.addView(empty_row);
             }
         }
     }
@@ -116,106 +116,39 @@ public class TheaterItem {
     }
 
     private TableRow CreateRow(int row_index, int start_index, int end_index) { //테이블 행과 내부 버튼 생성
-        btnRow = new TableRow(ctx);
-        btnRow.setLayoutParams(btnRow_params);
-        btnRow.setPadding(PADDING, PADDING, PADDING, PADDING);
+        seatRow = new TableRow(ctx);
+        seatRow.setLayoutParams(seatRow_params);
+        seatRow.setPadding(PADDING, PADDING, PADDING, PADDING);
 
 
         int n = 1;
         while (n <= tmp_maxCol) {
             if (n >= start_index && n <= end_index) {
-                btn = new Button(ctx);
-                btn.setLayoutParams(btn_params);
-                btn.setBackgroundResource(R.drawable.seatbutton_unclicked);
-                //btn.setOnClickListener(SeatButtonOnClickListener);
-                btn.setOnTouchListener(SeatButtonOnTouchListener);
+                seatBtn = new View(ctx);
+                seatBtn.setLayoutParams(seat_params);
+                seatBtn.setBackgroundResource(R.drawable.seatbutton_unclicked);
+                seatBtn.setOnTouchListener(SeatButtonOnTouchListener);
 
-                btn.setTag(row_index + "_" + n);
-                btnRow.addView(btn);
+                seatBtn.setTag(row_index + "_" + n);
+                seatRow.addView(seatBtn);
             } else { //가장자리 빈 공간
                 empty_view = new TextView(ctx);
-                empty_view.setLayoutParams(btn_params);
-                btnRow.addView(empty_view);
+                empty_view.setLayoutParams(seat_params);
+                seatRow.addView(empty_view);
             }
 
             if (tmp_col.contains(n)) { //구역 간 빈 공간
                 empty_view = new TextView(ctx);
                 empty_view.setLayoutParams(vertical_space_params);
-                btnRow.addView(empty_view);
+                seatRow.addView(empty_view);
             }
 
             n += 1;
         }
 
-        return btnRow;
+        return seatRow;
     }
 
-
-    //버튼 클릭과 버튼 위에서 확대, 이동 되도록 수정해야함.
-    public View.OnTouchListener SeatButtonOnTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            float X = 0;
-            float Y = 0;
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_UP:
-                    X = event.getX();
-                    Y = event.getY();
-
-                    if ((X < v.getWidth() && 0 < X) && (Y < v.getHeight() && 0 < Y)) {
-                        Test(v);
-                    }
-                    break;
-
-                case MotionEvent.ACTION_MOVE:
-
-
-            }
-
-            return false;
-        }
-    };
-
-
-    public View.OnClickListener SeatButtonOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (previous_btn == v) {
-                previous_btn.setBackgroundResource(R.drawable.seatbutton_unclicked);
-            } else {
-                if (previous_btn != null) {
-                    previous_btn.setBackgroundResource(R.drawable.seatbutton_unclicked);
-                }
-
-                v.setBackgroundResource(R.drawable.seatbutton_clicked);
-
-                String result = null;
-                String[] tag = v.getTag().toString().split("_"); //버튼의 태그 받아와서 행/열 번호로 나누기
-
-                int[] index = new int[2];
-                index[0] = Integer.parseInt(tag[0]); //층 나누기
-                index[1] = Integer.parseInt(tag[1]); //구역 나누기 - 구역 번호 알려줄 필요 없을 듯
-
-                int floor = 1;
-
-                for (; floor <= tmp_row.length; ++floor) { //층을 나누는 행 번호 넣기
-                    if (IsOverLess((index[0]), tmp_row[floor - 1], tmp_row[floor])) {
-                        result = floor + "층 ";
-                        break;
-                    }
-                }
-                index[0] -= tmp_row[floor - 1];
-
-                result += (index[0] + "열 " + index[1]);
-
-                Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
-
-                previous_btn = (Button) v;
-            }
-
-        }
-    };
 
     public String getSelectedSeat() {
         return selectedSeat;
@@ -227,14 +160,16 @@ public class TheaterItem {
 
     }
 
+
+
     public void Test(View v) {
-        if (previous_btn == v) {
-            previous_btn.setBackgroundResource(R.drawable.seatbutton_unclicked);
-            previous_btn = null;
+        if (previous_seat == v) {
+            previous_seat.setBackgroundResource(R.drawable.seatbutton_unclicked);
+            previous_seat = null;
             selectedSeat = null;
         } else {
-            if (previous_btn != null) {
-                previous_btn.setBackgroundResource(R.drawable.seatbutton_unclicked);
+            if (previous_seat != null) {
+                previous_seat.setBackgroundResource(R.drawable.seatbutton_unclicked);
             }
 
             v.setBackgroundResource(R.drawable.seatbutton_clicked);
@@ -262,7 +197,34 @@ public class TheaterItem {
 
             Toast.makeText(ctx, result, Toast.LENGTH_SHORT).show();
 
-            previous_btn = (Button) v;
+            previous_seat = v;
         }
     }
+
+    public View.OnTouchListener SeatButtonOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    TheaterActivity.dX = seatplan_layout.getX() - event.getRawX();
+                    TheaterActivity.dY = seatplan_layout.getY() - event.getRawY();
+                    check = 0;
+                    return true;
+
+                case MotionEvent.ACTION_MOVE:
+                    check = check + 1;
+                    return false;
+
+                case MotionEvent.ACTION_UP:
+                    if (check < 6) {
+                        Test(v);
+                    }
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+    };
+
 }
