@@ -3,11 +3,15 @@ package com.capstondesign.miraeseat;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.view.View;
+import android.widget.Button;
+
 import android.widget.TextView;
+
+
 
 public class SettingPage extends AppCompatActivity {
     private static final String TAG = "SettingPage";
@@ -15,7 +19,9 @@ public class SettingPage extends AppCompatActivity {
     DrawerHandler drawer;
     TextView titleText;
 
-    Switch sw;
+    Button btTheme;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,19 +38,14 @@ public class SettingPage extends AppCompatActivity {
         titleText = (TextView) findViewById(R.id.titleText);
         titleText.setText("설정");
 
-        sw = (Switch) findViewById(R.id.sw);
+        btTheme = (Button) findViewById(R.id.btTheme);
 
-        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        btTheme.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    //ThemeUtil.applyTheme("DARK_MODE");
-                    //다크모드 적용
-                }
-                else{
-                    //ThemeUtil.applyTheme("default");
-                    //다크모드 미적용
-               }
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), themedialog.class);
+                startActivity(intent);
             }
         });
 

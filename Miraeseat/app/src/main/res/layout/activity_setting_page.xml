@@ -42,12 +42,15 @@
     android:layout_margin="10dp"
     android:background="@drawable/round">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:id="@+id/btTheme"
+        android:layout_width="368dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="15dp"
-        android:text="다크모드" />
+        android:gravity="center_vertical"
+        android:text="테마 선택" />
 
     <View
         android:layout_width="0dp"
@@ -55,12 +58,7 @@
         android:layout_weight="1"
         android:gravity="center_horizontal"/>
 
-    <Switch
-        android:id="@+id/sw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginRight="15dp"/>
+
 
 </LinearLayout>
 

@@ -1,4 +1,4 @@
-package com.capstondesign.miraeseat;
+package com.capstondesign.miraeseat.Theme;
 
 import android.content.Context;
 import android.os.Build;

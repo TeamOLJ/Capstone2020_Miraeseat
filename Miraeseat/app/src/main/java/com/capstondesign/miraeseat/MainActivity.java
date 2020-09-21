@@ -2,6 +2,7 @@ package com.capstondesign.miraeseat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,9 +25,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.ViewCompat;
 
 import com.bumptech.glide.Glide;
+import com.capstondesign.miraeseat.Theme.ThemeUtil;
 import com.capstondesign.miraeseat.search.HallDetailedClass;
 import com.capstondesign.miraeseat.search.SearchActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,12 +47,21 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     EditText searchText;
     DrawerHandler drawer;
 
+    String themeName;
+
     ArrayList<HallDetailedClass> hdc = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
+//        super.setTheme(R.style.AppTheme);
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
+        themeName = SaveSharedPreference.getTheme(getApplicationContext());
+        if(themeName==null) themeName="default";
+        ThemeUtil.applyTheme(themeName);
 
         backpress = new BackPressCloseHandler(this);
         drawer = new DrawerHandler(this);
