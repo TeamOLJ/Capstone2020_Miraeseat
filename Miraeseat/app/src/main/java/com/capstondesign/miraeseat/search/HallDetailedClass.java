@@ -1,13 +1,15 @@
 package com.capstondesign.miraeseat.search;
 
 public class HallDetailedClass {
+    private String documentID;
     private String Combined_name;
     private String Combined_ID;
     private String Hall_Image;
     private boolean isSeatplan;
 
 
-    public HallDetailedClass(String Combined_name, String Combined_ID, String Hall_Image, boolean isSeatplan) {
+    public HallDetailedClass(String documentID, String Combined_name, String Combined_ID, String Hall_Image, boolean isSeatplan) {
+        this.documentID = documentID;
         this.Combined_name = Combined_name;
         this.Combined_ID = Combined_ID;
         this.Hall_Image = Hall_Image;
@@ -16,6 +18,7 @@ public class HallDetailedClass {
 
     public HallDetailedClass() { }
 
+    public String getDocumentID() { return documentID; }
 
     public String getCombined_ID() {
         return Combined_ID;

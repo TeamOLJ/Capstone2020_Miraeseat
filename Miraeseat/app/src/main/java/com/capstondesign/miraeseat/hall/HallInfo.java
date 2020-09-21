@@ -2,7 +2,6 @@ package com.capstondesign.miraeseat.hall;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -12,10 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 
@@ -23,7 +20,6 @@ import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.TheaterActivity;
-import com.capstondesign.miraeseat.search.HallDetailedClass;
 import com.capstondesign.miraeseat.search.HallLocation;
 import com.capstondesign.miraeseat.search.PlayClass;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,14 +28,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -84,6 +77,7 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         db = FirebaseFirestore.getInstance();
 
         Intent intent = getIntent();
+        final String documentID = intent.getStringExtra("document_ID");
         final String combinedID = intent.getStringExtra("Combined_ID");
         final String combinedName = intent.getStringExtra("Combined_Name");
         final boolean isSeatplan = intent.getBooleanExtra("is_Seatplan", false);
@@ -153,7 +147,12 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
                 }
             }
         });
+
+        //검색횟수 1 증가
+        db.collection("TheaterInfo").document(documentID).update("searchedNum", FieldValue.increment(1));
+
     }
+
 
     public void onLogoButtonClicked(View v) {
         Intent intent = new Intent(this, MainActivity.class);
