@@ -84,14 +84,20 @@
             android:text="현재 공연 정보" />
 
 
-            <ListView
-                android:id="@+id/hall_playlist"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clickable="false"
-                android:listSelector="@android:color/transparent"/>
+        <ListView
+            android:id="@+id/hall_playlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:listSelector="@android:color/transparent"/>
 
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="@string/hall_copyright"/>
 
     </LinearLayout>
 

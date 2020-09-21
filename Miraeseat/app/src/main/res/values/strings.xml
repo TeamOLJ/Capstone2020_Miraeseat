@@ -7,6 +7,7 @@
 
     <!--장혜진-->
     <string name="main_copyright">Copyright (c) MIRAESEAT All Rights Reserved</string>
+    <string name="hall_copyright">정보제공: (재)예술경영지원센터 공연예술통합전산망</string>
 
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
