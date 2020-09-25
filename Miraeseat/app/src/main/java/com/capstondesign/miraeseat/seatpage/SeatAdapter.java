@@ -135,6 +135,7 @@ public class SeatAdapter extends BaseAdapter {
         if(oneListItem.getIsOwner()) {
             holder.btnLike.setText("수정");
             holder.btnLike.setOnClickListener(ClickEdit);
+            holder.btnLike.setVisibility(View.VISIBLE);
 
             holder.btnReport.setText("삭제");
             holder.btnReport.setOnClickListener(ClickDelete);
@@ -142,6 +143,7 @@ public class SeatAdapter extends BaseAdapter {
         else {
             holder.btnLike.setText("좋아요");
             holder.btnLike.setOnClickListener(ClickLike);
+            holder.btnLike.setVisibility(View.GONE);
 
             holder.btnReport.setText("신고하기");
             holder.btnReport.setOnClickListener(ClickReport);

@@ -195,25 +195,27 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     UserClass foundUser = documentSnapshot.toObject(UserClass.class);
 
-                                    boolean isReviewOwner = false;
+                                    if(foundUser != null) {
+                                        boolean isReviewOwner = false;
 
-                                    if(mainAuth.getCurrentUser() != null) {
-                                        isReviewOwner = user.getUid().equals(foundReview.getOwnerUser());
+                                        if(mainAuth.getCurrentUser() != null) {
+                                            isReviewOwner = user.getUid().equals(foundReview.getOwnerUser());
+                                        }
+                                        // 문서 내용에서 필요한 값만 취하여 mData에 추가
+                                        seatItemData.add(new seatList_item(documentID, foundUser.getNick(), foundUser.getImagepath(), foundReview.getImagepath(),
+                                                foundReview.getRating(), foundReview.getReviewText(), isReviewOwner));
+
+                                        countReview += 1;
+
+                                        countRating += foundReview.getRating();
+
+                                        seatAdapter.notifyDataSetChanged();
+                                        listView.setAdapter(seatAdapter);
+
+                                        cntReview.setText("후기 수: " + countReview);
+                                        avgRating.setRating(countRating / countReview);
+                                        avgText.setText(new DecimalFormat("##.#").format(countRating / countReview));
                                     }
-                                    // 문서 내용에서 필요한 값만 취하여 mData에 추가
-                                    seatItemData.add(new seatList_item(documentID, foundUser.getNick(), foundUser.getImagepath(), foundReview.getImagepath(),
-                                            foundReview.getRating(), foundReview.getReviewText(), isReviewOwner));
-
-                                    countReview += 1;
-
-                                    countRating += foundReview.getRating();
-
-                                    seatAdapter.notifyDataSetChanged();
-                                    listView.setAdapter(seatAdapter);
-
-                                    cntReview.setText("후기 수: "+countReview);
-                                    avgRating.setRating(countRating/countReview);
-                                    avgText.setText(new DecimalFormat("##.#").format(countRating/countReview));
                                 }
                             });
                         }
