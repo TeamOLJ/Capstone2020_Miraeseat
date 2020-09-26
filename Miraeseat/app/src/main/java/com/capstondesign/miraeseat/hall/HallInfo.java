@@ -205,11 +205,10 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(Point);
         markerOptions.title(hall_locate.getTheater_name());
-        //markerOptions.snippet("한국의 수도");
         map.addMarker(markerOptions);
 
         map.moveCamera(CameraUpdateFactory.newLatLng(Point));
-        map.animateCamera(CameraUpdateFactory.zoomTo(12));
+        map.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
 
     class Thread_hall_details extends Thread {

@@ -76,6 +76,8 @@ public class HallAdapter extends BaseAdapter {
 
         Glide.with(context).load(hallList_itemArrayList.get(position).getPoster()).into(holder.poster);
 
+        holder.name.setSelected(true);
+
         return convertView;
     }
 }

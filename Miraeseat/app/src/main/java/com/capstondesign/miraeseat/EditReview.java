@@ -239,6 +239,10 @@ public class EditReview extends AppCompatActivity {
                 reset();
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(), "후기는 10글자 이상 작성하셔야 합니다.", Toast.LENGTH_LONG).show();
+            }  else if (ratingBar.getRating() == 0) {
+                    reset();
+                    clickImageListener.reset();
+                    Toast.makeText(getApplicationContext(),"평점을 매겨 주세요.",Toast.LENGTH_LONG).show();
             } else {
                 // 수정된 정보 DB에 업데이트
                 if(user != null) {
@@ -441,7 +445,7 @@ public class EditReview extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 if (photoFile != null) {
-                    photoURI = FileProvider.getUriForFile(this, getPackageName(), photoFile);
+                    photoURI = FileProvider.getUriForFile(EditReview.this, getPackageName(), photoFile);
                     imageURI = photoURI;
 
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -473,10 +477,10 @@ public class EditReview extends AppCompatActivity {
     //사진촬영,앨범 권한
     private int checkPermission() {
         // if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
-        if((ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE))||
-                (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA)))
+        if((ActivityCompat.shouldShowRequestPermissionRationale(EditReview.this, Manifest.permission.WRITE_EXTERNAL_STORAGE))||
+                (ActivityCompat.shouldShowRequestPermissionRationale(EditReview.this,Manifest.permission.CAMERA)))
         {
-            new android.app.AlertDialog.Builder(this).setTitle("알림").setMessage("저장소 권한이 거부되었습니다.")
+            new android.app.AlertDialog.Builder(EditReview.this).setTitle("알림").setMessage("저장소 권한이 거부되었습니다.")
                     .setNeutralButton("설정", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -491,7 +495,7 @@ public class EditReview extends AppCompatActivity {
         }
         else{
 
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, MY_PERMISSION_CAMERA);
+            ActivityCompat.requestPermissions(EditReview.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, MY_PERMISSION_CAMERA);
 
             return 1;
         }
@@ -667,7 +671,7 @@ public class EditReview extends AppCompatActivity {
         Uri contentURI = Uri.fromFile(file);
         mediaScanIntent.setData(contentURI);
         sendBroadcast(mediaScanIntent);
-        Toast.makeText(this,"앨범에 저장되었습니다.",Toast.LENGTH_SHORT).show();
+        Toast.makeText(EditReview.this,"앨범에 저장되었습니다.",Toast.LENGTH_SHORT).show();
     }
 
     //permission에 대한 승인 완료확인 코드
@@ -675,9 +679,9 @@ public class EditReview extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode==0){
             if(grantResults[0]==0){
-                Toast.makeText(this,"카메라 권한 승인완료",Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditReview.this,"카메라 권한 승인완료",Toast.LENGTH_SHORT).show();
             }else{
-                Toast.makeText(this,"카메라 권한 승인 거절",Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditReview.this,"카메라 권한 승인 거절",Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -685,7 +689,7 @@ public class EditReview extends AppCompatActivity {
 
     private void showEndMsg()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditReview.this);
         //builder.setTitle(null);
         builder.setMessage("후기 수정을 취소하시겠습니까?");
 

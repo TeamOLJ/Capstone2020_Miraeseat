@@ -80,7 +80,7 @@
                     android:layout_marginTop="15dp"
                     android:text="@string/notice_context"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="#000000" />
+                    android:textColor="@color/content_color" />
 
             </LinearLayout>
 

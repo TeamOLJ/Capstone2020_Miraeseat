@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
 
-    <color name="section_background">#D8D8D8</color>
+    <color name="section_background">#E8E8E8</color>
     <color name="total_background">#F8F8F8</color>
     <color name="main_color">#5FC4BD</color>
     <color name="sub_color">#A6A6A6</color>
@@ -14,4 +14,6 @@
 
     <color name="is_unique_info">#59DA50</color>
     <color name="textlayout_error">#FF3636</color>
+    <color name="content_color">#000000</color>
+    <color name="background">#FFFFFF</color>
 </resources>
