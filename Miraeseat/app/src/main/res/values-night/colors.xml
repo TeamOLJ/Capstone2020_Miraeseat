@@ -14,4 +14,6 @@
 
     <color name="is_unique_info">#59DA50</color>
     <color name="textlayout_error">#FF3636</color>
+    <color name="content_color">#FFFFFF</color>
+    <color name="background">#353535</color>
 </resources>

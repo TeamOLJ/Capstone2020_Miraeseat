@@ -107,4 +107,7 @@
     <string name="average_rating">평균 평점 : </string>
     <string name="max_rating"> / 5.0</string>
 
+    <string name="contact_text1">여러분의 의견은 소중한 밑거름이 됩니다.
+        \n자유롭게 남겨주세요.</string>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.capstondesign.miraeseat.seatpage;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -331,14 +332,13 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
     }
 
     private void reportDialog(View view) {
-        AlertDialog.Builder report = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Light_Dialog);
+        final View dialogView = getLayoutInflater().inflate(R.layout.report_dialog,null);
+
+        final AlertDialog.Builder report = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_DeviceDefault_DayNight);
 
         report.setTitle("신고하기");
         report.setMessage("신고 사유를 적어주세요.");
-
-        final EditText txt = new EditText(view.getContext());
-        report.setView(txt);
-        report.setCancelable(false);
+        report.setView(dialogView);
 
         report.setPositiveButton("신고하기", new DialogInterface.OnClickListener() {
             @Override
@@ -349,20 +349,23 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
 
         report.setNegativeButton("취소", null);
 
+
         final AlertDialog alertDialog = report.create();
         alertDialog.show();
+
 
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.v("선택","신고");
+                EditText input = (EditText)dialogView.findViewById(R.id.report);
 
-                String value = txt.getText().toString();
+                String value = input.getText().toString();
 
                 Boolean closeDialog = false;
 
-                if(value.length()<10) {
-                    Toast.makeText(seatPage.this, "신고 내용을 입력해주세요.(10자 이상)", Toast.LENGTH_LONG).show();
+                if(value.length()<10||value.length()>200) {
+                    Toast.makeText(seatPage.this, "신고 내용을 입력해주세요.(10자 이상, 200자 이하)", Toast.LENGTH_LONG).show();
                 }
                 else if(value.length()>= 10) {
                     //신고 정보 데이터로 넘기기
@@ -374,6 +377,12 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                     alertDialog.dismiss();
             }
         });
+
+
+
+
+
+
     }
 
     public void onBackPressed() {

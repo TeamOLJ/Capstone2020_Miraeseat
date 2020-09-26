@@ -20,6 +20,7 @@ public class SettingPage extends AppCompatActivity {
     TextView titleText;
 
     Button btTheme;
+    Button btContact;
 
 
 
@@ -39,12 +40,20 @@ public class SettingPage extends AppCompatActivity {
         titleText.setText("설정");
 
         btTheme = (Button) findViewById(R.id.btTheme);
-
+        btContact = (Button) findViewById(R.id.btContact);
 
         btTheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), themedialog.class);
+                startActivity(intent);
+            }
+        });
+
+        btContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ContactActivity.class);
                 startActivity(intent);
             }
         });

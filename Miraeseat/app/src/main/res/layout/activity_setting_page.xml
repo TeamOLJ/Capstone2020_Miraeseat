@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/section_background"
     tools:context=".SettingPage">
 
     <!-- 상단바 -->
@@ -39,8 +40,8 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:layout_margin="10dp"
-    android:background="@drawable/round">
+    android:layout_marginTop="10dp"
+    android:background="@drawable/border">
 
     <Button
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -48,8 +49,8 @@
         android:layout_width="368dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="15dp"
         android:gravity="center_vertical"
+        android:paddingLeft="20dp"
         android:text="테마 선택" />
 
     <View
@@ -57,9 +58,73 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center_horizontal"/>
-
-
-
 </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/border">
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/btContact"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="의견 보내기" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/border1">
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/btDJ"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="버전 정보" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/border1">
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/btDJDJ"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="또뭐하지 (서비스 이용약관 개인정보 보호정책)" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"/>
+    </LinearLayout>
 
 </LinearLayout>
