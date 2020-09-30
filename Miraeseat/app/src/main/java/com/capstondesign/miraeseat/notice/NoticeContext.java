@@ -44,7 +44,8 @@ public class NoticeContext extends AppCompatActivity {
 
         noticeTitle.setText(notice.getNoticeTitle());
         noticeDate.setText(notice.getNoticeDate());
-        noticeContext.setText(notice.getNoticeContext());
+        // 파이어베이스는 \n 등의 특수표기문자를 지원하지 않으므로, "\\n"로 표기해둔 부분을 모두 newline 기호로 치환하는 식으로 새 줄 구성
+        noticeContext.setText(notice.getNoticeContext().replace("\\\\n", "\n"));
     }
 
     // 뒤로가기 버튼(홈버튼)을 누르면 창이 꺼지는 메소드

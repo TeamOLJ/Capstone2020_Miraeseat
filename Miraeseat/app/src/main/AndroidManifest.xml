@@ -26,8 +26,6 @@
         tools:replace="android:allowBackup">
         <activity android:name=".themedialog"
             android:theme="@style/dialogtheme"></activity>
-        <activity android:name=".ContactActivity" />
-        <activity android:name=".SettingPage" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -81,6 +79,11 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".WriteReview"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity android:name=".ContactActivity" />
+        <activity
+            android:name=".SettingPage"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <provider
