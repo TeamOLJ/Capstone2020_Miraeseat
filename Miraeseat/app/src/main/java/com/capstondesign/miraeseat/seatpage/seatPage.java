@@ -26,15 +26,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.capstondesign.miraeseat.EditReview;
 import com.capstondesign.miraeseat.LoginPage;
+import com.capstondesign.miraeseat.OnOneOffClickListener;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.Review;
 import com.capstondesign.miraeseat.UserClass;
+import com.capstondesign.miraeseat.UserReport;
 import com.capstondesign.miraeseat.WriteReview;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -45,6 +49,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnClickListener {
     private static final String TAG = "SeatPage";
@@ -202,16 +208,21 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                                         if(mainAuth.getCurrentUser() != null) {
                                             isReviewOwner = user.getUid().equals(foundReview.getOwnerUser());
                                         }
+
                                         // 문서 내용에서 필요한 값만 취하여 mData에 추가
                                         seatItemData.add(new seatList_item(documentID, foundUser.getNick(), foundUser.getImagepath(), foundReview.getImagepath(),
-                                                foundReview.getRating(), foundReview.getReviewText(), isReviewOwner));
+                                                foundReview.getRating(), foundReview.getReviewText(), isReviewOwner, foundReview.getTimestamp()));
 
                                         countReview += 1;
 
                                         countRating += foundReview.getRating();
 
-                                        seatAdapter.notifyDataSetChanged();
+                                        //리스트 내의 내용 시간 역순 정렬
+                                        Collections.sort(seatItemData);
+                                        Collections.reverse(seatItemData);
+
                                         listView.setAdapter(seatAdapter);
+                                        seatAdapter.notifyDataSetChanged();
 
                                         cntReview.setText("후기 수: " + countReview);
                                         avgRating.setRating(countRating / countReview);
@@ -248,17 +259,12 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                 showConfirmMsg(position);
                 return;
             case 300:
-                // 좋아요
-                Log.d(TAG, "좋아요를 눌렀음");
-                // 해당 리뷰의 좋아요 값 1 증가... 같은 유저가 반복해서 좋아요를 누를 수 없게 하려면 어떻게 해야 하지??
-                return;
-            case 400:
                 // 신고하기
                 if(mainAuth.getCurrentUser() == null) {
                     Toast.makeText(seatPage.this, "로그인 후 가능합니다.", Toast.LENGTH_LONG).show();
                 }
                 else
-                    reportDialog(view);
+                    reportDialog(view, seatItemData.get(position).getDocumentID());
                 return;
         }
     }
@@ -333,7 +339,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
         dialog.show();
     }
 
-    private void reportDialog(View view) {
+    private void reportDialog(View view, final String reviewID) {
         final View dialogView = getLayoutInflater().inflate(R.layout.report_dialog,null);
 
         final AlertDialog.Builder report = new AlertDialog.Builder(view.getContext(), android.R.style.Theme_DeviceDefault_DayNight);
@@ -364,26 +370,19 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
 
                 String value = input.getText().toString();
 
-                Boolean closeDialog = false;
+                final Boolean[] closeDialog = {false};
 
                 if(value.length()<10||value.length()>200) {
                     Toast.makeText(seatPage.this, "신고 내용을 입력해주세요.(10자 이상, 200자 이하)", Toast.LENGTH_LONG).show();
                 }
                 else if(value.length()>= 10) {
                     //신고 정보 데이터로 넘기기
-                    Toast.makeText(seatPage.this, "신고가 접수되었습니다.", Toast.LENGTH_LONG).show();
-                    closeDialog = true;
                 }
 
-                if(closeDialog)
+                if(closeDialog[0])
                     alertDialog.dismiss();
             }
         });
-
-
-
-
-
 
     }
 

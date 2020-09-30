@@ -1,6 +1,10 @@
 package com.capstondesign.miraeseat.seatpage;
 
-public class seatList_item {
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
+public class seatList_item implements Comparable {
 
     private String documentID;
     private String nickname;
@@ -9,8 +13,10 @@ public class seatList_item {
     private float ratingbar;
     private String review_writing;
     private boolean isOwner;
+    @ServerTimestamp
+    private Date timestamp;
 
-    public seatList_item(String documentID, String nickname, String profile_image, String review_image, float ratingbar, String review_writing, boolean isOwner) {
+    public seatList_item(String documentID, String nickname, String profile_image, String review_image, float ratingbar, String review_writing, boolean isOwner, Date timestamp) {
         this.documentID = documentID;
         this.nickname = nickname;
         this.profile_image = profile_image;
@@ -18,6 +24,7 @@ public class seatList_item {
         this.ratingbar = ratingbar;
         this.review_writing = review_writing;
         this.isOwner = isOwner;
+        this.timestamp = timestamp;
     }
 
     public String getDocumentID() { return documentID; }
@@ -68,4 +75,16 @@ public class seatList_item {
 
     public void setIsOwner(boolean isOwner) { this.isOwner = isOwner; }
 
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.timestamp.compareTo(((seatList_item)o).getTimestamp());
+    }
 }

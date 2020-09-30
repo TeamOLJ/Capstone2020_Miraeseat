@@ -2,6 +2,7 @@ package com.capstondesign.miraeseat.seatpage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,12 +26,10 @@ public class SeatAdapter extends BaseAdapter {
     ArrayList<seatList_item> seatList_itemArrayList;
     LayoutInflater inflater;
 
-    seatList_item oneListItem;
-
     // 버튼 클릭 이벤트를 위한 Listener 인터페이스 정의
     public interface ItemBtnClickListener {
         void onItemBtnClick(View view, int position, int whichBtn);
-        // whichBtn: 100 - 수정, 200 - 삭제, 300 - 좋아요, 400 - 신고
+        // whichBtn: 100 - 수정, 200 - 삭제, 300 - 신고
     }
 
     private ItemBtnClickListener itemBtnClickListener = null;
@@ -69,7 +68,7 @@ public class SeatAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         SeatHolder holder = null;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -93,19 +92,18 @@ public class SeatAdapter extends BaseAdapter {
             holder = (SeatHolder)convertView.getTag();
         }
 
-        oneListItem = seatList_itemArrayList.get(position);
 
-        holder.nickName.setText(oneListItem.getNickname());
-        holder.ratingBar.setRating(oneListItem.getRatingbar());
-        holder.writing.setText(oneListItem.getReview_writing());
+        holder.nickName.setText(seatList_itemArrayList.get(position).getNickname());
+        holder.ratingBar.setRating(seatList_itemArrayList.get(position).getRatingbar());
+        holder.writing.setText(seatList_itemArrayList.get(position).getReview_writing());
 
-        Glide.with(context).load(oneListItem.getProfile_image()).into(holder.profile);
+        Glide.with(context).load(seatList_itemArrayList.get(position).getProfile_image()).into(holder.profile);
 
         // 사진의 유무에 따라 텍스트뷰의 마진 변경
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)holder.writing.getLayoutParams();
 
-        if(oneListItem.getReview_image() != null) {
-            Glide.with(context).load(oneListItem.getReview_image()).into(holder.image);
+        if(seatList_itemArrayList.get(position).getReview_image() != null) {
+            Glide.with(context).load(seatList_itemArrayList.get(position).getReview_image()).into(holder.image);
             holder.image.setVisibility(View.VISIBLE);
             params.bottomMargin = context.getResources().getDimensionPixelSize(R.dimen.review_withimage_bottom);
             holder.writing.setLayoutParams(params);
@@ -122,9 +120,9 @@ public class SeatAdapter extends BaseAdapter {
         holder.image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), Image.class);
-                intent.putExtra("imagepath", oneListItem.getReview_image());
-                context.startActivity(intent);
+                    Intent intent = new Intent(view.getContext(), Image.class);
+                    intent.putExtra("imagepath", seatList_itemArrayList.get(position).getReview_image());
+                    context.startActivity(intent);
             }
         });
 
@@ -132,7 +130,7 @@ public class SeatAdapter extends BaseAdapter {
         holder.btnReport.setTag(position);
 
         // 현재 사용자가 후기 작성자인지 아닌지에 따라 버튼 변경
-        if(oneListItem.getIsOwner()) {
+        if(seatList_itemArrayList.get(position).getIsOwner()) {
             holder.btnLike.setText("수정");
             holder.btnLike.setOnClickListener(ClickEdit);
             holder.btnLike.setVisibility(View.VISIBLE);
@@ -141,8 +139,6 @@ public class SeatAdapter extends BaseAdapter {
             holder.btnReport.setOnClickListener(ClickDelete);
         }
         else {
-            holder.btnLike.setText("좋아요");
-            holder.btnLike.setOnClickListener(ClickLike);
             holder.btnLike.setVisibility(View.GONE);
 
             holder.btnReport.setText("신고하기");
@@ -171,20 +167,11 @@ public class SeatAdapter extends BaseAdapter {
         }
     };
 
-    private View.OnClickListener ClickLike = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if(itemBtnClickListener != null) {
-                itemBtnClickListener.onItemBtnClick(v, (int) v.getTag(), 300);
-            }
-        }
-    };
-
     private View.OnClickListener ClickReport = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if(itemBtnClickListener != null) {
-                itemBtnClickListener.onItemBtnClick(v, (int) v.getTag(), 400);
+                itemBtnClickListener.onItemBtnClick(v, (int) v.getTag(), 300);
             }
         }
     };
