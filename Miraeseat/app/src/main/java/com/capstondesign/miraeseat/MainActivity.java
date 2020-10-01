@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -114,6 +115,11 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     public void onSearchButtonClicked(View v) {
         String data = searchText.getText().toString();
 
+        // 인터넷 연결 확인 먼저
+        ConnectivityManager conManager = (ConnectivityManager) MainActivity.this.getSystemService(CONNECTIVITY_SERVICE);
+        if(conManager.getActiveNetworkInfo() == null) {
+            Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+        }
         //검색어가 없으면
         if(data.length() == 0) {
             Toast.makeText(MainActivity.this, "검색어를 입력하세요", Toast.LENGTH_SHORT).show();

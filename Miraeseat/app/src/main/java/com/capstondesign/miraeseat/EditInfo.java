@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -270,7 +271,12 @@ public class EditInfo extends AppCompatActivity {
         btnCheckNick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isNickValid) {
+                // 인터넷 연결 확인
+                ConnectivityManager conManager = (ConnectivityManager) EditInfo.this.getSystemService(CONNECTIVITY_SERVICE);
+                if(conManager.getActiveNetworkInfo() == null) {
+                    Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+                }
+                else if (isNickValid) {
                     String newNick = edtNickname.getText().toString();
                     Query existingNicks = db.collection("UserInfo").whereEqualTo("nick", newNick);
 
@@ -343,8 +349,15 @@ public class EditInfo extends AppCompatActivity {
                 }
             }
 
+            // 인터넷 연결 확인 먼저
+            ConnectivityManager conManager = (ConnectivityManager) EditInfo.this.getSystemService(CONNECTIVITY_SERVICE);
+            if(conManager.getActiveNetworkInfo() == null) {
+                reset();
+                clickImageListener.reset();
+                Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+            }
             // 비밀번호를 변경하는 경우
-            if (currentPassword.getBytes().length > 0 || newPassword.getBytes().length > 0 || newPasswordCheck.getBytes().length > 0) {
+            else if (currentPassword.getBytes().length > 0 || newPassword.getBytes().length > 0 || newPasswordCheck.getBytes().length > 0) {
                 if (currentPassword.getBytes().length <= 0) {
                     reset();
                     clickImageListener.reset();

@@ -1,6 +1,7 @@
 package com.capstondesign.miraeseat.search;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,6 +15,7 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +24,7 @@ import androidx.core.view.ViewCompat;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.R;
+import com.capstondesign.miraeseat.WriteReview;
 import com.capstondesign.miraeseat.hall.HallInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -204,13 +207,20 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
 
     //검색 버튼 눌렀을 때
     public void onSearchButtonClicked(View v) {
-        String data = searchText.getText().toString();
+        // 인터넷 연결 확인 먼저
+        ConnectivityManager conManager = (ConnectivityManager) SearchActivity.this.getSystemService(CONNECTIVITY_SERVICE);
+        if(conManager.getActiveNetworkInfo() == null) {
+            Toast.makeText(getApplicationContext(),"인터넷 연결을 확인해주세요.",Toast.LENGTH_LONG).show();
+        }
+        else {
+            String data = searchText.getText().toString();
 
-        progressBar.setVisibility(View.VISIBLE);
-        gridView.setVisibility(View.INVISIBLE);
-        noResultLayout.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            gridView.setVisibility(View.INVISIBLE);
+            noResultLayout.setVisibility(View.INVISIBLE);
 
-        initUI(data);
+            initUI(data);
+        }
     }
 
     //엔터키 눌렀을 때 = 검색 버튼 눌렀을 때

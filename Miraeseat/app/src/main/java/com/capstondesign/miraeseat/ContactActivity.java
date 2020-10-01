@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -112,7 +113,13 @@ public class ContactActivity extends AppCompatActivity {
     OnOneOffClickListener clickSendListener = new OnOneOffClickListener() {
         @Override
         public void onOneClick(View v) {
-            if(edtName.getText().toString().getBytes().length<=0){
+            // 인터넷 연결 확인 먼저
+            ConnectivityManager conManager = (ConnectivityManager) ContactActivity.this.getSystemService(CONNECTIVITY_SERVICE);
+            if(conManager.getActiveNetworkInfo() == null) {
+                reset();
+                Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+            }
+            else if(edtName.getText().toString().getBytes().length<=0){
                 reset();
                 Toast.makeText(getApplicationContext(),"이름을 입력해 주세요.",Toast.LENGTH_LONG).show();
             }

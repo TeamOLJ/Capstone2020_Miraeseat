@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -349,8 +350,13 @@ public class SignUpPage extends AppCompatActivity {
         btnCheckEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 인터넷 연결 확인 먼저
+                ConnectivityManager conManager = (ConnectivityManager) SignUpPage.this.getSystemService(CONNECTIVITY_SERVICE);
+                if(conManager.getActiveNetworkInfo() == null) {
+                    Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+                }
                 // 입력값이 유효할 때만 작동
-                if (isEmailValid) {
+                else if (isEmailValid) {
                     // 이메일이 DB에 이미 존재하는지 확인
                     Query existingEmails = db.collection("UserInfo").whereEqualTo("email", edtEmail.getText().toString());
 
@@ -384,8 +390,13 @@ public class SignUpPage extends AppCompatActivity {
         btnCheckNick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 인터넷 연결 확인 먼저
+                ConnectivityManager conManager = (ConnectivityManager) SignUpPage.this.getSystemService(CONNECTIVITY_SERVICE);
+                if(conManager.getActiveNetworkInfo() == null) {
+                    Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+                }
                 // 입력한 닉네임이 유효한 형식일 때만 중복여부를 확인해줌
-                if (isNickValid) {
+                else if (isNickValid) {
                     // 닉네임이 DB에 이미 존재하는지 확인
                     Query existingNicks = db.collection("UserInfo").whereEqualTo("nick", edtNick.getText().toString());
 

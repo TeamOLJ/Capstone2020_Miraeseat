@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -366,6 +367,11 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
 
                 final Boolean[] closeDialog = {false};
 
+                // 인터넷 연결 확인 먼저
+                ConnectivityManager conManager = (ConnectivityManager) seatPage.this.getSystemService(CONNECTIVITY_SERVICE);
+                if(conManager.getActiveNetworkInfo() == null) {
+                    Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+                }
                 if(value.length()<10||value.length()>200) {
                     Toast.makeText(seatPage.this, "신고 내용을 입력해주세요.(10자 이상, 200자 이하)", Toast.LENGTH_LONG).show();
                 }

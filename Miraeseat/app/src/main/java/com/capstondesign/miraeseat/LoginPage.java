@@ -1,6 +1,7 @@
 package com.capstondesign.miraeseat;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -166,8 +167,14 @@ public class LoginPage extends AppCompatActivity implements EditText.OnEditorAct
             // 이메일과 비밀번호 모두 입력되어 있으면
             else
             {
+                // 인터넷 연결 확인 먼저
+                ConnectivityManager conManager = (ConnectivityManager) LoginPage.this.getSystemService(CONNECTIVITY_SERVICE);
+                if(conManager.getActiveNetworkInfo() == null) {
+                    reset();
+                    Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
+                }
                 // Firebase도 sql injection을 따로 대비해줘야 하는가?
-                if(!android.util.Patterns.EMAIL_ADDRESS.matcher(givenEmail).matches())
+                else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(givenEmail).matches())
                 {
                     inputLayoutPwd.setError("잘못된 로그인 정보입니다. 이메일과 비밀번호를 확인해주세요.");
                     reset();
