@@ -47,6 +47,8 @@ import java.util.regex.Pattern;
 public class SignUpPage extends AppCompatActivity {
     private static final String TAG = "SignUpPage";
 
+    private static final String basicProfile = "https://firebasestorage.googleapis.com/v0/b/capstone2020-e540d.appspot.com/o/user_upload_image%2Fdefaul_profile_image.png?alt=media&token=3a7538f5-b896-4815-8c86-8fb08a8c76d4";
+
     static int SIGN_UP_SUCCESS = 1111;
     static int SIGN_UP_CANCLE = 2222;
 
@@ -505,7 +507,7 @@ public class SignUpPage extends AppCompatActivity {
                                                 signedUpEmail = userEmail;
 
                                                 // 입력된 모든 정보를 데이터베이스에 추가
-                                                UserClass newUser = new UserClass(userEmail, userNick, null);
+                                                UserClass newUser = new UserClass(userEmail, userNick, basicProfile);
                                                 db.collection("UserInfo").document(FirebaseAuth.getInstance().getUid()).set(newUser)
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
@@ -542,7 +544,7 @@ public class SignUpPage extends AppCompatActivity {
                         }
                         else {
                             // 회원가입에는 성공했으나 회원정보를 DB에 저장하는 데에 실패한 경우
-                            UserClass newUser = new UserClass(userEmail, userNick, null);
+                            UserClass newUser = new UserClass(userEmail, userNick, basicProfile);
                             db.collection("UserInfo").document(FirebaseAuth.getInstance().getUid()).set(newUser)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
