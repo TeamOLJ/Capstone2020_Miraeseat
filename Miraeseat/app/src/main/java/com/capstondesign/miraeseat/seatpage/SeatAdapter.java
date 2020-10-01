@@ -95,7 +95,7 @@ public class SeatAdapter extends BaseAdapter {
 
         holder.nickName.setText(seatList_itemArrayList.get(position).getNickname());
         holder.ratingBar.setRating(seatList_itemArrayList.get(position).getRatingbar());
-        holder.writing.setText(seatList_itemArrayList.get(position).getReview_writing());
+        holder.writing.setText(seatList_itemArrayList.get(position).getReview_writing().replace("\\\\n", "\n"));
 
         Glide.with(context).load(seatList_itemArrayList.get(position).getProfile_image()).into(holder.profile);
 

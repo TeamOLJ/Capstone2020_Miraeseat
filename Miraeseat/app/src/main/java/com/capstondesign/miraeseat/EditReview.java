@@ -153,7 +153,7 @@ public class EditReview extends AppCompatActivity {
 
         ratedBefore = intent.getFloatExtra("rating", 0);
         ratingBar.setRating(ratedBefore);
-        edtReview.setText(intent.getStringExtra("reviewContext"));
+        edtReview.setText(intent.getStringExtra("reviewContext").replace("\\\\n", "\n"));
 
         serverImagePath = intent.getStringExtra("imagepath");
         imageBefore = serverImagePath;
@@ -235,7 +235,7 @@ public class EditReview extends AppCompatActivity {
                 reset();
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(),"수정 사항이 없습니다.",Toast.LENGTH_LONG).show();
-            } else if (newReview.getBytes().length <= 10) {
+            } else if (newReview.replace("\n", "").getBytes().length <= 10) {
                 reset();
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(), "후기는 10글자 이상 작성하셔야 합니다.", Toast.LENGTH_LONG).show();
@@ -336,7 +336,7 @@ public class EditReview extends AppCompatActivity {
         db.collection("SeatReview").document(documentID)
                 .update("imagepath", imagepath,
                         "rating", newRating,
-                        "reviewText", newReview)
+                        "reviewText", newReview.replace("\n", "\\\\n"))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

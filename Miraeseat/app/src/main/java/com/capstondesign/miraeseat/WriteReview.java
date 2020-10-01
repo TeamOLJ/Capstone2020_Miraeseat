@@ -236,23 +236,23 @@ public class WriteReview extends AppCompatActivity {
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(),"인터넷 연결을 먼저 확인해주세요.",Toast.LENGTH_LONG).show();
             }
-            else if (ratingBar.getRating() == 0) {
+            else if (ratingPoint == 0) {
                 reset();
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(),"평점을 매겨 주세요.",Toast.LENGTH_LONG).show();
-            } else if (edtReview.getText().toString().getBytes().length <= 10) {
+            } else if (newReview.replace("\n", "").getBytes().length < 10) {
                 reset();
                 clickImageListener.reset();
                 Toast.makeText(getApplicationContext(),"후기는 10글자 이상 작성하셔야 합니다.",Toast.LENGTH_LONG).show();
             }
             // 사진을 선택하지 않은 경우
             else if (image.getDrawable()==null) {
-                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, null, ratingPoint, newReview);
+                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, null, ratingPoint, newReview.replace("\n", "\\\\n"));
                 showSaveMsg(false, userReview);
             }
             // 사진을 선택한 경우
             else {
-                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, null, ratingPoint, newReview);
+                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, null, ratingPoint, newReview.replace("\n", "\\\\n"));
                 showSaveMsg(true, userReview);
             }
         }

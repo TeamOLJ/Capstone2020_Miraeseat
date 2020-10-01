@@ -92,7 +92,7 @@ public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
 
         holder.reviewInfo.setText(oneListItem.getTheaterName()+" "+oneListItem.getSeatNum());
         holder.reviewRating.setRating(oneListItem.getSeatRating());
-        holder.reviewContent.setText(oneListItem.getReviewContext());
+        holder.reviewContent.setText(oneListItem.getReviewContext().replace("\\\\n", "\n"));
         holder.reviewDate.setText(oneListItem.getReviewDate());
 
         // 사진의 유무에 따라 텍스트뷰의 마진 변경
