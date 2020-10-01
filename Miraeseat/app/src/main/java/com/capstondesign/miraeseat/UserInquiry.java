@@ -10,17 +10,17 @@ public class UserInquiry {
     private String inquiryTitle;
     private String inquiryContext;
     @ServerTimestamp
-    private Date timestamp;
+    private Date inquiryTime;
     private Boolean isChecked;
 
     public UserInquiry() { }
 
-    public UserInquiry(String userName, String userEmail, String inquiryTitle, String inquiryContext, Date timestamp, Boolean isChecked) {
+    public UserInquiry(String userName, String userEmail, String inquiryTitle, String inquiryContext, Date inquiryTime, Boolean isChecked) {
         this.userName = userName;
         this.userEmail = userEmail;
         this.inquiryTitle = inquiryTitle;
         this.inquiryContext = inquiryContext;
-        this.timestamp = timestamp;
+        this.inquiryTime = inquiryTime;
         this.isChecked = isChecked;
     }
 
@@ -56,19 +56,19 @@ public class UserInquiry {
         this.inquiryContext = inquiryContext;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public Date getInquiryTime() {
+        return inquiryTime;
     }
 
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public void setInquiryTime(Date inquiryTime) {
+        this.inquiryTime = inquiryTime;
     }
 
-    public Boolean getChecked() {
+    public Boolean getIsChecked() {
         return isChecked;
     }
 
-    public void setChecked(Boolean checked) {
+    public void setIsChecked(Boolean checked) {
         isChecked = checked;
     }
 }

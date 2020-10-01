@@ -168,7 +168,7 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
         listView.setAdapter(seatAdapter);
 
         db.collection("SeatReview").whereEqualTo("theaterName", theaterName).whereEqualTo("seatNum", seatNumber)
-                .orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -348,19 +348,13 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
         report.setMessage("신고 사유를 적어주세요.");
         report.setView(dialogView);
 
-        report.setPositiveButton("신고하기", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
+        report.setPositiveButton("신고하기", null);
 
         report.setNegativeButton("취소", null);
 
 
         final AlertDialog alertDialog = report.create();
         alertDialog.show();
-
 
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -377,10 +371,25 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                 }
                 else if(value.length()>= 10) {
                     //신고 정보 데이터로 넘기기
+                    db.collection("UserReport").add(new UserReport(user.getEmail(), reviewID, value, null, false))
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Log.d(TAG, "신고 업로드 성공");
+                                    Toast.makeText(seatPage.this, "신고가 접수되었습니다.", Toast.LENGTH_LONG).show();
+                                    alertDialog.dismiss();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(seatPage.this, "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                                }
+                            });
                 }
 
-                if(closeDialog[0])
-                    alertDialog.dismiss();
+//                if(closeDialog[0])
+//                    alertDialog.dismiss();
             }
         });
 
