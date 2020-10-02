@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -101,9 +100,6 @@ public class EditReview extends AppCompatActivity {
     float newRating;
     String imageBefore;
     String newReview;
-
-    Bitmap originalBitmap;
-    Bitmap rotatedBitmap = null;
 
     boolean isContextChanged = false;
     boolean isPhotoChanged = false;
@@ -377,11 +373,9 @@ public class EditReview extends AppCompatActivity {
 
                     if (selectedPhotoMenu == 0) {
                         // 사진촬영
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
                         getCamera();
                     } else if (selectedPhotoMenu == 1) {
                         // 앨범에서 선택
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
                         getAlbum();
                     }
                 }
@@ -400,11 +394,9 @@ public class EditReview extends AppCompatActivity {
 
                     if (selectedPhotoMenu == 0) {
                         // 사진촬영
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
                         getCamera();
                     } else if (selectedPhotoMenu == 1) {
                         // 앨범에서 선택
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
                         getAlbum();
                     } else if (selectedPhotoMenu == 2) {
                         image.setImageDrawable(null);
@@ -417,7 +409,6 @@ public class EditReview extends AppCompatActivity {
         alt_bld.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.v("알림", "다이얼로그 > 취소 선택");
                 clickImageListener.reset();
                 dialog.cancel();
             }
@@ -476,7 +467,6 @@ public class EditReview extends AppCompatActivity {
 
     //사진촬영,앨범 권한
     private int checkPermission() {
-        // if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
         if((ActivityCompat.shouldShowRequestPermissionRationale(EditReview.this, Manifest.permission.WRITE_EXTERNAL_STORAGE))||
                 (ActivityCompat.shouldShowRequestPermissionRationale(EditReview.this,Manifest.permission.CAMERA)))
         {
@@ -499,14 +489,6 @@ public class EditReview extends AppCompatActivity {
 
             return 1;
         }
-
-
-       /* }
-        else
-        {
-            return 1;
-        }*/
-
     }
 
     @Override
@@ -516,39 +498,11 @@ public class EditReview extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO:
                 if(resultCode == Activity.RESULT_OK){
                     try{
-                        Log.i("REQUEST_TAKE_PHOTO","OK!!!!!!");
                         album = false; //false일경우 :사진촬영
                         cropImage();
 
                         finalURI = imageURI;
 
-//                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
-//                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), image.getWidth(), image.getHeight());
-//
-//                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-//                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-//
-//                        switch(orientation) {
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_90:
-//                                rotatedBitmap = rotateImage(originalBitmap, 90);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_180:
-//                                rotatedBitmap = rotateImage(originalBitmap, 180);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_270:
-//                                rotatedBitmap = rotateImage(originalBitmap, 270);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_NORMAL:
-//                            default:
-//                                rotatedBitmap = originalBitmap;
-//                        }
-//
-//                        image.setImageBitmap(rotatedBitmap);
-//                        isContextChanged = true;
                         textNoPhoto.setVisibility(View.GONE);
 
                     }catch(Exception e){
@@ -690,7 +644,6 @@ public class EditReview extends AppCompatActivity {
     private void showEndMsg()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(EditReview.this);
-        //builder.setTitle(null);
         builder.setMessage("후기 수정을 취소하시겠습니까?");
 
         builder.setPositiveButton("예", new DialogInterface.OnClickListener() {

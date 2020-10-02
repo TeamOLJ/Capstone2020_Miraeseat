@@ -1,9 +1,6 @@
 package com.capstondesign.miraeseat.search;
 
-import android.content.res.Resources;
 import android.util.Log;
-
-import com.capstondesign.miraeseat.R;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -12,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class SearchAPI {
     final static private String KOPIS_key= "***REMOVED***";

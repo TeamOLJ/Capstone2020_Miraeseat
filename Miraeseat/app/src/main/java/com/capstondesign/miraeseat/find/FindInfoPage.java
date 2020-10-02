@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -16,23 +15,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.SignUpPage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class FindInfoPage extends AppCompatActivity {
     private static final String TAG = "FindInfoPage";
-
-    static int SIGN_UP_SUCCESS = 1111;
-    static int SIGN_UP_CANCLE = 2222;
 
     TextView titleText;
 
@@ -102,8 +95,6 @@ public class FindInfoPage extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Log.d(TAG, "Email sent.");
-
                                         layoutFindPwd.setVisibility(View.INVISIBLE);
                                         layoutFoundPwd.setVisibility(View.VISIBLE);
                                     }

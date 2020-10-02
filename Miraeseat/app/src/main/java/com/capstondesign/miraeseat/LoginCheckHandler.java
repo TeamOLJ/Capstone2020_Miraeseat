@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,13 +13,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
-import com.capstondesign.miraeseat.mypage.MyPage;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
 
 // dawerLayout의 로그인 정보를 변경하기 위함.
 // FirebaseAuth, FirebaseUser 객체 이용
@@ -40,7 +37,6 @@ public class LoginCheckHandler {
     public LoginCheckHandler(DrawerLayout drawerLayout, NavigationView navigationView, Context context) {
         root = navigationView;
         ctx = context;
-        //prefId = SaveSharedPreference.getUserName(context);
 
         drawer = drawerLayout;
 
@@ -58,7 +54,6 @@ public class LoginCheckHandler {
         // currentUser가 null이 아닌 경우 (로그인 중인 경우)
         if (currentUser != null) {
             login_id.setText(SaveSharedPreference.getUserNickName(ctx));
-//            profile_image.setImageResource(R.drawable.logo_temp);
             Glide.with(ctx).load(SaveSharedPreference.getProfileImage(ctx)).into(profile_image);
 
             nav_left.setText("마이페이지");

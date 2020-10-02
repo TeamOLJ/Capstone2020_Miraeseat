@@ -96,10 +96,6 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
 
         initUI();
 
-        //loadReviewData();
-        // initUI() 실행이 끝난 후에 loadReviewData()를 실행해야 하는데 자꾸 동시에 돌아가서 실행이 제대로 안 된다...
-        // initUI() 안에 집어넣는 걸로 일단은 해결했지만... 더 나은 방안이 있지 않을까?
-
         //회원정보수정 버튼
         mypage_edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +141,6 @@ public class MyPage extends AppCompatActivity implements MyPageAdapter.ListBtnCl
                     QuerySnapshot querySnapshot = task.getResult();
                     if (querySnapshot.isEmpty()) {
                         // 쿼리 리턴값이 없음 = 작성한 리뷰가 없음
-                        Log.d(TAG, nickname.getText().toString());
                         loadingLayout.setVisibility(View.INVISIBLE);
                         noReviewLayout.setVisibility(View.VISIBLE);
                         listView.setVisibility(View.INVISIBLE);

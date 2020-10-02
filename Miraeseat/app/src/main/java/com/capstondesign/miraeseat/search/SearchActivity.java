@@ -24,7 +24,6 @@ import androidx.core.view.ViewCompat;
 import com.capstondesign.miraeseat.DrawerHandler;
 import com.capstondesign.miraeseat.MainActivity;
 import com.capstondesign.miraeseat.R;
-import com.capstondesign.miraeseat.WriteReview;
 import com.capstondesign.miraeseat.hall.HallInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

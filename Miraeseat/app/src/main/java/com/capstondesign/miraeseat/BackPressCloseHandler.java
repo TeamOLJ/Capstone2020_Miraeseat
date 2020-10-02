@@ -1,7 +1,6 @@
 package com.capstondesign.miraeseat;
 
 import android.app.Activity;
-import android.content.Context;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;

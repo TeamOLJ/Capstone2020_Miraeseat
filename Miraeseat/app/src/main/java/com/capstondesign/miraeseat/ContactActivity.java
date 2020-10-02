@@ -141,7 +141,6 @@ public class ContactActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-                                Log.d(TAG, "의견 업로드 성공");
                                 Toast.makeText(getApplicationContext(), "의견이 접수되었습니다.", Toast.LENGTH_LONG).show();
                                 finish();
                             }
@@ -173,7 +172,6 @@ public class ContactActivity extends AppCompatActivity {
     private void showEndMsg()
     {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
-        //builder.setTitle(null);
         builder.setMessage("문의 작성을 취소하시겠습니까?");
 
         builder.setPositiveButton("예", new DialogInterface.OnClickListener() {

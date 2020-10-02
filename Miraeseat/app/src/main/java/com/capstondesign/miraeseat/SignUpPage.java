@@ -2,14 +2,12 @@ package com.capstondesign.miraeseat;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,15 +31,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class SignUpPage extends AppCompatActivity {
@@ -226,25 +219,6 @@ public class SignUpPage extends AppCompatActivity {
 
             }
         });
-
-        // setOnFocusChangeLister을 사용한 방식
-        // 텍스트를 입력할 때마다 확인하는 것이 아니라 EditText가 Focus를 잃었을 때만 확인
-//        edtEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if(!hasFocus) {
-//                    if (!android.util.Patterns.EMAIL_ADDRESS.matcher(s.toString()).matches()) {
-//                        isEmailValid = false;
-//                        inputLayoutEmail.setError("유효하지 않은 이메일 형식입니다.");
-//                    }
-//                    else {
-//                        isEmailValid = true;
-//                        inputLayoutEmail.setError(null);
-//                        inputLayoutEmail.setErrorEnabled(false);
-//                    }
-//                }
-//            }
-//        });
 
         edtNick.addTextChangedListener(new TextWatcher() {
             @Override
@@ -513,7 +487,6 @@ public class SignUpPage extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if(task.isSuccessful()) {
                                                 // 회원가입 성공
-                                                // Log.d(TAG, "createUserWithEmail:success");
                                                 isSignUpSucess = true;
                                                 signedUpEmail = userEmail;
 
@@ -523,7 +496,6 @@ public class SignUpPage extends AppCompatActivity {
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
-                                                                // Log.d(TAG, "Signup Info successfully written to DB.");
                                                                 setResult(SIGN_UP_SUCCESS);
 
                                                                 FirebaseAuth.getInstance().signOut();
@@ -538,7 +510,6 @@ public class SignUpPage extends AppCompatActivity {
                                                         .addOnFailureListener(new OnFailureListener() {
                                                             @Override
                                                             public void onFailure(@NonNull Exception e) {
-                                                                //Log.w(TAG, "Error writing document(DB)", e);
                                                                 reset();
                                                                 Toast.makeText(getApplicationContext(), "회원가입에 실패했습니다. 인터넷 연결을 확인하시고 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
                                                             }
@@ -546,7 +517,6 @@ public class SignUpPage extends AppCompatActivity {
                                             }
                                             else {
                                                 // 회원가입 실패
-                                                // Log.w(TAG, "createUserWithEmail:failure", task.getException());
                                                 reset();
                                                 Toast.makeText(getApplicationContext(), "회원가입에 실패했습니다. 인터넷 연결을 확인하시고 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
                                             }
@@ -560,7 +530,6 @@ public class SignUpPage extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "Signup Info successfully written to DB.");
                                             setResult(SIGN_UP_SUCCESS);
                                             FirebaseAuth.getInstance().signOut();
                                             Toast.makeText(getApplicationContext(), "환영합니다! 회원가입에 성공하였습니다. 다시 로그인해주시기 바랍니다.", Toast.LENGTH_LONG).show();
@@ -574,7 +543,6 @@ public class SignUpPage extends AppCompatActivity {
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            //Log.w(TAG, "Error writing document(DB)", e);
                                             reset();
                                             Toast.makeText(getApplicationContext(), "회원가입에 실패했습니다. 인터넷 연결을 확인하시고 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
                                         }
@@ -615,7 +583,6 @@ public class SignUpPage extends AppCompatActivity {
         {
             case android.R.id.home:
                 showEndMsg();
-                // finish();
                 break;
             default:
                 break;

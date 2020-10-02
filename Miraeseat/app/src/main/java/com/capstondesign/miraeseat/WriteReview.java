@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -81,7 +80,6 @@ public class WriteReview extends AppCompatActivity {
     private StorageReference storageRef;
 
     String userUID;
-    String userNick;
 
     String reviewDate = null;
     String seatNumber;
@@ -102,9 +100,6 @@ public class WriteReview extends AppCompatActivity {
     Button btnCancel;
 
     String savedImageUri = null;
-
-    Bitmap originalBitmap;
-    Bitmap rotatedBitmap = null;
 
     DrawerHandler drawer;
 
@@ -310,7 +305,6 @@ public class WriteReview extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "좌석 후기 업로드 성공");
                         Toast.makeText(getApplicationContext(), "후기가 업로드 되었습니다.", Toast.LENGTH_LONG).show();
                         setResult(1);
                         finish();
@@ -319,9 +313,7 @@ public class WriteReview extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // Log.w(TAG, "Error writing document(DB)", e);
                         Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
-                        //reset();
                         clickSaveListener.reset();
                         clickImageListener.reset();
                     }
@@ -350,11 +342,9 @@ public class WriteReview extends AppCompatActivity {
 
                     if (selectedPhotoMenu == 0) {
                         // 사진촬영
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
                         getCamera();
                     } else if (selectedPhotoMenu == 1) {
                         // 앨범에서 선택
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
                         getAlbum();
                     }
                 }
@@ -373,11 +363,9 @@ public class WriteReview extends AppCompatActivity {
 
                     if (selectedPhotoMenu == 0) {
                         // 사진촬영
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
                         getCamera();
                     } else if (selectedPhotoMenu == 1) {
                         // 앨범에서 선택
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
                         getAlbum();
                     } else if (selectedPhotoMenu == 2) {
                         image.setImageDrawable(null);
@@ -389,7 +377,6 @@ public class WriteReview extends AppCompatActivity {
         alt_bld.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.v("알림", "다이얼로그 > 취소 선택");
                 clickImageListener.reset();
                 dialog.cancel();
             }
@@ -449,7 +436,6 @@ public class WriteReview extends AppCompatActivity {
 
     //사진촬영,앨범 권한
     private int checkPermission() {
-        // if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
         if((ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.WRITE_EXTERNAL_STORAGE))||
                 (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA)))
         {
@@ -467,9 +453,7 @@ public class WriteReview extends AppCompatActivity {
             return 0;
         }
         else{
-
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, MY_PERMISSION_CAMERA);
-
             return 1;
         }
     }
@@ -481,39 +465,12 @@ public class WriteReview extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO:
                 if(resultCode == Activity.RESULT_OK){
                     try{
-                        Log.i("REQUEST_TAKE_PHOTO","OK!!!!!!");
                         album = false; //false일경우 :사진촬영
                         cropImage();
 
                         finalURI = imageURI;
                         savedImageUri = null;
 
-//                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
-//                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), image.getWidth(), image.getHeight());
-//
-//                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-//                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-//
-//                        switch(orientation) {
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_90:
-//                                rotatedBitmap = rotateImage(originalBitmap, 90);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_180:
-//                                rotatedBitmap = rotateImage(originalBitmap, 180);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_270:
-//                                rotatedBitmap = rotateImage(originalBitmap, 270);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_NORMAL:
-//                            default:
-//                                rotatedBitmap = originalBitmap;
-//                        }
-//
-//                        image.setImageBitmap(rotatedBitmap);
                         textAddPhoto.setVisibility(View.INVISIBLE);
 
                     }catch(Exception e){
@@ -723,7 +680,6 @@ public class WriteReview extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(ev);
     }
-
 }
 
 

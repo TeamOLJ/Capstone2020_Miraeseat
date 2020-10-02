@@ -1,7 +1,5 @@
 package com.capstondesign.miraeseat;
 
-import com.google.firebase.firestore.auth.User;
-
 public class UserClass {
     private String email;
     private String nick;

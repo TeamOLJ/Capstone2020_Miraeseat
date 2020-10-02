@@ -2,33 +2,23 @@ package com.capstondesign.miraeseat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.ViewCompat;
 
 import com.bumptech.glide.Glide;
@@ -70,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
-//        super.setTheme(R.style.AppTheme);
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);

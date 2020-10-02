@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,14 +41,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
-import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -58,9 +52,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -118,9 +110,6 @@ public class EditInfo extends AppCompatActivity {
 
     DrawerHandler drawer;
 
-    Bitmap originalBitmap;
-    Bitmap rotatedBitmap = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,7 +155,6 @@ public class EditInfo extends AppCompatActivity {
                 UserClass loginedUser = documentSnapshot.toObject(UserClass.class);
                 userEmail = loginedUser.getEmail();
                 edtEmail.setText(loginedUser.getEmail());
-                Log.d(TAG, "loginedUser.getEmail():"+loginedUser.getEmail());
                 prevNick = loginedUser.getNick();
                 edtNickname.setText(prevNick);
                 prevImagePath = loginedUser.getImagepath();
@@ -382,12 +370,10 @@ public class EditInfo extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Log.d(TAG, "User re-authenticated.");
                                 user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            Log.d(TAG, "User password updated.");
                                         }
                                     }
                                 });
@@ -506,8 +492,6 @@ public class EditInfo extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Log.d(TAG, "Modified Info successfully written to DB.");
-
                         SaveSharedPreference.setUserNickName(getApplicationContext(), user.getNick());
                         SaveSharedPreference.setProfileImage(getApplicationContext(), user.getImagepath());
                         Toast.makeText(getApplicationContext(), "회원정보가 수정되었습니다.", Toast.LENGTH_LONG).show();
@@ -518,7 +502,6 @@ public class EditInfo extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // Log.w(TAG, "Error modifying document(DB)", e);
                         clickSaveListener.reset();
                         clickImageListener.reset();
                         Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
@@ -547,11 +530,9 @@ public class EditInfo extends AppCompatActivity {
 
                 if(selectedPhotoMenu == 0 ) {
                     // 사진촬영
-                    Log.v("알림", "다이얼로그 > 사진촬영 선택");
                     getCamera();
                 } else if(selectedPhotoMenu == 1) {
                     // 앨범에서 선택
-                    Log.v("알림", "다이얼로그 > 앨범선택 선택");
                     getAlbum();
                 }
             }
@@ -561,8 +542,6 @@ public class EditInfo extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 clickImageListener.reset();
-
-                Log.v("알림", "다이얼로그 > 취소 선택");
                 dialog.cancel();
             }
         });
@@ -620,31 +599,26 @@ public class EditInfo extends AppCompatActivity {
 
     //사진촬영,앨범 권한
     private int checkPermission() {
-       // if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
-            if((ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.WRITE_EXTERNAL_STORAGE))||
-                    (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA)))
-            {
-                new android.app.AlertDialog.Builder(this).setTitle("알림").setMessage("저장소 권한이 거부되었습니다.")
-                        .setNeutralButton("설정", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        intent.setData(Uri.parse("package:" + getPackageName()));
-                        startActivity(intent);
-                    }
-                })
-                        .setPositiveButton("확인", null).setCancelable(false).create().show();
+        if((ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.WRITE_EXTERNAL_STORAGE))||
+                (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA)))
+        {
+            new android.app.AlertDialog.Builder(this).setTitle("알림").setMessage("저장소 권한이 거부되었습니다.")
+                    .setNeutralButton("설정", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                }
+            })
+                    .setPositiveButton("확인", null).setCancelable(false).create().show();
 
-                return 0;
-            }
-            else{
-
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, MY_PERMISSION_CAMERA);
-
-                return 1;
-            }
-
-
+            return 0;
+        }
+        else{
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, MY_PERMISSION_CAMERA);
+            return 1;
+        }
     }
 
     @Override
@@ -654,39 +628,11 @@ public class EditInfo extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO:
                 if(resultCode == Activity.RESULT_OK){
                     try{
-                        Log.i("REQUEST_TAKE_PHOTO","OK!!!!!!");
                         album = false; //false일경우 :사진촬영
                         cropImage();
 
                         finalURI = imageURI;
-
-//                        // imageURI를 exif 정보에 따라 회전처리 한 후 edit_photo에 set 해줘야 함
-//                        originalBitmap = decodeSampledBitmapFromResource(new File(mCurrentPhotoPath), edit_photo.getWidth(), edit_photo.getHeight());
-//
-//                        ExifInterface ei = new ExifInterface(mCurrentPhotoPath);
-//                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-//
-//                        switch(orientation) {
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_90:
-//                                rotatedBitmap = rotateImage(originalBitmap, 90);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_180:
-//                                rotatedBitmap = rotateImage(originalBitmap, 180);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_ROTATE_270:
-//                                rotatedBitmap = rotateImage(originalBitmap, 270);
-//                                break;
-//
-//                            case ExifInterface.ORIENTATION_NORMAL:
-//                            default:
-//                                rotatedBitmap = originalBitmap;
-//                        }
-//
-//                        edit_photo.setImageBitmap(rotatedBitmap);
-
+                        // Firestore에서 이미지를 읽어올 때 자동으로 방향이 전환되므로 exif 정보를 확인할 필요가 없어짐
                     }catch(Exception e){
                         Log.e("REQUEST_TAKE_PHOTO",e.toString());
                     }

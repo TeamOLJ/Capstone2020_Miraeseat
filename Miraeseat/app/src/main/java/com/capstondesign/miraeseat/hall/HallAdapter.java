@@ -1,7 +1,6 @@
 package com.capstondesign.miraeseat.hall;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ public class HallAdapter extends BaseAdapter {
     Context context;
     ArrayList<PlayClass> hallList_itemArrayList;
     LayoutInflater inflater;
-
 
     public HallAdapter(Context context, ArrayList<PlayClass> hallList_itemArrayList) {
         this.context = context;

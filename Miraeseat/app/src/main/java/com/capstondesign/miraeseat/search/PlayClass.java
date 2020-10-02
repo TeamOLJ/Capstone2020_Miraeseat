@@ -1,9 +1,5 @@
 package com.capstondesign.miraeseat.search;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 

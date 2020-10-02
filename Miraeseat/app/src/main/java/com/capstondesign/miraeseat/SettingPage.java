@@ -11,8 +11,6 @@ import android.widget.Button;
 
 import android.widget.TextView;
 
-
-
 public class SettingPage extends AppCompatActivity {
     private static final String TAG = "SettingPage";
 
@@ -21,8 +19,6 @@ public class SettingPage extends AppCompatActivity {
 
     Button btTheme;
     Button btContact;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +53,7 @@ public class SettingPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

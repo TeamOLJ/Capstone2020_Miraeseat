@@ -1,6 +1,5 @@
 package com.capstondesign.miraeseat.seatpage;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,7 +26,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.capstondesign.miraeseat.EditReview;
 import com.capstondesign.miraeseat.LoginPage;
-import com.capstondesign.miraeseat.OnOneOffClickListener;
 import com.capstondesign.miraeseat.R;
 import com.capstondesign.miraeseat.Review;
 import com.capstondesign.miraeseat.UserClass;
@@ -42,7 +40,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -51,7 +48,6 @@ import com.google.firebase.storage.StorageReference;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnClickListener {
     private static final String TAG = "SeatPage";
@@ -239,7 +235,6 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                 }
             }
         });
-
     }
 
     @Override
@@ -322,7 +317,6 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
 
     private void loginDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //builder.setTitle(null);
         builder.setMessage("후기는 로그인 후 작성하실 수 있습니다. 로그인 페이지로 이동하시겠습니까?");
 
         builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
@@ -360,7 +354,6 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.v("선택","신고");
                 EditText input = (EditText)dialogView.findViewById(R.id.report);
 
                 String value = input.getText().toString();
@@ -381,7 +374,6 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
-                                    Log.d(TAG, "신고 업로드 성공");
                                     Toast.makeText(seatPage.this, "신고가 접수되었습니다.", Toast.LENGTH_LONG).show();
                                     alertDialog.dismiss();
                                 }
@@ -393,9 +385,6 @@ public class seatPage extends AppCompatActivity implements SeatAdapter.ItemBtnCl
                                 }
                             });
                 }
-
-//                if(closeDialog[0])
-//                    alertDialog.dismiss();
             }
         });
 
