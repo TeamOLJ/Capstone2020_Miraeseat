@@ -46,7 +46,7 @@
     <Button
         style="@style/Widget.AppCompat.Button.Borderless"
         android:id="@+id/btTheme"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
@@ -63,18 +63,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/border">
+        android:background="@drawable/border1">
 
         <Button
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:id="@+id/btContact"
-            android:layout_width="368dp"
+            android:id="@+id/btnCash"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
-            android:text="의견 보내기" />
+            android:text="캐시 정리" />
 
         <View
             android:layout_width="0dp"
@@ -82,6 +81,54 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"/>
     </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/border1">
+
+        <TextView
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/btDJ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="버전 정보"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:enabled="false"/>
+
+        <TextView
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/verNum"
+            android:textColor="@color/main_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0.0"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:enabled="false"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="최신 버전입니다."
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:focusableInTouchMode="false"
+            android:clickable="false"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -90,13 +137,13 @@
 
         <Button
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:id="@+id/btDJ"
-            android:layout_width="368dp"
+            android:id="@+id/btDJd"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
-            android:text="버전 정보" />
+            android:text="서비스 이용약관" />
 
         <View
             android:layout_width="0dp"
@@ -104,6 +151,7 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"/>
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -113,12 +161,12 @@
         <Button
             style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/btDJDJ"
-            android:layout_width="368dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
-            android:text="또뭐하지 (서비스 이용약관 개인정보 보호정책)" />
+            android:text="또뭐하지 (개인정보 보호정책 캐시정리)" />
 
         <View
             android:layout_width="0dp"
@@ -126,5 +174,4 @@
             android:layout_weight="1"
             android:gravity="center_horizontal"/>
     </LinearLayout>
-
 </LinearLayout>

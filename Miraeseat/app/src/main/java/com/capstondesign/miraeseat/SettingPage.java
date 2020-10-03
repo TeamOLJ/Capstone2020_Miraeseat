@@ -2,6 +2,7 @@ package com.capstondesign.miraeseat;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import com.capstondesign.miraeseat.BuildConfig;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,9 +19,13 @@ public class SettingPage extends AppCompatActivity {
 
     DrawerHandler drawer;
     TextView titleText;
+    TextView versionText;
+
 
     Button btTheme;
-    Button btContact;
+    Button btnCash;
+
+    String versionName = BuildConfig.VERSION_NAME;
 
 
 
@@ -40,7 +45,8 @@ public class SettingPage extends AppCompatActivity {
         titleText.setText("설정");
 
         btTheme = (Button) findViewById(R.id.btTheme);
-        btContact = (Button) findViewById(R.id.btContact);
+        btnCash = (Button) findViewById(R.id.btnCash);
+
 
         btTheme.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,13 +56,9 @@ public class SettingPage extends AppCompatActivity {
             }
         });
 
-        btContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ContactActivity.class);
-                startActivity(intent);
-            }
-        });
+
+        versionText = (TextView)findViewById(R.id.verNum);
+        versionText.setText(versionName);
 
 
     }
