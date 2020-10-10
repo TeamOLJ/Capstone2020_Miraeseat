@@ -130,6 +130,7 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
 
                                     Intent intent = new Intent(getApplicationContext(), TheaterActivity.class);
                                     intent.putExtra("combined_name", combinedName);
+                                    intent.putExtra("combined_id", combinedID);
                                     intent.putExtra("seatImage", seatplanImage);
                                     startActivity(intent);
                                 }

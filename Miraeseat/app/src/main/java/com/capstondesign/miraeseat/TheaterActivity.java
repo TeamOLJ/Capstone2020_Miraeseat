@@ -51,15 +51,16 @@ public class TheaterActivity extends AppCompatActivity {
         Intent intent = getIntent();
         TheaterName = intent.getStringExtra("combined_name");
         seatPlanImage = intent.getStringExtra("seatImage");
+        final String combinedID = intent.getStringExtra("combined_id");
 
         seatplan_layout = (ViewGroup) findViewById(R.id.seatplanLayout);
         seatplan = (ImageView) findViewById(R.id.seatplan);
 
         btnViewReview = (FloatingActionButton) findViewById(R.id.floatingViewReview);
 
-        GetSeatplanImage();
+        TI = new TheaterItem(this, seatplan_layout, combinedID);
 
-        TI = new TheaterItem(this, seatplan_layout);
+        GetSeatplanImage();
 
         mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
