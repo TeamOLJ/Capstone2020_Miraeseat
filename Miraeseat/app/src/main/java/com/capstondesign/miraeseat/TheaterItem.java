@@ -25,8 +25,6 @@ import java.util.Map;
 public class TheaterItem extends TheaterActivity {
     final static String TAG = "TheaterItem";
 
-    private String combinedID;
-
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private int WIDTH;
@@ -61,10 +59,9 @@ public class TheaterItem extends TheaterActivity {
     int check = 0;
 
 
-    TheaterItem(Context ctx, ViewGroup viewGroup, String combinedID) {
+    TheaterItem(Context ctx, ViewGroup viewGroup) {
         this.ctx = ctx;
         seatplan_layout = viewGroup;
-        this.combinedID = combinedID;
     }
 
 
@@ -74,7 +71,7 @@ public class TheaterItem extends TheaterActivity {
     }
 
 
-    public void init() {
+    public void init(SeatPlanInfo seatPlanInfo) {
         table_info = ctx.getResources().getStringArray(R.array.charlotte_ratio);
 
         int vertical_space = Math.round(Float.parseFloat(table_info[4]) * WIDTH);
@@ -87,42 +84,6 @@ public class TheaterItem extends TheaterActivity {
 
         vertical_space_params = new TableRow.LayoutParams(vertical_space, 0);
         horizontal_space_params = new TableRow.LayoutParams(0, horizontal_space);
-
-        //DB에서 데이터 가져오기
-        db.collection("SeatPlanInfo").document(combinedID).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists()) {
-                            좌석전체넓이 = documentSnapshot.getLong("totalWidth").intValue();
-                            좌석전체높이 = documentSnapshot.getLong("totalHeight").intValue();
-
-                            왼쪽마진 = documentSnapshot.getLong("marginLeft").intValue();
-                            위쪽마진 = documentSnapshot.getLong("marginTop").intValue();
-
-                            행사이마진 = documentSnapshot.getLong("marginRow").intValue();
-                            열사이마진 = documentSnapshot.getLong("marginCol").intValue();
-
-                            최대행 = documentSnapshot.getLong("maxRow").intValue();
-                            최대열 = documentSnapshot.getLong("maxCol").intValue();
-
-                            층따라나눠지는행 = (ArrayList<Integer>) documentSnapshot.get("floorRow");
-                            좌석번호에따라나눠지는열 = (Map<Integer, ArrayList<Integer>>) documentSnapshot.get("rowStartEnd");
-
-                            구역기준열 = (ArrayList<Integer>) documentSnapshot.get("aisleSeat");
-                        }
-                        else {
-                            Toast.makeText(ctx, "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "error occured", e);
-                        Toast.makeText(ctx, "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
 
