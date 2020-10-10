@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.capstondesign.miraeseat.notice.NoticeListPage;
 import com.google.android.material.navigation.NavigationView;
 
+
 public class DrawerHandler implements NavigationView.OnNavigationItemSelectedListener {
     private Activity activity;
     public Toolbar toolbar;
@@ -47,8 +48,9 @@ public class DrawerHandler implements NavigationView.OnNavigationItemSelectedLis
         if (id == R.id.menu_notice) {
             Intent intent = new Intent(activity, NoticeListPage.class);
             activity.startActivity(intent);
-        } else if (id == R.id.menu_use) {
-            // 이용방법
+        } else if (id == R.id.menu_contact) {
+            Intent intent = new Intent(activity, ContactActivity.class);
+            activity.startActivity(intent);
         } else if (id == R.id.menu_settings) {
             Intent intent = new Intent(activity, SettingPage.class);
             activity.startActivity(intent);
