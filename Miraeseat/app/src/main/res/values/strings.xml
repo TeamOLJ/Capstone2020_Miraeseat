@@ -14,7 +14,7 @@
 
     <!--drawer-->
     <string name="menu_notice">공지사항</string>
-    <string name="menu_use">이용방법</string>
+    <string name="menu_contact">문의하기</string>
     <string name="menu_settings">설정</string>
 
     <string name="nav_login">로그인을 해주세요.</string>
@@ -109,5 +109,7 @@
 
     <string name="contact_text1">여러분의 의견은 소중한 밑거름이 됩니다.
         \n자유롭게 남겨주세요.</string>
+
+    <string name="cash_text">정말 캐시 데이터를 지우시겠습니까?</string>
 
 </resources>
