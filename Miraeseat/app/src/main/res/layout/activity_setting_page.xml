@@ -88,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/border1">
+        android:background="@drawable/border">
 
         <TextView
             style="@style/Widget.AppCompat.Button.Borderless"
@@ -137,7 +137,7 @@
 
         <Button
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:id="@+id/btDJd"
+            android:id="@+id/btnTOS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -166,7 +166,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
-            android:text="또뭐하지 (개인정보 보호정책 캐시정리)" />
+            android:text="또뭐하지 (개인정보 보호정책)" />
 
         <View
             android:layout_width="0dp"
