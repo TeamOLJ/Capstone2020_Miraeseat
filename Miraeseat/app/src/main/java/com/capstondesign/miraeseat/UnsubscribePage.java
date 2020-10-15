@@ -157,9 +157,10 @@ public class UnsubscribePage extends AppCompatActivity {
                                                     }
                                                 });
 
-                                        // 회원이 업로드한 이미지 전체 삭제
-                                        // storage.getReference().child("user_upload_image/"+userUID).delete();
-                                        // 저장소 폴더를 단번에 삭제할 수 있는 방법은 없나?
+                                        // 회원이 업로드한 이미지 전체 삭제: 
+                                        // Storage 폴더 삭제 기능이 지원되지 않으므로, DB의 OperationDatas/UnsubedUsers에 탈퇴한 회원 UID 목록 저장
+                                        // 이후 관리자가 직접 DB를 확인하여 삭제를 진행해야 함
+                                        db.collection("OperationDatas").document("UnsubedUsers").update(userUID, true);
 
                                         // 메인화면으로 돌아감
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
