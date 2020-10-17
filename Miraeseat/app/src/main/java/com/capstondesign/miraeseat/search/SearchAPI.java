@@ -26,7 +26,7 @@ public class SearchAPI {
 
         String shprfnmfct = "&shprfnmfct=" + search_word;
 
-        String HallURL = "http://www.kopis.or.kr/openApi/restful/prfplc?service=" + KOPIS_key + "&cpage=1&rows=9" + shprfnmfct + "&signgucode=11"; //너무 많아서 우선 서울 한정으로 찾게 해놓음.
+        String HallURL = "http://www.kopis.or.kr/openApi/restful/prfplc?service=" + KOPIS_key + "&cpage=1&rows=9" + shprfnmfct;
 
 
         //공연시설명, ID

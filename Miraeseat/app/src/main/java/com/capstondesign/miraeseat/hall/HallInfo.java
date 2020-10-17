@@ -113,6 +113,9 @@ public class HallInfo extends AppCompatActivity implements OnMapReadyCallback {
         listView = (ListView) findViewById(R.id.hall_playlist);
 
         hallAdapter = new HallAdapter(HallInfo.this, mData);
+
+        View footer = getLayoutInflater().inflate(R.layout.hall_item_footer, null, false);
+        listView.addFooterView(footer);
         listView.setAdapter(hallAdapter);
 
 

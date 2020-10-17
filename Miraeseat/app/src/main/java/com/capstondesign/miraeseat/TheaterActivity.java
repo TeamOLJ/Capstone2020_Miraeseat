@@ -1,6 +1,7 @@
 package com.capstondesign.miraeseat;
 
 import android.content.Intent;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +38,7 @@ public class TheaterActivity extends AppCompatActivity {
     private int half_width, half_height;
     private ScaleGestureDetector mScaleGestureDetector;
     private float mScaleFactor = 1.0f;
+    private float previous_sf;
     static float dX, dY;
 
     private ViewGroup seatplan_layout;
@@ -47,7 +49,7 @@ public class TheaterActivity extends AppCompatActivity {
 
     String TheaterName;
     String seatPlanImage;
-    double widthPerHeight;
+    PointF current = new PointF();
 
     SeatPlanInfo seatinfo;
 
@@ -187,24 +189,41 @@ public class TheaterActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         mScaleGestureDetector.onTouchEvent(event);
 
-        switch (event.getAction()) {
+        int count = event.getPointerCount();
+
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 dX = seatplan_layout.getX() - event.getRawX();
                 dY = seatplan_layout.getY() - event.getRawY();
                 return false;
 
             case MotionEvent.ACTION_MOVE:
-                float tmpX = event.getRawX() + dX;
-                float tmpY = event.getRawY() + dY;
-                //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
+                if(count==1) {
+                    float tmpX = event.getRawX() + dX;
+                    float tmpY = event.getRawY() + dY;
+                    //mlayout.getX()에 초기의 화면 좌표값(dX의 getRawX())과 새로운 화면 좌표값(tmpX의 getRawX())의 차, 즉 X좌표 전개 방향을 더해줌.
 
-                if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
-                    seatplan_layout.animate().x(tmpX).y(tmpY).setDuration(0).start();
+                    if (Math.abs(tmpX) < half_width * (mScaleFactor - 1) && Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
+                        seatplan_layout.animate().x(tmpX).y(tmpY).setDuration(0).start();
+                    } else {
+                        if (Math.abs(tmpX) < half_width * (mScaleFactor - 1)) {
+                            seatplan_layout.animate().x(tmpX).setDuration(0).start();
+                        }
+
+                        if (Math.abs(tmpY) < half_height * (mScaleFactor - 1)) {
+                            seatplan_layout.animate().y(tmpY).setDuration(0).start();
+                        }
+                    }
+                    return true;
                 }
-                return true;
 
             case MotionEvent.ACTION_UP:
                 return false;
+
+            case MotionEvent.ACTION_POINTER_DOWN:
+                current.set(seatplan_layout.getX(), seatplan_layout.getY());
+                previous_sf = mScaleFactor;
+                return true;
         }
         return false;
     }
@@ -212,9 +231,14 @@ public class TheaterActivity extends AppCompatActivity {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            previous_sf = mScaleFactor;
             mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(1f,
-                    Math.min(mScaleFactor, 5.0f));
+            mScaleFactor = Math.max(1f, Math.min(mScaleFactor, 5.0f));
+
+            if(previous_sf>mScaleFactor) {
+                float tmp = (float)(mScaleFactor-1)/previous_sf;
+                seatplan_layout.animate().x(current.x*tmp).y(current.y*tmp).setDuration(0).start();
+            }
             seatplan_layout.setScaleX(mScaleFactor);
             seatplan_layout.setScaleY(mScaleFactor);
 
