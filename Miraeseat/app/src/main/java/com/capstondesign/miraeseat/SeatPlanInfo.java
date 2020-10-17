@@ -23,9 +23,12 @@ public class SeatPlanInfo {
     Map<Integer, ArrayList<Integer>> row_start_end;
     ArrayList<Integer> aisle_col;
 
+    boolean isgy;
+    boolean isColRepeat;
+
     SeatPlanInfo() { }
 
-    public SeatPlanInfo(int seat_width, int seat_height, int margin_left, int margin_top, int margin_row, int margin_col, int max_row, int max_col, ArrayList<Integer> floor_row, Map<Integer, ArrayList<Integer>> row_start_end, ArrayList<Integer> aisle_col) {
+    public SeatPlanInfo(int seat_width, int seat_height, int margin_left, int margin_top, int margin_row, int margin_col, int max_row, int max_col, ArrayList<Integer> floor_row, Map<Integer, ArrayList<Integer>> row_start_end, ArrayList<Integer> aisle_col, boolean isgy, boolean isColRepeat) {
         this.seat_width = seat_width;
         this.seat_height = seat_height;
         this.margin_left = margin_left;
@@ -37,6 +40,9 @@ public class SeatPlanInfo {
         this.floor_row = floor_row;
         this.row_start_end = row_start_end;
         this.aisle_col = aisle_col;
+        this.isgy = isgy;
+        this.isColRepeat = isColRepeat;
+
     }
 
     public int getSeat_width() {

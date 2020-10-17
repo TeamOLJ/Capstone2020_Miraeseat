@@ -65,6 +65,8 @@ public class TheaterActivity extends AppCompatActivity {
         seatPlanImage = intent.getStringExtra("seatImage");
         final String combinedID = intent.getStringExtra("combined_id");
 
+        db = FirebaseFirestore.getInstance();
+
         seatplan_layout = (ViewGroup) findViewById(R.id.seatplanLayout);
         seatplan = (ImageView) findViewById(R.id.seatplan);
 
@@ -124,7 +126,10 @@ public class TheaterActivity extends AppCompatActivity {
                                     documentSnapshot.getLong("maxCol").intValue(),
                                     (ArrayList<Integer>) documentSnapshot.get("floorRow"),
                                     (Map<Integer, ArrayList<Integer>>) documentSnapshot.get("rowStartEnd"),
-                                    (ArrayList<Integer>) documentSnapshot.get("aisleSeat"));
+                                    (ArrayList<Integer>) documentSnapshot.get("aisleSeat"),
+                                    documentSnapshot.getBoolean("isgy").booleanValue(),
+                                    documentSnapshot.getBoolean("isColRepeat").booleanValue()
+                            );
 
                             // Map 접근 방식:
                             // (주의사항: Map의 Key는 좌석 행 번호이므로 1부터 시작함)
