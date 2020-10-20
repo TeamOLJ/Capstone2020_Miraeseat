@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -29,8 +27,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TheaterActivity extends AppCompatActivity {
     private static final String TAG = "TheaterActivity";
@@ -49,9 +51,9 @@ public class TheaterActivity extends AppCompatActivity {
 
     String TheaterName;
     String seatPlanImage;
-    PointF current = new PointF();
+    PointF current_P = new PointF();
 
-    SeatPlanInfo seatinfo;
+    SeatPlanInfo seatInfo;
 
     FloatingActionButton btnViewReview;
 
@@ -116,27 +118,26 @@ public class TheaterActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()) {
                             //(int seat_width, int seat_height, int margin_left, int margin_top, int margin_row, int margin_col, int max_row, int max_col, ArrayList<Integer> floor_row, Map<Integer, ArrayList<Integer>> row_start_end, ArrayList<Integer> aisle_col)
-                            seatinfo = new SeatPlanInfo(documentSnapshot.getLong("totalWidth").intValue(),
-                                    documentSnapshot.getLong("totalHeight").intValue(),
-                                    documentSnapshot.getLong("marginLeft").intValue(),
-                                    documentSnapshot.getLong("marginTop").intValue(),
-                                    documentSnapshot.getLong("marginRow").intValue(),
-                                    documentSnapshot.getLong("marginCol").intValue(),
-                                    documentSnapshot.getLong("maxRow").intValue(),
-                                    documentSnapshot.getLong("maxCol").intValue(),
-                                    (ArrayList<Integer>) documentSnapshot.get("floorRow"),
-                                    (Map<Integer, ArrayList<Integer>>) documentSnapshot.get("rowStartEnd"),
-                                    (ArrayList<Integer>) documentSnapshot.get("aisleSeat"),
-                                    documentSnapshot.getBoolean("isgy").booleanValue(),
-                                    documentSnapshot.getBoolean("isColRepeat").booleanValue()
+                            seatInfo = new SeatPlanInfo(documentSnapshot.getDouble("totalWidthRatio").floatValue(), //넓이 비율
+                                    documentSnapshot.getDouble("totalHeightRatio").floatValue(),    //높이 비율
+                                    documentSnapshot.getDouble("marginLeftRatio").floatValue(), //왼쪽 여백 비율
+                                    documentSnapshot.getDouble("marginTopRatio").floatValue(),  //위쪽 여백 비율
+                                    (ArrayList<Double>)documentSnapshot.get("marginRowRatio"),  //층 사이 여백 비율(층수-1)
+                                    documentSnapshot.getDouble("marginColRatio").floatValue(),  //구역 사이 여백 비율
+                                    (ArrayList<Long>) documentSnapshot.get("floorRow"), //층별 행 수
+                                    (Map<String, ArrayList<Long>>) documentSnapshot.get("aisleSeat"),    //층별 구역 수
+                                    documentSnapshot.getLong("maxCol").intValue(),  //최대 좌석 수
+                                    (Map<String, ArrayList<Long>>) documentSnapshot.get("rowStartEnd"), //행-(좌석 시작 번호, 좌석 끝 번호...) 배열 크기는 2n.
+                                    documentSnapshot.getBoolean("isgy").booleanValue(), //구역이 있는가
+                                    documentSnapshot.getBoolean("isColRepeat").booleanValue()   //
                             );
 
                             // Map 접근 방식:
                             // (주의사항: Map의 Key는 좌석 행 번호이므로 1부터 시작함)
-                            //for(int i = 0; i < rowStartEnd.size(); i++) {
-                            //    //Log.d("rowStartEnd: ", String.valueOf(i+1)+" = "+String.valueOf((ArrayList<Integer>)rowStartEnd.get(String.valueOf(i+1))));
-                            //    Log.d("rowStartEnd: ", (i+1) + " = ["+ rowStartEnd.get(String.valueOf(i+1)).get(0) + ", " + rowStartEnd.get(String.valueOf(i+1)).get(1) + "]");
-                            //}
+//                            for(int i = 0; i < seatInfo.getRow_start_end().size(); i++) {
+//                                Log.d("rowStartEnd: ", String.valueOf(i+1)+" = "+String.valueOf((ArrayList<Integer>)seatInfo.getRow_start_end().get(String.valueOf(i+1))));
+//                                Log.d("rowStartEnd: ", (i+1) + " = ["+ seatInfo.getRow_start_end().get(String.valueOf(i+1)).get(0) + ", " + seatInfo.getRow_start_end().get(String.valueOf(i+1)).get(1) + "]");
+//                            }
 
                             // 좌석배치도 세팅
                             Glide.with(getApplicationContext()).load(seatPlanImage)
@@ -156,8 +157,8 @@ public class TheaterActivity extends AppCompatActivity {
                                                 @Override
                                                 public void run()
                                                 {
-                                                    TI.getSize(seatplan.getWidth(), seatplan.getHeight());
-                                                    TI.init(seatinfo);
+                                                    TI.setSize(seatplan.getWidth(), seatplan.getHeight());
+                                                    TI.init(seatInfo);
                                                     TI.execute();
                                                 }
                                             }, 1000);
@@ -173,7 +174,7 @@ public class TheaterActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onFailure(@NonNull Exception e) {
+                    public void onFailure(@Nonnull Exception e) {
                         Log.e(TAG, "error occured", e);
                         Toast.makeText(getApplicationContext(), "오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
                     }
@@ -226,7 +227,7 @@ public class TheaterActivity extends AppCompatActivity {
                 return false;
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                current.set(seatplan_layout.getX(), seatplan_layout.getY());
+                current_P.set(seatplan_layout.getX(), seatplan_layout.getY());
                 previous_sf = mScaleFactor;
                 return true;
         }
@@ -242,7 +243,7 @@ public class TheaterActivity extends AppCompatActivity {
 
             if(previous_sf>mScaleFactor) {
                 float tmp = (float)(mScaleFactor-1)/previous_sf;
-                seatplan_layout.animate().x(current.x*tmp).y(current.y*tmp).setDuration(0).start();
+                seatplan_layout.animate().x(current_P.x*tmp).y(current_P.y*tmp).setDuration(0).start();
             }
             seatplan_layout.setScaleX(mScaleFactor);
             seatplan_layout.setScaleY(mScaleFactor);
