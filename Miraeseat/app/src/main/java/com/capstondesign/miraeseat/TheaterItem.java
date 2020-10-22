@@ -61,7 +61,7 @@ public class TheaterItem extends TheaterActivity {
         seatRow_params = new TableLayout.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
         seatView_params = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f);
 
-        max_col = seatInfo.getMax_col();
+        max_col = seatInfo.getMaxCol();
     }
 
     public void execute() { //메모리 문제가 발생하여 아예 나눠서 돌림
@@ -69,8 +69,8 @@ public class TheaterItem extends TheaterActivity {
         boolean isgy = seatInfo.get_isgy();
 
         if(isColRepeat) {
-            run_CR();
-        } else if(isgy) {
+            run_CR(isgy);
+        } else {
             run(isgy);
         }
 
@@ -90,8 +90,8 @@ public class TheaterItem extends TheaterActivity {
 
         while (true) {   //한 층씩 구현
             zero_line_count = 0;
-            col = seatInfo.getAisle_col().get(String.valueOf(floor_index+1));   //Map key "1"부터...
-            int row = seatInfo.getFloor_row().get(floor_index).intValue(); //floor_index+1 층의 행 수. 0번 인덱스부터..
+            col = seatInfo.getAisleSeat().get(String.valueOf(floor_index+1));   //Map key "1"부터...
+            int row = seatInfo.getFloorRow().get(floor_index).intValue(); //floor_index+1 층의 행 수. 0번 인덱스부터..
 
 
             for (int r = 1; r <= row; ++r) { //1행부터 row행까지 한 행씩 구현
@@ -106,13 +106,16 @@ public class TheaterItem extends TheaterActivity {
 
                 while (true) {
                     try {
-                        start = seatInfo.getRow_start_end().get(String.valueOf(total_row)).get(row_start_end_index).intValue();
+                        start = seatInfo.getRowStartEnd().get(String.valueOf(total_row)).get(row_start_end_index).intValue();
                         if (start == 0) {    //{0, 0}이면 행 사이 빈 공간으로 간주함.
                             AddEmptyView(1);
-                            zero_line_count += 1;
+                            zero_line_count += 1;   //삥줄. 없는걸로 치기 때문에 zero_line_count 증가시켜서 증가된 r 상쇄시키기~
+                            break;
+                        } else if(start==45) {  //그러나 {max_col, max_col}이면 빈 공간이지만 행 번호는 부여함.
+                            AddEmptyView(1);
                             break;
                         }
-                        end = seatInfo.getRow_start_end().get(String.valueOf(total_row)).get(row_start_end_index + 1).intValue();
+                        end = seatInfo.getRowStartEnd().get(String.valueOf(total_row)).get(row_start_end_index + 1).intValue();
                     } catch (Exception e) {
                         start = max_col + 1;
                     }
@@ -150,7 +153,7 @@ public class TheaterItem extends TheaterActivity {
             }
             try {   //층 사이 공간 추가
                 emptyView = new TextView(ctx);
-                emptyView.setLayoutParams(new TableRow.LayoutParams(0, seatInfo.getMargin_row().get(floor_index++).intValue()));
+                emptyView.setLayoutParams(new TableRow.LayoutParams(0, seatInfo.getMarginRow_relative().get(floor_index++).intValue()));
 
                 TableRow emptyRow = new TableRow(ctx);
                 emptyRow.addView(emptyView);
@@ -164,8 +167,7 @@ public class TheaterItem extends TheaterActivity {
     }
 
 
-
-    public void run_CR() {
+    public void run_CR(boolean isgy) {
         total_row = 1;    //Map key가 1부터이므로...
         floor_index = 0;  //0번 행
 
@@ -173,8 +175,8 @@ public class TheaterItem extends TheaterActivity {
 
         while (true) {   //한 층씩 구현
             zero_line_count = 0;
-            col = seatInfo.getAisle_col().get(String.valueOf(floor_index+1));   //Map key "1"부터...
-            int row = seatInfo.getFloor_row().get(floor_index).intValue(); //floor_index+1 층의 행 수. 0번 인덱스부터..
+            col = seatInfo.getAisleSeat().get(String.valueOf(floor_index+1));   //Map key "1"부터...
+            int row = seatInfo.getFloorRow().get(floor_index).intValue(); //floor_index+1 층의 행 수. 0번 인덱스부터..
 
 
             for (int r = 1; r <= row; ++r) { //1행부터 row행까지 한 행씩 구현
@@ -189,13 +191,16 @@ public class TheaterItem extends TheaterActivity {
 
                 while (true) {
                     try {
-                        start = seatInfo.getRow_start_end().get(String.valueOf(total_row)).get(row_start_end_index).intValue();
+                        start = seatInfo.getRowStartEnd().get(String.valueOf(total_row)).get(row_start_end_index).intValue();
                         if (start == 0) {    //{0, 0}이면 행 사이 빈 공간으로 간주함.
                             AddEmptyView(1);
-                            zero_line_count += 1;
+                            zero_line_count += 1;   //삥줄. 없는걸로 치기 때문에 zero_line_count 증가시켜서 증가된 r 상쇄시키기~
+                            break;
+                        } else if(start==45) {  //그러나 {max_col, max_col}이면 빈 공간이지만 행 번호는 부여함.
+                            AddEmptyView(1);
                             break;
                         }
-                        end = seatInfo.getRow_start_end().get(String.valueOf(total_row)).get(row_start_end_index + 1).intValue();
+                        end = seatInfo.getRowStartEnd().get(String.valueOf(total_row)).get(row_start_end_index + 1).intValue();
                     } catch (Exception e) {
                         start = max_col + 1;
                     }
@@ -216,10 +221,11 @@ public class TheaterItem extends TheaterActivity {
                     }
 
                     for (current = start; current <= end; ++current) {
-                        int tmp = (aisle_index==0)?start+1:col.get(aisle_index-1).intValue();
-                        AddSeatView(r - zero_line_count, current-tmp, true);    //반복되는 번호의 좌석은 구역 정보가 필수
+                        int tmp = (aisle_index==0)?start-1:col.get(aisle_index-1).intValue();
+                        AddSeatView(r - zero_line_count, current-tmp, isgy);    //반복되는 번호의 좌석은 구역 정보가 필수
                         try {
                             if (current == col.get(aisle_index)) {
+
                                 AddEmptyView();
                                 ++aisle_index;
                             }
@@ -234,7 +240,7 @@ public class TheaterItem extends TheaterActivity {
             }
             try {   //층 사이 공간 추가
                 emptyView = new TextView(ctx);
-                emptyView.setLayoutParams(new TableRow.LayoutParams(0, seatInfo.getMargin_row().get(floor_index++).intValue()));
+                emptyView.setLayoutParams(new TableRow.LayoutParams(0, seatInfo.getMarginRow_relative().get(floor_index++).intValue()));
 
                 TableRow emptyRow = new TableRow(ctx);
                 emptyRow.addView(emptyView);
@@ -247,11 +253,12 @@ public class TheaterItem extends TheaterActivity {
         seatplan_layout.addView(seatTableLayout);
     }
 
+
     private void CreateTable() { //테이블 레이아웃 설정 및 생성
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(seatInfo.getSeat_width(), seatInfo.getSeat_height());
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(seatInfo.getSeatWidth_relative(), seatInfo.getSeatHeight_relative());
         params.addRule(RelativeLayout.ALIGN_LEFT, R.id.seatplan);
         params.addRule(RelativeLayout.ALIGN_TOP, R.id.seatplan);
-        params.setMargins(seatInfo.getMargin_left(), seatInfo.getMargin_top(), 0, 0);
+        params.setMargins(seatInfo.getMarginLeft_relative(), seatInfo.getMarginTop_relative(), 0, 0);
 
         seatTableLayout = new TableLayout(ctx);
         seatTableLayout.setLayoutParams(params);
@@ -260,7 +267,7 @@ public class TheaterItem extends TheaterActivity {
 
     private void AddEmptyView() {
         emptyView = new TextView(ctx);
-        emptyView.setLayoutParams(new TableRow.LayoutParams(seatInfo.getMargin_col(), 0));
+        emptyView.setLayoutParams(new TableRow.LayoutParams(seatInfo.getMarginCol_relative(), 0));
         seatRow.addView(emptyView);
 
     }
@@ -269,6 +276,7 @@ public class TheaterItem extends TheaterActivity {
         if (weight == 0) return;
         emptyView = new TextView(ctx);
         emptyView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, weight));
+        emptyView.setBackgroundResource(R.drawable.seatbutton_clicked);
         seatRow.addView(emptyView);
 
     }

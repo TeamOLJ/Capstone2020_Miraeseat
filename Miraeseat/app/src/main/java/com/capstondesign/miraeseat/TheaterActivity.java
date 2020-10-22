@@ -118,18 +118,18 @@ public class TheaterActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists()) {
                             //(int seat_width, int seat_height, int margin_left, int margin_top, int margin_row, int margin_col, int max_row, int max_col, ArrayList<Integer> floor_row, Map<Integer, ArrayList<Integer>> row_start_end, ArrayList<Integer> aisle_col)
-                            seatInfo = new SeatPlanInfo(documentSnapshot.getDouble("totalWidthRatio").floatValue(), //넓이 비율
-                                    documentSnapshot.getDouble("totalHeightRatio").floatValue(),    //높이 비율
-                                    documentSnapshot.getDouble("marginLeftRatio").floatValue(), //왼쪽 여백 비율
-                                    documentSnapshot.getDouble("marginTopRatio").floatValue(),  //위쪽 여백 비율
-                                    (ArrayList<Double>)documentSnapshot.get("marginRowRatio"),  //층 사이 여백 비율(층수-1)
-                                    documentSnapshot.getDouble("marginColRatio").floatValue(),  //구역 사이 여백 비율
+                            seatInfo = new SeatPlanInfo(documentSnapshot.getDouble("seatWidth").floatValue(), //넓이 비율
+                                    documentSnapshot.getDouble("seatHeight").floatValue(),    //높이 비율
+                                    documentSnapshot.getDouble("marginLeft").floatValue(), //왼쪽 여백 비율
+                                    documentSnapshot.getDouble("marginTop").floatValue(),  //위쪽 여백 비율
+                                    (ArrayList<Double>)documentSnapshot.get("marginRow"),  //층 사이 여백 비율(층수-1)
+                                    documentSnapshot.getDouble("marginCol").floatValue(),  //구역 사이 여백 비율
                                     (ArrayList<Long>) documentSnapshot.get("floorRow"), //층별 행 수
                                     (Map<String, ArrayList<Long>>) documentSnapshot.get("aisleSeat"),    //층별 구역 수
                                     documentSnapshot.getLong("maxCol").intValue(),  //최대 좌석 수
                                     (Map<String, ArrayList<Long>>) documentSnapshot.get("rowStartEnd"), //행-(좌석 시작 번호, 좌석 끝 번호...) 배열 크기는 2n.
-                                    documentSnapshot.getBoolean("isgy").booleanValue(), //구역이 있는가
-                                    documentSnapshot.getBoolean("isColRepeat").booleanValue()   //
+                                    documentSnapshot.getBoolean("_isgy").booleanValue(), //구역이 있는가
+                                    documentSnapshot.getBoolean("_isColRepeat").booleanValue()   //
                             );
 
                             // Map 접근 방식:

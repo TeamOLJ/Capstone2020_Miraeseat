@@ -1,119 +1,139 @@
 package com.capstondesign.miraeseat;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Map;
 
 public class SeatPlanInfo {
-    float width_ratio;
-    int seat_width;
+    float seatWidth;
+    int seatWidth_relative;
 
-    float height_ratio;
-    int seat_height;
+    float seatHeight;
+    int seatHeight_relative;
 
-    float margin_left_ratio;
-    int margin_left;
+    float marginLeft;
+    int marginLeft_relative;
 
-    float margin_top_ratio;
-    int margin_top;
+    float marginTop;
+    int marginTop_relative;
 
-    ArrayList<Double> margin_row_ratio;
-    ArrayList<Integer> margin_row;
+    ArrayList<Double> marginRow;
+    ArrayList<Integer> marginRow_relative;
 
-    float margin_col_ratio;
-    int margin_col;
+    float marginCol;
+    int marginCol_relative;
 
-    ArrayList<Long> floor_row;
-    Map<String, ArrayList<Long>> aisle_col;
-    int max_col;
+    ArrayList<Long> floorRow;
+    Map<String, ArrayList<Long>> aisleSeat;
+    int maxCol;
 
-    Map<String, ArrayList<Long>> row_start_end;
+    Map<String, ArrayList<Long>> rowStartEnd;
 
-    boolean isgy;
-    boolean isColRepeat;
+    boolean _isgy;
+    boolean _isColRepeat;
 
     SeatPlanInfo() { }
 
-    public SeatPlanInfo(float seat_width_ratio, float seat_height_ratio, float margin_left_ratio, float margin_top_ratio,
-                        ArrayList<Double> margin_row_ratio, float margin_col_ratio,
-                        ArrayList<Long> floor_row, Map<String, ArrayList<Long>> aisle_col, int max_col,
-                        Map<String, ArrayList<Long>> row_start_end, boolean isgy, boolean isColRepeat) {
+    public SeatPlanInfo(float seat_width, float seat_height, float margin_left, float margin_top,
+                        ArrayList<Double> margin_row, float margin_col,
+                        ArrayList<Long> floor_row, Map<String, ArrayList<Long>> aisle_seat, int max_col,
+                        Map<String, ArrayList<Long>> row_start_end, boolean _isgy, boolean _isColRepeat) {
 
-        this.width_ratio = seat_width_ratio;
-        this.height_ratio = seat_height_ratio;
-        this.margin_left_ratio = margin_left_ratio;
-        this.margin_top_ratio = margin_top_ratio;
-        this.margin_row_ratio = margin_row_ratio;
-        this.margin_col_ratio = margin_col_ratio;
-        this.floor_row = floor_row;
-        this.aisle_col = aisle_col;
-        this.max_col = max_col;
-        this.row_start_end = row_start_end;
-        this.isgy = isgy;
-        this.isColRepeat = isColRepeat;
+        this.seatWidth = seat_width;
+        this.seatHeight = seat_height;
+        this.marginLeft = margin_left;
+        this.marginTop = margin_top;
+        this.marginRow = margin_row;
+        this.marginCol = margin_col;
+        this.floorRow = floor_row;
+        this.aisleSeat = aisle_seat;
+        this.maxCol = max_col;
+        this.rowStartEnd = row_start_end;
+        this._isgy = _isgy;
+        this._isColRepeat = _isColRepeat;
 
     }
 
     public void init(int layout_width, int layout_height) {
-        seat_width = (int)Math.round(width_ratio*layout_width);
-        seat_height = (int)Math.round(height_ratio*layout_height);
+        seatWidth_relative = (int)Math.round(seatWidth *layout_width);
+        seatHeight_relative = (int)Math.round(seatHeight *layout_height);
 
-        margin_left = (int)Math.round(margin_left_ratio*layout_width);
-        margin_top = (int)Math.round(margin_top_ratio*layout_height);
+        marginLeft_relative = (int)Math.round(marginLeft *layout_width);
+        marginTop_relative = (int)Math.round(marginTop *layout_height);
 
-        margin_row = new ArrayList<Integer>();
-        for(int i=0; i<margin_row_ratio.size(); ++i) {
-            margin_row.add((int)Math.round(margin_row_ratio.get(i)*layout_height));
+        marginRow_relative = new ArrayList<Integer>();
+        for(int i = 0; i< marginRow.size(); ++i) {
+            marginRow_relative.add((int)Math.round(marginRow.get(i)*layout_height));
         }
 
-        margin_col = (int)Math.round(margin_col_ratio*layout_width);
+        marginCol_relative = (int)Math.round(marginCol *layout_width);
 
     }
 
-    public int getSeat_width() {
-        return seat_width;
+    public float getSeatWidth() {
+        return seatWidth;
     }
 
-    public int getSeat_height() {
-        return seat_height;
+    public int getSeatWidth_relative() {
+        return seatWidth_relative;
     }
 
-    public int getMargin_left() {
-        return margin_left;
+    public float getSeatHeight() {
+        return seatHeight;
     }
 
-    public int getMargin_top() {
-        return margin_top;
+    public int getSeatHeight_relative() {
+        return seatHeight_relative;
     }
 
-    public ArrayList<Integer> getMargin_row() {
-        return margin_row;
+    public float getMarginLeft() {
+        return marginLeft;
     }
 
-    public ArrayList<Long> getFloor_row() {
-        return floor_row;
+    public int getMarginLeft_relative() {
+        return marginLeft_relative;
     }
 
-    public int getMargin_col() {
-        return margin_col;
+    public float getMarginTop() {
+        return marginTop;
     }
 
-    public Map<String, ArrayList<Long>> getAisle_col() {
-        return aisle_col;
+    public int getMarginTop_relative() {
+        return marginTop_relative;
     }
 
-    public int getMax_col() {
-        return max_col;
+    public ArrayList<Double> getMarginRow() {
+        return marginRow;
     }
 
-    public Map<String, ArrayList<Long>> getRow_start_end() {
-        return row_start_end;
+    public ArrayList<Integer> getMarginRow_relative() {
+        return marginRow_relative;
     }
 
-    public boolean get_isgy() {return isgy;}
+    public ArrayList<Long> getFloorRow() {
+        return floorRow;
+    }
 
-    public boolean get_isColRepeat() { return isColRepeat; }
+    public int getMarginCol() {
+        return marginCol_relative;
+    }
+
+    public int getMarginCol_relative() {
+        return marginCol_relative;
+    }
+
+    public Map<String, ArrayList<Long>> getAisleSeat() {
+        return aisleSeat;
+    }
+
+    public int getMaxCol() {
+        return maxCol;
+    }
+
+    public Map<String, ArrayList<Long>> getRowStartEnd() {
+        return rowStartEnd;
+    }
+
+    public boolean get_isgy() {return _isgy;}
+
+    public boolean get_isColRepeat() { return _isColRepeat; }
 }
