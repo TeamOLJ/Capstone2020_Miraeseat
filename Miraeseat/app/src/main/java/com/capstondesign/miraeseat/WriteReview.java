@@ -82,7 +82,6 @@ public class WriteReview extends AppCompatActivity {
     String userUID;
 
     String reviewDate = null;
-    String seatNumber;
     String theaterName;
 
     TextView textAddPhoto;
@@ -92,9 +91,7 @@ public class WriteReview extends AppCompatActivity {
     TextInputLayout inputlayoutReview;
     EditText edtReview;
 
-    Spinner floorSpinner;
-    Spinner rowSpinner;
-    Spinner seatSpinner;
+    TextView textSeatName;
 
     Button btnSave;
     Button btnCancel;
@@ -119,13 +116,12 @@ public class WriteReview extends AppCompatActivity {
         String selectedSeat = intent.getStringExtra("selectedSeat");
         theaterName = intent.getStringExtra("theaterName");
 
+        textSeatName = (TextView)findViewById(R.id.textSeatName);
+        textSeatName.setText(intent.getStringExtra("selectedSeat"));
+
         textAddPhoto = (TextView)findViewById(R.id.textAddPhoto);
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
         image = (ImageView) findViewById(R.id.write_photo);
-
-        floorSpinner = (Spinner)findViewById(R.id.floorSpinner);
-        rowSpinner = (Spinner)findViewById(R.id.rowSpinner);
-        seatSpinner = (Spinner)findViewById(R.id.seatnumSpinner);
 
         inputlayoutReview = (TextInputLayout)findViewById(R.id.textlayoutReview);
         edtReview = inputlayoutReview.getEditText();
@@ -140,46 +136,6 @@ public class WriteReview extends AppCompatActivity {
         userUID = user.getUid();
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference().child("user_upload_image/"+userUID+"/review_photo");
-
-        // Spinner 관련 임시 코드
-        // DB에서 정보를 읽어오거나... 처음부터 Spinner 설정을 못 하게 변경하거나...
-        List floors = new ArrayList<String>();
-        for (int i = 1; i <= 3; i++) {
-            floors.add(Integer.toString(i));
-        }
-
-        List rows = new ArrayList<Integer>();
-        for (int i = 1; i <= 40; i++) {
-            rows.add(Integer.toString(i));
-        }
-
-        List seats = new ArrayList<Integer>();
-        for (int i = 1; i <= 50; i++) {
-            seats.add(Integer.toString(i));
-        }
-
-        ArrayAdapter<String> spinnerArrayAdapter;
-
-        spinnerArrayAdapter = new ArrayAdapter<String>(WriteReview.this, R.layout.spinner_item, floors);
-        floorSpinner.setAdapter(spinnerArrayAdapter);
-
-        spinnerArrayAdapter = new ArrayAdapter<String>(WriteReview.this, R.layout.spinner_item, rows);
-        rowSpinner.setAdapter(spinnerArrayAdapter);
-
-        spinnerArrayAdapter = new ArrayAdapter<String>(WriteReview.this, R.layout.spinner_item, seats);
-        seatSpinner.setAdapter(spinnerArrayAdapter);
-
-        String[] getfloor = selectedSeat.split("층 ");
-        String[] getrow = getfloor[1].split("열 ");
-        String[] getnum = getrow[1].split("번");
-
-        String floor = getfloor[0];
-        String row = getrow[0];
-        String num = getnum[0];
-
-        floorSpinner.setSelection(Integer.parseInt(floor)-1);
-        rowSpinner.setSelection(Integer.parseInt(row)-1);
-        seatSpinner.setSelection(Integer.parseInt(num)-1);
 
         // ratingbar
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -219,8 +175,6 @@ public class WriteReview extends AppCompatActivity {
 
             clickImageListener.disable();
 
-            seatNumber = floorSpinner.getSelectedItem().toString()+"층 "+rowSpinner.getSelectedItem().toString()+"열 "
-                    +seatSpinner.getSelectedItem().toString()+"번";
             final float ratingPoint = ratingBar.getRating();
             final String newReview = edtReview.getText().toString();
 
@@ -242,12 +196,12 @@ public class WriteReview extends AppCompatActivity {
             }
             // 사진을 선택하지 않은 경우
             else if (image.getDrawable()==null) {
-                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, null, ratingPoint, newReview.replace("\n", "\\\\n"));
+                Review userReview = new Review(userUID, null, reviewDate, theaterName, textSeatName.getText().toString(), null, ratingPoint, newReview.replace("\n", "\\\\n"));
                 showSaveMsg(false, userReview);
             }
             // 사진을 선택한 경우
             else {
-                Review userReview = new Review(userUID, null, reviewDate, theaterName, seatNumber, null, ratingPoint, newReview.replace("\n", "\\\\n"));
+                Review userReview = new Review(userUID, null, reviewDate, theaterName, textSeatName.getText().toString(), null, ratingPoint, newReview.replace("\n", "\\\\n"));
                 showSaveMsg(true, userReview);
             }
         }

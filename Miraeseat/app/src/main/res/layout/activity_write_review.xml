@@ -94,57 +94,15 @@
                     android:text="@string/hint_seat"
                     android:textAppearance="?android:attr/textAppearanceSearchResultTitle" />
 
-                <Spinner
-                    android:id="@+id/floorSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:layout_gravity="center_vertical"
-                    android:background="@null" />
-
                 <TextView
+                    android:id="@+id/textSeatName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="12"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="10dp"
-                    android:text="층"
+                    android:text="좌석"
                     android:textSize="18sp" />
-
-                <Spinner
-                    android:id="@+id/rowSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:layout_gravity="center_vertical"
-                    android:background="@null" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="10dp"
-                    android:text="열"
-                    android:textSize="18sp" />
-
-                <Spinner
-                    android:id="@+id/seatnumSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:layout_gravity="center_vertical"
-                    android:background="@null" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="10dp"
-                    android:text="번"
-                    android:textSize="18sp" />
-
 
             </LinearLayout>
 

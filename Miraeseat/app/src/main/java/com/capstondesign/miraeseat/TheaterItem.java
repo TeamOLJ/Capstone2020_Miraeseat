@@ -316,7 +316,7 @@ public class TheaterItem extends TheaterActivity {
 
             String seat_name = v.getTag().toString();
 
-            selectedSeat = seat_name.replaceAll("[A-Z]구역 ", "");
+            selectedSeat = seat_name;
 
             Toast.makeText(ctx, seat_name, Toast.LENGTH_SHORT).show();
 

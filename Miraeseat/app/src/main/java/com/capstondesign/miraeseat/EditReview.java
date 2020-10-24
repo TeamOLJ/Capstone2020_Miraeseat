@@ -86,9 +86,7 @@ public class EditReview extends AppCompatActivity {
     ImageView image;
     RatingBar ratingBar;
 
-    TextView textFloorNum;
-    TextView textRowNum;
-    TextView textSeatNum;
+    TextView textSeatName;
 
     TextInputLayout inputlayoutReview;
     EditText edtReview;
@@ -124,11 +122,6 @@ public class EditReview extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.edit_photo);
         ratingBar = (RatingBar) findViewById(R.id.write_rating);
 
-
-        textFloorNum = (TextView)findViewById(R.id.textFloorNum);
-        textRowNum = (TextView)findViewById(R.id.textRowNum);
-        textSeatNum = (TextView)findViewById(R.id.textSeatNum);
-
         inputlayoutReview = (TextInputLayout)findViewById(R.id.textlayoutReview);
         edtReview = inputlayoutReview.getEditText();
         edtReview.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
@@ -158,18 +151,8 @@ public class EditReview extends AppCompatActivity {
         else
             textNoPhoto.setVisibility(View.VISIBLE);
 
-        String seatNumber = intent.getStringExtra("seatNum");
-        String[] getfloor = seatNumber.split("층 ");
-        String[] getrow = getfloor[1].split("열 ");
-        String[] getnum = getrow[1].split("번");
-
-        String floor = getfloor[0];
-        String row = getrow[0];
-        String num = getnum[0];
-
-        textFloorNum.setText(floor);
-        textRowNum.setText(row);
-        textSeatNum.setText(num);
+        textSeatName = (TextView)findViewById(R.id.textSeatName);
+        textSeatName.setText(intent.getStringExtra("seatNum"));
 
         image.setOnClickListener(clickImageListener);
 
