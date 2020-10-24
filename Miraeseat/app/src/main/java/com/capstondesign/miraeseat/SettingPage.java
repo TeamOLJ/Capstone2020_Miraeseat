@@ -84,6 +84,7 @@ public class SettingPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),TermsPage.class);
+                intent.putExtra("type","서비스 이용약관");
                 startActivity(intent);
             }
         });
@@ -91,6 +92,10 @@ public class SettingPage extends AppCompatActivity {
         btnPI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),TermsPage.class);
+                intent.putExtra("type","개인정보 보호정책");
+                startActivity(intent);
+
             }
         });
 

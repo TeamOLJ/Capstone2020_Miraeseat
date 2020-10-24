@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -23,6 +24,8 @@ public class TermsPage extends AppCompatActivity {
     TextView titleText;
     TextView TCText;
 
+    String text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +37,11 @@ public class TermsPage extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        Intent intent =getIntent();
+        text = intent.getStringExtra("type");
+
         titleText = (TextView) findViewById(R.id.titleText);
-        titleText.setText("서비스 이용약관");
+        titleText.setText(text);
 
         db = FirebaseFirestore.getInstance();
 
@@ -47,8 +53,14 @@ public class TermsPage extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         // 파이어베이스는 \n 등의 특수표기문자를 지원하지 않으므로, "\\n"로 표기해둔 부분을 모두 newline 기호로 치환하는 식으로 새 줄 구성
-                        String TC = documentSnapshot.getString("TermCondition").replace("\\\\n", "\n");
-                        TCText.setText(TC);
+                        if(text.equals("서비스 이용약관")) {
+                            String TC = documentSnapshot.getString("TermCondition").replace("\\\\n", "\n");
+                            TCText.setText(TC);
+                        }
+                        else if(text.equals("개인정보 보호정책")){
+                            String TC = documentSnapshot.getString("PersonalInfo").replace("\\\\n", "\n");
+                            TCText.setText(TC);
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

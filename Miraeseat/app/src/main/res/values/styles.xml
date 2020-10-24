@@ -78,4 +78,8 @@
     <style name="InputError.Red">
         <item name="android:textColor">@color/textlayout_error</item>
     </style>
+
+    <style name="AppTheme.Ripple">
+        <item name="colorControlHighlight">#0000ff</item>
+    </style>
 </resources>
