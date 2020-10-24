@@ -138,6 +138,9 @@
                 <Button
                     android:id="@+id/btnCheckNick"
                     android:layout_width="0dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/ripple_custom"
+                    android:backgroundTint="@color/main_color"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="20dp"

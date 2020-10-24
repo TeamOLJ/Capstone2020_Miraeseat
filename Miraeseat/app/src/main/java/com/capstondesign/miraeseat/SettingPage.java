@@ -29,6 +29,7 @@ public class SettingPage extends AppCompatActivity {
     Button btTheme;
     Button btnCash;
     Button btnTOS;
+    Button btnPI;
 
     String versionName = BuildConfig.VERSION_NAME;
 
@@ -50,6 +51,7 @@ public class SettingPage extends AppCompatActivity {
         btTheme = (Button) findViewById(R.id.btTheme);
         btnCash = (Button) findViewById(R.id.btnCash);
         btnTOS = (Button) findViewById(R.id.btnTOS);
+        btnPI = (Button)findViewById(R.id.btnPI);
 
 
         btTheme.setOnClickListener(new View.OnClickListener() {
@@ -82,9 +84,21 @@ public class SettingPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),TermsPage.class);
+                intent.putExtra("type","서비스 이용약관");
                 startActivity(intent);
             }
         });
+
+        btnPI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),TermsPage.class);
+                intent.putExtra("type","개인정보 보호정책");
+                startActivity(intent);
+
+            }
+        });
+
 
 
         versionText = (TextView) findViewById(R.id.verNum);

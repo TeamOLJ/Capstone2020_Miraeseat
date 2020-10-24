@@ -62,6 +62,9 @@
         <Button
             android:id="@+id/mypage_edit"
             android:layout_width="0dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/ripple_custom"
+            android:backgroundTint="@color/main_color"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/edit_user_info"
@@ -70,6 +73,9 @@
         <Button
             android:id="@+id/mypage_withdrawl"
             android:layout_width="0dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/ripple_custom"
+            android:backgroundTint="@color/main_color"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/unsubscribe"

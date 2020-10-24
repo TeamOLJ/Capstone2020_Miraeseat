@@ -1,6 +1,7 @@
 package com.capstondesign.miraeseat.mypage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.capstondesign.miraeseat.Image;
 import com.capstondesign.miraeseat.R;
 
 import java.util.ArrayList;
@@ -110,6 +112,16 @@ public class MyPageAdapter extends BaseAdapter implements View.OnClickListener {
             params.bottomMargin = mContext.getResources().getDimensionPixelSize(R.dimen.review_noimage_bottom);
             holder.reviewContent.setLayoutParams(params);
         }
+
+        //이미지 클릭시 원본 이미지
+        holder.reviewImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), Image.class);
+                intent.putExtra("imagepath", infoList.get(position).getImagePath());
+                mContext.startActivity(intent);
+            }
+        });
 
 
         holder.btnMenu.setTag(position);
