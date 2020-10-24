@@ -153,18 +153,16 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                         hdc.add(new HallDetailedClass(document.getId(),
                                 document.getString("theaterName") + " " + document.getString("hallName"),
                                 document.getString("theaterCode") + "-" + document.getString("hallCode"),
-                                document.getString("hallImage"), document.getBoolean("isSeatplan")));
+                                document.getString("theaterImage"), document.getBoolean("isSeatplan")));
 
                         // 공연장 이미지 glide, 공연장 이름 textview에 설정
-                        if(document.getString("hallImage") == null) {
+                        if(document.getString("theaterImage") == null) {
                             btnList[cntIndex].setBackgroundResource(R.drawable.theater1);
                         }
                         else {
-                            Glide.with(getApplicationContext()).load(document.getString("hallImage")).into(btnList[cntIndex]);
+                            Glide.with(MainActivity.this).load(document.getString("theaterImage")).into(btnList[cntIndex]);
                         }
 
-                        //버튼의 이미지 색상을 죽임
-                        btnList[cntIndex].setColorFilter(Color.argb(100, 0, 0, 0), android.graphics.PorterDuff.Mode.MULTIPLY);
                         btnList[cntIndex].setClickable(true);
                         textList[cntIndex].setText(document.getString("theaterName") + " " + document.getString("hallName"));
 
