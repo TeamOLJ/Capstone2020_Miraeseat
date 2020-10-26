@@ -1,6 +1,7 @@
 package com.capstondesign.miraeseat.search;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,9 @@ public class SearchAdapter extends BaseAdapter {
         oneListItem = hallList.get(position);
 
         holder.hallName.setText(oneListItem.getCombined_name());
+        holder.hallName.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        holder.hallName.setMarqueeRepeatLimit(-1);
+        holder.hallName.setSelected(true);
 
         if (oneListItem.getHall_Image() == null) { // 지정된 공연장 이미지가 없을 경우 기본이미지로
             holder.hallImage.setImageResource(R.drawable.theater1);

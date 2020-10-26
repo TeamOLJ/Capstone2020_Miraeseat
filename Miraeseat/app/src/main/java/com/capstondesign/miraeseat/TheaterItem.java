@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -37,10 +36,16 @@ public class TheaterItem extends TheaterActivity {
     private TableLayout seatTableLayout;
     private TableRow seatRow;
     private View seatView;
-    private TextView emptyView;
+    private View emptyView;
     private View previous_seat = null;
 
     int check = 0;
+
+    private int aisle_index, floor_index, row_start_end_index;
+    private  int current, start, end, total_row, zero_line_count;
+
+    private  ArrayList<Long> aisle_col;
+
 
     TheaterItem(Context ctx, ViewGroup viewGroup) {
         this.ctx = ctx;
@@ -60,11 +65,10 @@ public class TheaterItem extends TheaterActivity {
 
         seatRow_params = new TableLayout.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
         seatView_params = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1f);
-
-        max_col = seatInfo.getMaxCol();
     }
 
-    public void execute() { //메모리 문제가 발생하여 아예 나눠서 돌림
+
+    public void execute() { //아예 나눠서 돌림
         boolean isColRepeat=seatInfo.get_isColRepeat();
         boolean isgy = seatInfo.get_isgy();
 
@@ -76,11 +80,6 @@ public class TheaterItem extends TheaterActivity {
 
     }
 
-    private int aisle_index, floor_index, row_start_end_index;
-    private  int current, start, end, total_row, zero_line_count;
-
-    private  int max_col;
-    private  ArrayList<Long> col;
 
     private void run(boolean isgy) {
         total_row = 1;    //Map key가 1부터이므로...
@@ -90,9 +89,9 @@ public class TheaterItem extends TheaterActivity {
 
         while (true) {   //한 층씩 구현
             zero_line_count = 0;
-            col = seatInfo.getAisleSeat().get(String.valueOf(floor_index+1));   //Map key "1"부터...
+            aisle_col = seatInfo.getAisleSeat().get(String.valueOf(floor_index+1));   //Map key "1"부터...
             int row = seatInfo.getFloorRow().get(floor_index).intValue(); //floor_index+1 층의 행 수. 0번 인덱스부터..
-
+            int max_col = seatInfo.getMaxCol().get(floor_index).intValue();
 
             for (int r = 1; r <= row; ++r) { //1행부터 row행까지 한 행씩 구현
                 //행 생성, 초기화
@@ -108,12 +107,8 @@ public class TheaterItem extends TheaterActivity {
                     try {
                         start = seatInfo.getRowStartEnd().get(String.valueOf(total_row)).get(row_start_end_index).intValue();
                         if (start == 0) {    //{0, 0}이면 행 사이 빈 공간으로 간주함.
-                            AddEmptyView(1);
                             zero_line_count += 1;   //삥줄. 없는걸로 치기 때문에 zero_line_count 증가시켜서 증가된 r 상쇄시키기~
-                            break;
-                        } else if(start==45) {  //그러나 {max_col, max_col}이면 빈 공간이지만 행 번호는 부여함.
-                            AddEmptyView(1);
-                            break;
+                        } else if (max_col < start)  {  //그러나 {max_col+1, max_col1+}이면 빈 공간이지만 행 번호는 부여함.
                         }
                         end = seatInfo.getRowStartEnd().get(String.valueOf(total_row)).get(row_start_end_index + 1).intValue();
                     } catch (Exception e) {
@@ -123,23 +118,23 @@ public class TheaterItem extends TheaterActivity {
                     AddEmptyView(start - current);
                     for (; current < start; ++current) {
                         try {
-                            if (current == col.get(aisle_index)) {
-                                AddEmptyView();
+                            if (current == aisle_col.get(aisle_index)) {
+                                AddAisleView();
                                 ++aisle_index;
                             }
                         } catch (IndexOutOfBoundsException e) {
                         }
                     }
 
-                    if (max_col < start) {
+                    if (start<1 || max_col < start) {
                         break;
                     }
 
                     for (current = start; current <= end; ++current) {
                         AddSeatView(r - zero_line_count, current, isgy);
                         try {
-                            if (current == col.get(aisle_index)) {
-                                AddEmptyView();
+                            if (current == aisle_col.get(aisle_index)) {
+                                AddAisleView();
                                 ++aisle_index;
                             }
                         } catch (IndexOutOfBoundsException e) {
@@ -152,12 +147,16 @@ public class TheaterItem extends TheaterActivity {
                 ++total_row;
             }
             try {   //층 사이 공간 추가
-                emptyView = new TextView(ctx);
-                emptyView.setLayoutParams(new TableRow.LayoutParams(0, seatInfo.getMarginRow_relative().get(floor_index++).intValue()));
+                int tmp = seatInfo.getMarginRow_relative().get(floor_index++);
+                if(tmp==0) { break; }
+                else {
+                    emptyView = new View(ctx);
+                    emptyView.setLayoutParams(new TableRow.LayoutParams(0, tmp));
 
-                TableRow emptyRow = new TableRow(ctx);
-                emptyRow.addView(emptyView);
-                seatTableLayout.addView(emptyRow);
+                    TableRow emptyRow = new TableRow(ctx);
+                    emptyRow.addView(emptyView);
+                    seatTableLayout.addView(emptyRow);
+                }
             } catch (IndexOutOfBoundsException e) {
                 break;
             }
@@ -175,8 +174,9 @@ public class TheaterItem extends TheaterActivity {
 
         while (true) {   //한 층씩 구현
             zero_line_count = 0;
-            col = seatInfo.getAisleSeat().get(String.valueOf(floor_index+1));   //Map key "1"부터...
+            aisle_col = seatInfo.getAisleSeat().get(String.valueOf(floor_index+1));   //Map key "1"부터...
             int row = seatInfo.getFloorRow().get(floor_index).intValue(); //floor_index+1 층의 행 수. 0번 인덱스부터..
+            int max_col = seatInfo.getMaxCol().get(floor_index).intValue();
 
 
             for (int r = 1; r <= row; ++r) { //1행부터 row행까지 한 행씩 구현
@@ -193,12 +193,8 @@ public class TheaterItem extends TheaterActivity {
                     try {
                         start = seatInfo.getRowStartEnd().get(String.valueOf(total_row)).get(row_start_end_index).intValue();
                         if (start == 0) {    //{0, 0}이면 행 사이 빈 공간으로 간주함.
-                            AddEmptyView(1);
                             zero_line_count += 1;   //삥줄. 없는걸로 치기 때문에 zero_line_count 증가시켜서 증가된 r 상쇄시키기~
-                            break;
-                        } else if(start==45) {  //그러나 {max_col, max_col}이면 빈 공간이지만 행 번호는 부여함.
-                            AddEmptyView(1);
-                            break;
+                        } else if (max_col < start)  {  //그러나 {max_col+1, max_col1+}이면 빈 공간이지만 행 번호는 부여함.
                         }
                         end = seatInfo.getRowStartEnd().get(String.valueOf(total_row)).get(row_start_end_index + 1).intValue();
                     } catch (Exception e) {
@@ -208,25 +204,24 @@ public class TheaterItem extends TheaterActivity {
                     AddEmptyView(start - current);
                     for (; current < start; ++current) {
                         try {
-                            if (current == col.get(aisle_index)) {
-                                AddEmptyView();
+                            if (current == aisle_col.get(aisle_index)) {
+                                AddAisleView();
                                 ++aisle_index;
                             }
                         } catch (IndexOutOfBoundsException e) {
                         }
                     }
 
-                    if (max_col < start) {
+                    if (start<1 || max_col < start) {
                         break;
                     }
 
                     for (current = start; current <= end; ++current) {
-                        int tmp = (aisle_index==0)?start-1:col.get(aisle_index-1).intValue();
+                        int tmp = (aisle_index==0)?start-1: aisle_col.get(aisle_index-1).intValue();
                         AddSeatView(r - zero_line_count, current-tmp, isgy);    //반복되는 번호의 좌석은 구역 정보가 필수
                         try {
-                            if (current == col.get(aisle_index)) {
-
-                                AddEmptyView();
+                            if (current == aisle_col.get(aisle_index)) {
+                                AddAisleView();
                                 ++aisle_index;
                             }
                         } catch (IndexOutOfBoundsException e) {
@@ -239,12 +234,16 @@ public class TheaterItem extends TheaterActivity {
                 ++total_row;
             }
             try {   //층 사이 공간 추가
-                emptyView = new TextView(ctx);
-                emptyView.setLayoutParams(new TableRow.LayoutParams(0, seatInfo.getMarginRow_relative().get(floor_index++).intValue()));
+                int tmp = seatInfo.getMarginRow_relative().get(floor_index++);
+                if(tmp==0) { break; }
+                else {
+                    emptyView = new View(ctx);
+                    emptyView.setLayoutParams(new TableRow.LayoutParams(0, tmp));
 
-                TableRow emptyRow = new TableRow(ctx);
-                emptyRow.addView(emptyView);
-                seatTableLayout.addView(emptyRow);
+                    TableRow emptyRow = new TableRow(ctx);
+                    emptyRow.addView(emptyView);
+                    seatTableLayout.addView(emptyRow);
+                }
             } catch (IndexOutOfBoundsException e) {
                 break;
             }
@@ -265,18 +264,17 @@ public class TheaterItem extends TheaterActivity {
 
     }
 
-    private void AddEmptyView() {
-        emptyView = new TextView(ctx);
-        emptyView.setLayoutParams(new TableRow.LayoutParams(seatInfo.getMarginCol_relative(), 0));
+    private void AddAisleView() {
+        emptyView = new View(ctx);
+        emptyView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 2));
         seatRow.addView(emptyView);
 
     }
 
     private void AddEmptyView(int weight) {
-        if (weight == 0) return;
-        emptyView = new TextView(ctx);
+        if (weight <= 0) return;
+        emptyView = new View(ctx);
         emptyView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, weight));
-        emptyView.setBackgroundResource(R.drawable.seatbutton_clicked);
         seatRow.addView(emptyView);
 
     }

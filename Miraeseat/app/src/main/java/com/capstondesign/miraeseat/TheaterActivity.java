@@ -126,7 +126,7 @@ public class TheaterActivity extends AppCompatActivity {
                                     documentSnapshot.getDouble("marginCol").floatValue(),  //구역 사이 여백 비율
                                     (ArrayList<Long>) documentSnapshot.get("floorRow"), //층별 행 수
                                     (Map<String, ArrayList<Long>>) documentSnapshot.get("aisleSeat"),    //층별 구역 수
-                                    documentSnapshot.getLong("maxCol").intValue(),  //최대 좌석 수
+                                    (ArrayList<Long>) documentSnapshot.get("maxCol"),  //최대 좌석 수
                                     (Map<String, ArrayList<Long>>) documentSnapshot.get("rowStartEnd"), //행-(좌석 시작 번호, 좌석 끝 번호...) 배열 크기는 2n.
                                     documentSnapshot.getBoolean("_isgy").booleanValue(), //구역이 있는가
                                     documentSnapshot.getBoolean("_isColRepeat").booleanValue()   //
