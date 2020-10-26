@@ -1,5 +1,7 @@
 package com.capstondesign.miraeseat;
 
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ public class SeatPlanInfo {
 
     ArrayList<Long> floorRow;
     Map<String, ArrayList<Long>> aisleSeat;
-    int maxCol;
+    ArrayList<Long> maxCol;
 
     Map<String, ArrayList<Long>> rowStartEnd;
 
@@ -35,7 +37,7 @@ public class SeatPlanInfo {
 
     public SeatPlanInfo(float seat_width, float seat_height, float margin_left, float margin_top,
                         ArrayList<Double> margin_row, float margin_col,
-                        ArrayList<Long> floor_row, Map<String, ArrayList<Long>> aisle_seat, int max_col,
+                        ArrayList<Long> floor_row, Map<String, ArrayList<Long>> aisle_seat, ArrayList<Long> max_col,
                         Map<String, ArrayList<Long>> row_start_end, boolean _isgy, boolean _isColRepeat) {
 
         this.seatWidth = seat_width;
@@ -62,7 +64,11 @@ public class SeatPlanInfo {
 
         marginRow_relative = new ArrayList<Integer>();
         for(int i = 0; i< marginRow.size(); ++i) {
-            marginRow_relative.add((int)Math.round(marginRow.get(i)*layout_height));
+            try{
+                marginRow_relative.add((int) Math.round(marginRow.get(i) * layout_height));
+            } catch (ClassCastException e) {
+                marginRow_relative.add(0);
+            }
         }
 
         marginCol_relative = (int)Math.round(marginCol *layout_width);
@@ -125,7 +131,7 @@ public class SeatPlanInfo {
         return aisleSeat;
     }
 
-    public int getMaxCol() {
+    public ArrayList<Long> getMaxCol() {
         return maxCol;
     }
 
