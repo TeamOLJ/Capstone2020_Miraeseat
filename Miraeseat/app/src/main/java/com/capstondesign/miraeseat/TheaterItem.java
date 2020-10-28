@@ -266,7 +266,7 @@ public class TheaterItem extends TheaterActivity {
 
     private void AddAisleView() {
         emptyView = new View(ctx);
-        emptyView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 2));
+        emptyView.setLayoutParams(new TableRow.LayoutParams(seatInfo.getMarginCol_relative(), 0));
         seatRow.addView(emptyView);
 
     }

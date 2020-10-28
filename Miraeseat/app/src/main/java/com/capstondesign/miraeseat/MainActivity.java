@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
                         // 공연장 이미지 glide, 공연장 이름 textview에 설정
                         if(document.getString("theaterImage") == null) {
-                            btnList[cntIndex].setBackgroundResource(R.drawable.theater1);
+                            btnList[cntIndex].setBackgroundResource(R.drawable.logo_color);
                         }
                         else {
                             Glide.with(MainActivity.this).load(document.getString("theaterImage")).into(btnList[cntIndex]);

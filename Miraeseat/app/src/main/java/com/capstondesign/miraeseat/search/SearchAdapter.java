@@ -76,9 +76,9 @@ public class SearchAdapter extends BaseAdapter {
         holder.hallName.setSelected(true);
 
         if (oneListItem.getHall_Image() == null) { // 지정된 공연장 이미지가 없을 경우 기본이미지로
-            holder.hallImage.setImageResource(R.drawable.theater1);
+            holder.hallImage.setImageResource(R.drawable.logo_color);
         } else {
-            Glide.with(mContext).load(oneListItem.getHall_Image()).into(holder.hallImage);
+            Glide.with(mContext).load(oneListItem.getHall_Image()).centerCrop().into(holder.hallImage);
         }
 
         return convertView;

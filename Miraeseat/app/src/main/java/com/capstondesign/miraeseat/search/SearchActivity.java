@@ -152,7 +152,7 @@ public class SearchActivity extends AppCompatActivity implements TextView.OnEdit
                                         finalList.add(new HallDetailedClass(document.getId(),
                                                 currentItem.getTheater_name().split("\\(구")[0] + " " + document.getString("hallName"),
                                                 currentItem.getTheater_ID() + "-" + document.getString("hallCode"),
-                                                document.getString("hallImage"), document.getBoolean("isSeatplan")));
+                                                document.getString("theaterImage"), document.getBoolean("isSeatplan")));
                                     }
                                 } else {
                                     Log.d(TAG, "Error reading DB", task.getException());
