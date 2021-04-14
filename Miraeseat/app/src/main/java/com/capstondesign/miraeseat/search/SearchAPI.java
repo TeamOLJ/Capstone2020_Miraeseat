@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class SearchAPI {
-    final static private String KOPIS_key= "***REMOVED***";
+    final static private String KOPIS_key= "***API KEY***";
     //API에서 검색어가 포함된 객체를 찾아 일부 정보만 ArrayList로 반환
     //문제점 : 검색결과가 없을 때 에러코드가 안나옴. 어떻게 처리해줘야할지 찾아봐야함.
 

@@ -23,7 +23,7 @@
     <string name="editText_desc">검색창</string>
     <string name="editText_hint">공연장/공연 검색</string>
 
-    <string name="KOPIS_key">***REMOVED***</string>
+    <string name="KOPIS_key">***API KEY***</string>
 
     <!--오나현-->
     <string name="hint_id">아이디</string>

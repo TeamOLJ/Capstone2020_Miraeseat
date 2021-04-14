@@ -29,7 +29,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="***REMOVED***" />
+            android:value="***API KEY***" />
 
         <activity android:name=".Image" />
         <activity

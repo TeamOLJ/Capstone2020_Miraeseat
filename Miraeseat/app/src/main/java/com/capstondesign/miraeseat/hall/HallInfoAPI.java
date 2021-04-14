@@ -17,7 +17,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class HallInfoAPI {
-    final static private String KOPIS_key = "***REMOVED***";
+    final static private String KOPIS_key = "***API KEY***";
     /*
     공연시설 : tag(공연시설 ID)로 GetDetails_Hall 구하기 / GetDetails_Hall의 공연시설명으로 Get_Play
     공연 : tag(공연 ID)로 공연시설 ID 얻기 / 얻은 공연 시설 ID로 GetDetails_Hall 구하기 / GetDetails_Hall의 공연시설명으로 Get_Play
