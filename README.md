@@ -160,6 +160,6 @@
 
 ## 팀 정보
 #### 오나현 [Github](https://github.com/onhyeon618)
-#### 장혜진 [Github](https://github.com/jhj5897)
 #### 이명주 [Github](https://github.com/mmmmjjj)
+#### 장혜진 [Github](https://github.com/jhj5897)
 <br>
